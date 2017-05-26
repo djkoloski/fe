@@ -1,0 +1,52 @@
+#pragma once
+
+#include <Fe/Core/FeFeature.h>
+
+#define FE_CONFIG_TYPE_DEBUG	FE_ENUM_TYPE
+#define FE_CONFIG_TYPE_RELEASE	FE_ENUM_TYPE
+#define FE_CONFIG_TYPE_PROFILE	FE_ENUM_TYPE
+#define FE_CONFIG_TYPE_FINAL	FE_ENUM_TYPE
+#define FE_IS_CONFIG(x)			FE_IS_ENUM(FE_CONFIG, x)
+
+// Debug
+#if defined(CONFIG_DEBUG)
+
+#define FE_CONFIG_DEBUG			FE_ENUM_VALUE
+
+#define FE_FEATURE_ASSERT		FE_IN_USE
+#define FE_FEATURE_DEBUG_BREAK	FE_IN_USE
+#define FE_FEATURE_PRINT		FE_IN_USE
+
+// Release
+#elif defined(CONFIG_RELEASE)
+
+#define FE_CONFIG_RELEASE		FE_ENUM_VALUE
+
+#define FE_FEATURE_ASSERT		FE_IN_USE
+#define FE_FEATURE_DEBUG_BREAK	FE_IN_USE
+#define FE_FEATURE_PRINT		FE_IN_USE
+
+// Profile
+#elif defined(CONFIG_PROFILE)
+
+#define FE_CONFIG_PROFILE		FE_ENUM_VALUE
+
+#define FE_FEATURE_ASSERT		FE_IN_USE
+#define FE_FEATURE_DEBUG_BREAK	FE_IN_USE
+#define FE_FEATURE_PRINT		FE_IN_USE
+
+// Final
+#elif defined(CONFIG_FINAL)
+
+#define FE_CONFIG_FINAL			FE_ENUM_VALUE
+
+#define FE_FEATURE_ASSERT		FE_NOT_IN_USE
+#define FE_FEATURE_DEBUG_BREAK	FE_NOT_IN_USE
+#define FE_FEATURE_PRINT		FE_NOT_IN_USE
+
+// Unsupported config
+#else
+	
+#error Unsupported config
+
+#endif
