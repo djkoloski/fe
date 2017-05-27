@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 // Subsystem Windows otherwise
 #else
 
-#include <Windows.h>
+#include <Fe/Core/FeWindows.h>
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	feMain(__argc, __argv);

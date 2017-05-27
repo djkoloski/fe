@@ -176,26 +176,26 @@ void ConfigureRules(Solution &solution)
 		{
 		case Settings::Configuration::Debug:
 			// Debug
-			compileCommand += " /DCONFIG_DEBUG /Z7 /FS";
+			compileCommand += " /DCONFIG_DEBUG /Z7";
 			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Release:
 			// Release
 			compileCommand += " /DCONFIG_RELEASE /Z7 /O2";
-			linkCommand += " /SUBSYSTEM:CONSOLE";
+			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Profile:
 			// Profile
 			compileCommand += " /DCONFIG_PROFILE /O2 /GL";
-			linkCommand += " /SUBSYSTEM:CONSOLE /LTCG";
+			linkCommand += " /SUBSYSTEM:CONSOLE /LTCG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE /LTCG";
 			break;
 		case Settings::Configuration::Final:
 			// Final
-			compileCommand += " /DCONFIG_PROFILE /O2 /GL";
-			linkCommand += " /SUBSYSTEM:WINDOWS /LTCG";
+			compileCommand += " /DCONFIG_FINAL /O2 /GL";
+			linkCommand += " /SUBSYSTEM:WINDOWS /LTCG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:WINDOWS /LTCG";
 			break;
 		default:
@@ -362,7 +362,7 @@ void feMain(feInt argc, const feRawString *argv)
 		n.writeSubninja(ninjaPath);
 		
 		// Project NinjaFile
-		NinjaFile n (ninjaPath);
+		NinjaFile n (Path::join(project.getName(), "build.ninja"));
 		
 		// Variables
 		n.writeComment("Variables");

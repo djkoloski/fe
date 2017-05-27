@@ -4,7 +4,7 @@ rule compile
   description = compile $out
   deps = msvc
 rule link
-  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE
+  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF
   description = link $out
 rule copy
   command = cmd /k copy $in $out

@@ -1,3 +1,4 @@
 Bin/*
 !Bin/Win_x64_Release
 Build
+.vs
