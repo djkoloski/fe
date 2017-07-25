@@ -43,6 +43,7 @@
     <ClCompile Include="Rule.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Solution.cpp" />
+    <ClCompile Include="SolutionFolder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BuildCommand.h" />
@@ -52,6 +53,7 @@
     <ClInclude Include="Rule.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Solution.h" />
+    <ClInclude Include="SolutionFolder.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="build.ninja" />

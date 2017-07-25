@@ -1,5 +1,17 @@
 #include <Makey/Solution.h>
 
+Solution::Solution(feStringView name, const feGUID &visualStudioGUID) :
+	_name(name),
+	_visualStudioGUID(visualStudioGUID)
+{}
+const feString &Solution::getName() const
+{
+	return _name;
+}
+const feGUID &Solution::getVisualStudioGUID() const
+{
+	return _visualStudioGUID;
+}
 const feString &Solution::getSolutionDir() const
 {
 	return _solutionDir;
@@ -38,9 +50,9 @@ const feHashTable<feString, feUnique<Project>> &Solution::getProjects() const
 {
 	return _projects;
 }
-Project *Solution::addProject(feStringView name)
+Project *Solution::addProject(feStringView name, const feGUID visualStudioGUID)
 {
-	_projects[name] = feMakeUnique<Project>(name);
+	_projects[name] = feMakeUnique<Project>(name, visualStudioGUID);
 	return _projects[name].get();
 }
 const Project *Solution::getProject(feStringView name) const
@@ -69,4 +81,21 @@ const Module *Solution::getModule(feStringView name) const
 		return null;
 	}
 	return i->second.get();
+}
+void Solution::setVisualStudioSolutionFoldersGUID(const feGUID &visualStudioSolutionFoldersGUID)
+{
+	_visualStudioSolutionFoldersGUID = visualStudioSolutionFoldersGUID;
+}
+const feGUID &Solution::getVisualStudioSolutionFoldersGUID() const
+{
+	return _visualStudioSolutionFoldersGUID;
+}
+SolutionFolder *Solution::addVisualStudioSolutionFolder(feStringView name, const feGUID &visualStudioSolutionFolderGUID)
+{
+	_visualStudioSolutionFolders.push_back(feMakeUnique<SolutionFolder>(name, visualStudioSolutionFolderGUID));
+	return _visualStudioSolutionFolders.back().get();
+}
+const feVector<feUnique<SolutionFolder>> &Solution::getVisualStudioSolutionFolders() const
+{
+	return _visualStudioSolutionFolders;
 }

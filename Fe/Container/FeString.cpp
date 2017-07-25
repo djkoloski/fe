@@ -18,7 +18,7 @@ void feStringUtil::_joinWrapped(feString &out, feStringView prefix, feStringView
 }
 feString feStringUtil::append(feStringView str, feStringView append, feChar delimiter)
 {
-	feString result = str;
+	auto result = feString(str);
 	if (str.length())
 	{
 		result += delimiter;
@@ -28,25 +28,37 @@ feString feStringUtil::append(feStringView str, feStringView append, feChar deli
 }
 feString feStringUtil::toLower(feStringView str)
 {
-	feString result;
+	auto result = feString();
 	result.resize(str.length());
-	
-	for (feInt i = 0; i < str.length(); ++i)
+
+	for (auto i = 0; i < str.length(); ++i)
 	{
 		result[i] = tolower(str[i]);
 	}
-	
+
+	return result;
+}
+feString feStringUtil::toUpper(feStringView str)
+{
+	auto result = feString();
+	result.resize(str.length());
+
+	for (auto i = 0; i < str.length(); ++i)
+	{
+		result[i] = toupper(str[i]);
+	}
+
 	return result;
 }
 feString toUpper(feStringView str)
 {
-	feString result;
+	auto result = feString();
 	result.resize(str.length());
-	
-	for (feInt i = 0; i < str.length(); ++i)
+
+	for (auto i = 0; i < str.length(); ++i)
 	{
 		result[i] = toupper(str[i]);
 	}
-	
+
 	return result;
 }

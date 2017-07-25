@@ -14,7 +14,7 @@ private:
 
 public:
 	NinjaFile(feStringView path);
-	
+
 	void writeComment(feStringView comment);
 	void writeNewline();
 	void writeVariable(feStringView name, feStringView value);

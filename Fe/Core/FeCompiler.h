@@ -12,7 +12,7 @@
 
 // Unsupported compiler
 #else
-	
+
 #error Unsupported compiler
 
 #endif

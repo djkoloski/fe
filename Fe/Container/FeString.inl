@@ -6,7 +6,7 @@ template <typename ...Rest>
 feString feStringUtil::join(feStringView first, const Rest &...rest)
 {
 	auto length = _joinLength(first, rest...);
-	feString out;
+	auto out = feString();
 	out.reserve(length);
 	_join(out, first, rest...);
 	return out;
@@ -19,7 +19,7 @@ feString feStringUtil::joinRange(Iterator begin, Iterator end)
 	{
 		length += feStringView(*i).length();
 	}
-	feString out;
+	auto out = feString();
 	out.reserve(length);
 	for (; begin != end; ++begin)
 	{
@@ -32,7 +32,7 @@ feString feStringUtil::joinWrapped(feStringView prefix, feStringView suffix, feS
 {
 	auto argCount = 1 + sizeof...(rest);
 	auto length = _joinLength(first, rest...) + argCount * (prefix.length() + suffix.length() + separator.length()) - separator.length();
-	feString out;
+	auto out = feString();
 	out.reserve(length);
 	_joinWrapped(out, prefix, suffix, separator, first, rest...);
 	return out;
@@ -41,7 +41,7 @@ template <typename Iterator>
 feString feStringUtil::joinRangeWrapped(feStringView prefix, feStringView suffix, feStringView separator, Iterator begin, Iterator end)
 {
 	auto length = feUWord(0);
-	
+
 	auto i = begin;
 	if (i != end)
 	{
@@ -52,10 +52,10 @@ feString feStringUtil::joinRangeWrapped(feStringView prefix, feStringView suffix
 	{
 		length += separator.length() + prefix.length() + feStringView(*i).length() + suffix.length();
 	}
-	
-	feString out;
+
+	auto out = feString();
 	out.reserve(length);
-	
+
 	if (begin != end)
 	{
 		out += prefix + *begin + suffix;

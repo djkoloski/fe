@@ -15,7 +15,7 @@ public:
 	static feString addExtension(feStringView path, feStringView extension);
 	static feString removePrefix(feStringView path, feStringView prefix);
 	static feString fileName(feStringView path);
-	
+
 private:
 	static feUWord _baseNameLength(feStringView path);
 	static feUWord _extensionLength(feStringView path);

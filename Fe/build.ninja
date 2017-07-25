@@ -10,6 +10,7 @@ libPaths =
 libs = 
 
 # Build
+build $buildDir\Container\FeGUID.obj: compile $sourceDir\Container\FeGUID.cpp
 build $buildDir\Container\FeString.obj: compile $sourceDir\Container\FeString.cpp
 build $buildDir\Core\FeEntry_Win.obj: compile $sourceDir\Core\FeEntry_Win.cpp
 build $buildDir\Core\FePrint.obj: compile $sourceDir\Core\FePrint.cpp
@@ -17,5 +18,5 @@ build $buildDir\Core\FeUtility.obj: compile $sourceDir\Core\FeUtility.cpp
 build $buildDir\System\Directory_Win.obj: compile $sourceDir\System\Directory_Win.cpp
 build $buildDir\System\FileInfo.obj: compile $sourceDir\System\FileInfo.cpp
 build $buildDir\System\Path.obj: compile $sourceDir\System\Path.cpp
-build $binDir\Fe.lib: lib $buildDir\Container\FeString.obj $buildDir\Core\FeEntry_Win.obj $buildDir\Core\FePrint.obj $buildDir\Core\FeUtility.obj $buildDir\System\Directory_Win.obj $buildDir\System\FileInfo.obj $buildDir\System\Path.obj
+build $binDir\Fe.lib: lib $buildDir\Container\FeGUID.obj $buildDir\Container\FeString.obj $buildDir\Core\FeEntry_Win.obj $buildDir\Core\FePrint.obj $buildDir\Core\FeUtility.obj $buildDir\System\Directory_Win.obj $buildDir\System\FileInfo.obj $buildDir\System\Path.obj
 build Fe: phony $binDir\Fe.lib

@@ -39,6 +39,9 @@
     <ClCompile Include="Solution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SolutionFolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BuildCommand.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Solution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionFolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

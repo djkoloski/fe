@@ -8,7 +8,7 @@
 
 void fePrint(feRawString fmt, ...)
 {
-	va_list args;
+	auto args = va_list();
 	va_start(args, fmt);
 	vprintf(fmt, args);
 	va_end(args);

@@ -1,11 +1,16 @@
 #include <Makey/Project.h>
 
-Project::Project(feStringView name) :
-	_name(name)
+Project::Project(feStringView name, const feGUID &visualStudioGUID) :
+	_name(name),
+	_visualStudioGUID(visualStudioGUID)
 {}
 const feString &Project::getName() const
 {
 	return _name;
+}
+const feGUID &Project::getVisualStudioGUID() const
+{
+	return _visualStudioGUID;
 }
 Project::Type Project::getType() const
 {

@@ -6,7 +6,7 @@
 
 feString WindowsDirectory::currentWorkingDirectory()
 {
-	feString result;
+	auto result = feString();
 	auto length = GetCurrentDirectory(0, null);
 	result.resize(length - 1);
 	GetCurrentDirectory(length, &result[0]);

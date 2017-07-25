@@ -21,7 +21,7 @@ public:
 	static feString append(feStringView str, feStringView append, feChar delimiter = ' ');
 	static feString toLower(feStringView str);
 	static feString toUpper(feStringView str);
-	
+
 private:
 	template <typename ...Rest>
 	static feUWord _joinLength(feStringView first, const Rest &...rest);

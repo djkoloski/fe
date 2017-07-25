@@ -10,10 +10,10 @@ private:
 	feString _description;
 	feString _deps;
 	feBool _isGenerator;
-	
+
 public:
 	Rule(feStringView name);
-	
+
 	const feString &getName() const;
 	const feString &getCommand() const;
 	void setCommand(feStringView command);

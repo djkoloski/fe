@@ -50,7 +50,7 @@ feUWord Path::_baseNameLength(feStringView path)
 			break;
 		}
 	}
-	
+
 	return path.length();
 }
 feUWord Path::_extensionLength(feStringView path)
@@ -79,6 +79,6 @@ feUWord Path::_extensionLength(feStringView path)
 			break;
 		}
 	}
-	
+
 	return path.length() - lastIndex;
 }

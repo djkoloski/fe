@@ -18,5 +18,6 @@ build $buildDir\Project.obj: compile $sourceDir\Project.cpp
 build $buildDir\Rule.obj: compile $sourceDir\Rule.cpp
 build $buildDir\Settings.obj: compile $sourceDir\Settings.cpp
 build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp
-build $binDir\Makey.exe: link $buildDir\BuildCommand.obj $buildDir\Main.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj | Fe
+build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp
+build $binDir\Makey.exe: link $buildDir\BuildCommand.obj $buildDir\Main.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj | Fe
 build Makey: phony $binDir\Makey.exe

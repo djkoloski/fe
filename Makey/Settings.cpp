@@ -43,6 +43,18 @@ const feRawString Settings::getPlatformString() const
 		return "Unknown";
 	}
 }
+const feRawString Settings::getMSVCPlatformString() const
+{
+	switch (_platform)
+	{
+	case Settings::Platform::Win_x86:
+		return "Win32";
+	case Settings::Platform::Win_x64:
+		return "x64";
+	default:
+		return "Unknown";
+	}
+}
 Settings::Configuration Settings::getConfiguration() const
 {
 	return _configuration;

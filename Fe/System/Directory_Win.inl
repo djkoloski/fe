@@ -11,36 +11,32 @@
 template <typename T>
 void WindowsDirectory::iterate(feStringView path, T eval, feBool recurse)
 {
-	WIN32_FIND_DATA findData;
-	HANDLE hFind = FindFirstFile(Path::join(path, "*").c_str(), &findData);
-	
+	auto findData = WIN32_FIND_DATA();
+	auto hFind = FindFirstFile(Path::join(path, "*").c_str(), &findData);
+
 	do
 	{
 		if (hFind == INVALID_HANDLE_VALUE)
 		{
 			break;
 		}
-		
-		feString fileName = findData.cFileName;
+
+		auto fileName = feString(findData.cFileName);
 		if (fileName == "." || fileName == "..")
 		{
 			continue;
 		}
-		
-		FileType fileType;
+
+		auto fileType = FileType::File;
 		if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			fileType = FileType::Directory;
 		}
-		else
-		{
-			fileType = FileType::File;
-		}
-		
-		FileInfo fileInfo (Path::join(path, fileName), fileName, fileType);
-		
+
+		auto fileInfo = FileInfo(Path::join(path, fileName), fileName, fileType);
+
 		eval((const FileInfo &)fileInfo);
-		
+
 		switch (fileInfo.getType())
 		{
 		case FileType::File:
@@ -56,7 +52,7 @@ void WindowsDirectory::iterate(feStringView path, T eval, feBool recurse)
 		}
 	}
 	while (FindNextFile(hFind, &findData));
-	
+
 	FindClose(hFind);
 	hFind = INVALID_HANDLE_VALUE;
 }
