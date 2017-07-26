@@ -1,4 +1,3 @@
-#include <Fe/Algorithm/Hash.h>
 #include <Fe/Container/FeGUID.h>
 #include <Fe/System/Directory.h>
 #include <Makey/Solution.h>
@@ -996,10 +995,7 @@ void ReplaceFileIfChanged(feStringView path, feStringView newContents)
 	inputStr.assign((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
 	input.close();
 
-	auto inputHash = Hash::SHA1(inputStr);
-	auto outputHash = Hash::SHA1(newContents);
-
-	if (inputHash != outputHash)
+	if (inputStr != newContents)
 	{
 		auto output = std::ofstream(path);
 		output << newContents;
