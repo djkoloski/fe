@@ -1,7 +1,10 @@
+#include <Fe/Algorithm/Hash.h>
 #include <Fe/Container/FeGUID.h>
 #include <Fe/System/Directory.h>
 #include <Makey/Solution.h>
 #include <Makey/NinjaFile.h>
+
+#include <sstream>
 
 void ConfigureSettings(Solution &solution, feInt argc, const feRawString *argv);
 void ConfigureRules(Solution &solution);
@@ -12,6 +15,7 @@ void ConfigureSolutionFolders(Solution &solution);
 void WriteNinjaFile(const Solution &solution);
 void WriteMSVCSolution(const Solution &solution);
 void WriteMSVCProject(const Project &project);
+void ReplaceFileIfChanged(feStringView path, feStringView newContents);
 
 void feMain(feInt argc, const feRawString *argv)
 {
@@ -381,7 +385,7 @@ void ConfigureSolutionFolders(Solution &solution)
 		0xC4, 0xF6, 0x95, 0xA8);
 	auto *solutionFolder = solution.addVisualStudioSolutionFolder("Solution Items", solutionFolderGUID);
 	Directory::iterate(
-		"*",
+		".",
 		[solutionFolder = solutionFolder](const FileInfo &fileInfo)
 		{
 			if (fileInfo.getType() == FileType::File)
@@ -393,8 +397,6 @@ void ConfigureSolutionFolders(Solution &solution)
 				}
 			}
 		});
-	solutionFolder->addPath(".gitignore");
-	solutionFolder->addPath("build.ninja");
 }
 
 void WriteNinjaFile(const Solution &solution)
@@ -479,7 +481,8 @@ void WriteNinjaFile(const Solution &solution)
 
 void WriteMSVCSolution(const Solution &solution)
 {
-	auto output = std::ofstream(solution.getName() + ".sln");
+	auto solutionPath = solution.getName() + ".sln";
+	auto output = std::stringstream();
 
 	// Header
 	output << "\n";
@@ -651,7 +654,8 @@ void WriteMSVCSolution(const Solution &solution)
 
 	output << "EndGlobal\n";
 
-	output.close();
+	ReplaceFileIfChanged(solutionPath, output.str());
+	output.clear();
 
 	for (const auto &pair : solution.getProjects())
 	{
@@ -662,7 +666,8 @@ void WriteMSVCSolution(const Solution &solution)
 
 void WriteMSVCProject(const Project &project)
 {
-	auto output = std::ofstream(Path::join(project.getName(), Path::addExtension(project.getName(), ".vcxproj")));
+	auto projectPath = Path::join(project.getName(), Path::addExtension(project.getName(), ".vcxproj"));
+	auto output = std::stringstream();
 
 	output << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 	output << "<Project DefaultTargets=\"Build\" ToolsVersion=\"15.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n";
@@ -976,5 +981,27 @@ void WriteMSVCProject(const Project &project)
 
 	output << "</Project>";
 
-	output.close();
+	ReplaceFileIfChanged(projectPath, output.str());
+	output.clear();
+}
+
+void ReplaceFileIfChanged(feStringView path, feStringView newContents)
+{
+	auto input = std::ifstream(path);
+	auto inputStr = feString();
+
+	input.seekg(0, std::ios::end);
+	inputStr.reserve(input.tellg());
+	input.seekg(0, std::ios::beg);
+	inputStr.assign((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+	input.close();
+
+	auto inputHash = Hash::SHA1(inputStr);
+	auto outputHash = Hash::SHA1(newContents);
+
+	if (inputHash != outputHash)
+	{
+		auto output = std::ofstream(path);
+		output << newContents;
+	}
 }

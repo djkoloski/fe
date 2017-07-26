@@ -12,8 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Makey", "Makey\Makey.vcxpro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FF3DB73F-E91E-4605-AB14-4C27C4F695A8}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		build.ninja = build.ninja
+		.\.gitignore = .\.gitignore
+		.\build.ninja = .\build.ninja
 	EndProjectSection
 EndProject
 Global

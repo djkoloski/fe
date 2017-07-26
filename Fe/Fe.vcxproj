@@ -35,6 +35,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Algorithm\Hash.h" />
+    <ClInclude Include="Algorithm\Internal\sha1.h" />
     <ClInclude Include="Container\FeGUID.h" />
     <ClInclude Include="Container\FeHashTable.h" />
     <ClInclude Include="Container\FePointer.h" />
@@ -58,6 +60,8 @@
     <ClInclude Include="System\Path.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Algorithm\Hash.cpp" />
+    <ClCompile Include="Algorithm\Internal\sha1.cpp" />
     <ClCompile Include="Container\FeGUID.cpp" />
     <ClCompile Include="Container\FeString.cpp" />
     <ClCompile Include="Core\FeEntry_Win.cpp" />
