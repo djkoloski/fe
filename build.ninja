@@ -1,6 +1,6 @@
 # Rules
 rule compile
-  command = cl /c $in /Fo$out /showIncludes /I $solutionDir $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /O2
+  command = cl /c $in /Fo$out /showIncludes /I $solutionDir $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_DEBUG /Z7
   description = compile $out
   deps = msvc
 rule link
@@ -15,7 +15,7 @@ rule lib
 
 # Variables
 solutionDir = D:\Projects\Fe
-buildType = Win_x64_Release
+buildType = Win_x64_Debug
 
 # Fe Module
 FeIncludes = /I $solutionDir
