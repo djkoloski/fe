@@ -21,6 +21,9 @@ private:
 	Type _type;
 	feVector<BuildCommand> _buildCommands;
 	feVector<const Module *> _modules;
+	feVector<feString> _headerFilePaths;
+	feVector<feString> _sourceFilePaths;
+	feVector<feString> _otherFilePaths;
 
 public:
 	Project(feStringView name, const feGUID &visualStudioGUID);
@@ -33,4 +36,10 @@ public:
 	BuildCommand &addBuildCommand();
 	const feVector<const Module *> &getModules() const;
 	void addModule(const Module *module);
+	void addHeaderFilePath(feStringView headerFilePath);
+	const feVector<feString> &getHeaderFilePaths() const;
+	void addSourceFilePath(feStringView sourceFilePath);
+	const feVector<feString> &getSourceFilePaths() const;
+	void addOtherFilePath(feStringView otherFilePath);
+	const feVector<feString> &getOtherFilePaths() const;
 };

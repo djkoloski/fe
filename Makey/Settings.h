@@ -41,19 +41,26 @@ public:
 
 	Compiler getCompiler() const;
 	void setCompiler(Compiler compiler);
-	const feRawString getCompilerString() const;
+	feRawString getCompilerString() const;
+	static feRawString getCompilerString(Compiler compiler);
 
 	Platform getPlatform() const;
 	void setPlatform(Platform platform);
-	const feRawString getPlatformString() const;
-	const feRawString getMSVCPlatformString() const;
+	feRawString getPlatformString() const;
+	static feRawString getPlatformString(Platform platform);
+	feRawString getMSVCPlatformString() const;
+	static feRawString getMSVCPlatformString(Platform platform);
 
 	Configuration getConfiguration() const;
 	void setConfiguration(Configuration configuration);
-	const feRawString getConfigurationString() const;
+	feRawString getConfigurationString() const;
+	static feRawString getConfigurationString(Configuration configuration);
 
 	feString getIdentifier() const;
-	const feRawString getObjectFileExtension() const;
-	const feRawString getExecutableFileExtension() const;
-	const feRawString getLibraryFileExtension() const;
+	feRawString getObjectFileExtension() const;
+	static feRawString getObjectFileExtension(Compiler compiler);
+	feRawString getExecutableFileExtension() const;
+	static feRawString getExecutableFileExtension(Compiler compiler);
+	feRawString getLibraryFileExtension() const;
+	static feRawString getLibraryFileExtension(Compiler compiler);
 };

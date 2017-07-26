@@ -1,21 +1,25 @@
 #include <Makey/Settings.h>
 
 Settings::Settings() :
-	_compiler(Settings::Compiler::Unknown),
-	_platform(Settings::Platform::Unknown),
-	_configuration(Settings::Configuration::Unknown)
+	_compiler(Compiler::Unknown),
+	_platform(Platform::Unknown),
+	_configuration(Configuration::Unknown)
 {}
 Settings::Compiler Settings::getCompiler() const
 {
 	return _compiler;
 }
-void Settings::setCompiler(Settings::Compiler compiler)
+void Settings::setCompiler(Compiler compiler)
 {
 	_compiler = compiler;
 }
-const feRawString Settings::getCompilerString() const
+feRawString Settings::getCompilerString() const
 {
-	switch (_compiler)
+	return getCompilerString(_compiler);
+}
+feRawString Settings::getCompilerString(Compiler compiler)
+{
+	switch (compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return "MSVC";
@@ -27,13 +31,17 @@ Settings::Platform Settings::getPlatform() const
 {
 	return _platform;
 }
-void Settings::setPlatform(Settings::Platform platform)
+void Settings::setPlatform(Platform platform)
 {
 	_platform = platform;
 }
-const feRawString Settings::getPlatformString() const
+feRawString Settings::getPlatformString() const
 {
-	switch (_platform)
+	return getPlatformString(_platform);
+}
+feRawString Settings::getPlatformString(Platform platform)
+{
+	switch (platform)
 	{
 	case Settings::Platform::Win_x86:
 		return "Win_x86";
@@ -43,9 +51,13 @@ const feRawString Settings::getPlatformString() const
 		return "Unknown";
 	}
 }
-const feRawString Settings::getMSVCPlatformString() const
+feRawString Settings::getMSVCPlatformString() const
 {
-	switch (_platform)
+	return getMSVCPlatformString(_platform);
+}
+feRawString Settings::getMSVCPlatformString(Platform platform)
+{
+	switch (platform)
 	{
 	case Settings::Platform::Win_x86:
 		return "Win32";
@@ -59,13 +71,17 @@ Settings::Configuration Settings::getConfiguration() const
 {
 	return _configuration;
 }
-void Settings::setConfiguration(Settings::Configuration configuration)
+void Settings::setConfiguration(Configuration configuration)
 {
 	_configuration = configuration;
 }
-const feRawString Settings::getConfigurationString() const
+feRawString Settings::getConfigurationString() const
 {
-	switch (_configuration)
+	return getConfigurationString(_configuration);
+}
+feRawString Settings::getConfigurationString(Configuration configuration)
+{
+	switch (configuration)
 	{
 	case Settings::Configuration::Debug:
 		return "Debug";
@@ -83,9 +99,13 @@ feString Settings::getIdentifier() const
 {
 	return feStringUtil::join(getPlatformString(), "_", getConfigurationString());
 }
-const feRawString Settings::getObjectFileExtension() const
+feRawString Settings::getObjectFileExtension() const
 {
-	switch (_compiler)
+	return getObjectFileExtension(_compiler);
+}
+feRawString Settings::getObjectFileExtension(Compiler compiler)
+{
+	switch (compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return ".obj";
@@ -93,9 +113,13 @@ const feRawString Settings::getObjectFileExtension() const
 		return "";
 	}
 }
-const feRawString Settings::getExecutableFileExtension() const
+feRawString Settings::getExecutableFileExtension() const
 {
-	switch (_compiler)
+	return getExecutableFileExtension(_compiler);
+}
+feRawString Settings::getExecutableFileExtension(Compiler compiler)
+{
+	switch (compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return ".exe";
@@ -103,9 +127,13 @@ const feRawString Settings::getExecutableFileExtension() const
 		return "";
 	}
 }
-const feRawString Settings::getLibraryFileExtension() const
+feRawString Settings::getLibraryFileExtension() const
 {
-	switch (_compiler)
+	return getLibraryFileExtension(_compiler);
+}
+feRawString Settings::getLibraryFileExtension(Compiler compiler)
+{
+	switch (compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return ".lib";

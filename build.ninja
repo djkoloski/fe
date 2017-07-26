@@ -14,7 +14,7 @@ rule lib
   description = lib $out
 
 # Variables
-solutionDir = D:\Projects\Breakout
+solutionDir = D:\Projects\Fe
 buildType = Win_x64_Release
 
 # Fe Module

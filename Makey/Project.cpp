@@ -37,3 +37,27 @@ void Project::addModule(const Module *module)
 {
 	_modules.push_back(module);
 }
+void Project::addHeaderFilePath(feStringView headerFilePath)
+{
+	_headerFilePaths.push_back(headerFilePath);
+}
+const feVector<feString> &Project::getHeaderFilePaths() const
+{
+	return _headerFilePaths;
+}
+void Project::addSourceFilePath(feStringView sourceFilePath)
+{
+	_sourceFilePaths.push_back(sourceFilePath);
+}
+const feVector<feString> &Project::getSourceFilePaths() const
+{
+	return _sourceFilePaths;
+}
+void Project::addOtherFilePath(feStringView otherFilePath)
+{
+	_otherFilePaths.push_back(otherFilePath);
+}
+const feVector<feString> &Project::getOtherFilePaths() const
+{
+	return _otherFilePaths;
+}

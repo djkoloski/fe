@@ -1,16 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Final|Win32">
-      <Configuration>Final</Configuration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Final|x64">
-      <Configuration>Final</Configuration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Profile|Win32">
@@ -21,16 +25,12 @@
       <Configuration>Profile</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
+    <ProjectConfiguration Include="Final|Win32">
+      <Configuration>Final</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
+    <ProjectConfiguration Include="Final|x64">
+      <Configuration>Final</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -84,12 +84,17 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
@@ -99,22 +104,17 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
@@ -127,31 +127,31 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_DEBUG;WIN32;PLATFORM_WIN_X86;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CONFIG_DEBUG;WIN32;PLATFORM_WIN_X86;_DEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
     <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
     <NMakeBuildCommandLine>cd $(SolutionDir)
@@ -162,13 +162,13 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
 Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
 External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
     <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_DEBUG;PLATFORM_WIN_X64;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CONFIG_DEBUG;WIN64;PLATFORM_WIN_X64;_DEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
     <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
     <NMakeBuildCommandLine>cd $(SolutionDir)
@@ -179,13 +179,13 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
 Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
 External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
     <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_RELEASE;WIN32;PLATFORM_WIN_X86;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CONFIG_RELEASE;WIN32;PLATFORM_WIN_X86;NDEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
     <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
     <NMakeBuildCommandLine>cd $(SolutionDir)
@@ -196,47 +196,13 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
 Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
 External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
-    <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x86;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
-    <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_FINAL;WIN32;PLATFORM_WIN_X86;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
-    <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
-    <NMakeBuildCommandLine>cd $(SolutionDir)
-Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
-External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
-Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
-External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
-    <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x86;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
-    <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_PROFILE;WIN32;PLATFORM_WIN_X86;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
-    <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
-    <NMakeBuildCommandLine>cd $(SolutionDir)
-Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
-External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
-Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
-External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
     <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_RELEASE;PLATFORM_WIN_X64;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CONFIG_RELEASE;WIN64;PLATFORM_WIN_X64;NDEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
     <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
     <NMakeBuildCommandLine>cd $(SolutionDir)
@@ -247,13 +213,13 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
 Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
 External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
     <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_FINAL;PLATFORM_WIN_X64;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CONFIG_PROFILE;WIN32;PLATFORM_WIN_X86;NDEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
     <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
     <NMakeBuildCommandLine>cd $(SolutionDir)
@@ -264,13 +230,13 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
 Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
 External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
-    <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x64;$(LibraryPath)</LibraryPath>
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+    <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <NMakeOutput>Fe.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>CONFIG_PROFILE;PLATFORM_WIN_X64;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CONFIG_PROFILE;WIN64;PLATFORM_WIN_X64;NDEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
     <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
     <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
     <NMakeBuildCommandLine>cd $(SolutionDir)
@@ -281,26 +247,45 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
 Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
 External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cd $(SolutionDir)
-External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandLine>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+    <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
+    <NMakeOutput>Fe.lib</NMakeOutput>
+    <NMakePreprocessorDefinitions>CONFIG_FINAL;WIN32;PLATFORM_WIN_X86;NDEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
+    <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
+    <NMakeBuildCommandLine>cd $(SolutionDir)
+Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
+External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd $(SolutionDir)
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
+Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
+External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd $(SolutionDir)
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
+    <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
+    <NMakeOutput>Fe.lib</NMakeOutput>
+    <NMakePreprocessorDefinitions>CONFIG_FINAL;WIN64;PLATFORM_WIN_X64;NDEBUG;$(NMakePreprocesssorDefinitions)</NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</OutDir>
+    <IntDir>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)</IntDir>
+    <NMakeBuildCommandLine>cd $(SolutionDir)
+Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
+External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd $(SolutionDir)
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)
+Bin\Win_x64_Release\Makey\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC
+External\ninja\ninja.exe -C Build -f ..\build.ninja $(ProjectName)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd $(SolutionDir)
+External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>
+    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\um;$(UCRTContentRoot)include\$(TargetUniversalCRTVersion)\shared;$(SolutionDir)</IncludePath>
     <LibraryPath>$(UCRTContentRoot)lib\$(TargetUniversalCRTVersion)\um\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <BuildLog>
-      <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
-    </BuildLog>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
-    <BuildLog>
-      <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
-    </BuildLog>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
-    <BuildLog>
-      <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
-    </BuildLog>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <BuildLog>
       <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
     </BuildLog>
@@ -310,7 +295,17 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandL
       <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
     </BuildLog>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <BuildLog>
+      <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <BuildLog>
+      <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <BuildLog>
       <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
     </BuildLog>
@@ -320,7 +315,12 @@ External\ninja\ninja.exe -C Build -f ..\build.ninja -t clean</NMakeCleanCommandL
       <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
     </BuildLog>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
+    <BuildLog>
+      <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
     <BuildLog>
       <Path>$(SolutionDir)Build\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).log</Path>
     </BuildLog>
