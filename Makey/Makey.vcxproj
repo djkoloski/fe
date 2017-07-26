@@ -35,7 +35,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccumulateProject.h" />
     <ClInclude Include="BuildCommand.h" />
+    <ClInclude Include="ConfigureSolution.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="NinjaFile.h" />
     <ClInclude Include="Project.h" />
@@ -43,9 +45,12 @@
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Solution.h" />
     <ClInclude Include="SolutionFolder.h" />
+    <ClInclude Include="WriteSolution.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AccumulateProject.cpp" />
     <ClCompile Include="BuildCommand.cpp" />
+    <ClCompile Include="ConfigureSolution.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="NinjaFile.cpp" />
@@ -54,6 +59,7 @@
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Solution.cpp" />
     <ClCompile Include="SolutionFolder.cpp" />
+    <ClCompile Include="WriteSolution.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="build.ninja" />
