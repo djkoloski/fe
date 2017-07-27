@@ -140,6 +140,10 @@ void ConfigureRules(Solution &solution)
 #endif
 	copy.setDescription("copy $in $out");
 
+	auto &unitTest = *solution.addRule("unitTest");
+	unitTest.setCommand("$in --run-unit-tests");
+	unitTest.setDescription("unit test $in");
+
 	switch (solution.getSettings().getCompiler())
 	{
 	case Settings::Compiler::MSVC:
