@@ -40,3 +40,14 @@ void Rule::setIsGenerator(feBool isGenerator)
 {
 	_isGenerator = isGenerator;
 }
+
+
+#if FE_USING(FE_FEATURE_UNIT_TESTS)
+
+#include <Fe/Core/FeUnitTest.h>
+
+TEST_CASE("Testing Catch", "[test]") {
+	REQUIRE((1 + 1) == 2);
+}
+
+#endif

@@ -29,6 +29,14 @@ BuildCommand &Project::addBuildCommand()
 	_buildCommands.emplace_back();
 	return _buildCommands.back();
 }
+BuildCommand &Project::getBuildAlias()
+{
+	return _buildAlias;
+}
+const BuildCommand &Project::getBuildAlias() const
+{
+	return _buildAlias;
+}
 const feVector<const Module *> &Project::getModules() const
 {
 	return _modules;

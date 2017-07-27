@@ -40,14 +40,14 @@ void AccumulateProject(Project &project, Solution &solution)
 		},
 		true);
 
-	auto outputPath = Path::join("$binDir", project.getName());
+	auto outputName = project.getName();
 	switch (project.getType())
 	{
 	case Project::Type::Executable:
-		outputPath = Path::addExtension(outputPath, solution.getSettings().getExecutableFileExtension());
+		outputName = Path::addExtension(outputName, solution.getSettings().getExecutableFileExtension());
 		break;
 	case Project::Type::Library:
-		outputPath = Path::addExtension(outputPath, solution.getSettings().getLibraryFileExtension());
+		outputName = Path::addExtension(outputName, solution.getSettings().getLibraryFileExtension());
 		break;
 	default:
 		break;
@@ -66,19 +66,19 @@ void AccumulateProject(Project &project, Solution &solution)
 		break;
 	}
 	combine.setInputs(allObjects);
-	combine.setOutputs(outputPath);
+	combine.setOutputs(Path::join("$binDir", outputName));
 	auto allDependencies = feString();
 	for (const auto *module : project.getModules())
 	{
 		for (const auto *project : module->getDependencies())
 		{
-			allDependencies = feStringUtil::append(allDependencies, project->getName());
+			allDependencies = feStringUtil::append(allDependencies, project->getBuildAlias().getInputs());
 		}
 	}
 	combine.setImplicitDependencies(allDependencies);
 
-	auto &alias = project.addBuildCommand();
+	auto &alias = project.getBuildAlias();
 	alias.setRule(null);
-	alias.setInputs(outputPath);
+	alias.setInputs(Path::join("$solutionDir\\Bin\\$buildType", project.getName(), outputName));
 	alias.setOutputs(project.getName());
 }

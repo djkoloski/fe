@@ -19,7 +19,11 @@ void feMain(feInt argc, const feRawString *argv)
 	auto solution = Solution("AllProjects", solutionGUID);
 
 	solution.setSolutionDir(".");
-	ConfigureSettings(solution, argc, argv);
+	if (ConfigureSettings(solution, argc, argv) == kFailure)
+	{
+		return;
+	}
+
 	ConfigureRules(solution);
 	ConfigureFe(solution);
 	ConfigureMakey(solution);

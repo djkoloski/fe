@@ -52,6 +52,7 @@
     <ClInclude Include="Core\FePlatform.h" />
     <ClInclude Include="Core\FePrint.h" />
     <ClInclude Include="Core\FeType.h" />
+    <ClInclude Include="Core\FeUnitTest.h" />
     <ClInclude Include="Core\FeUtility.h" />
     <ClInclude Include="Core\FeWindows.h" />
     <ClInclude Include="System\Directory.h" />
@@ -64,7 +65,7 @@
     <ClCompile Include="Algorithm\Internal\sha1.cpp" />
     <ClCompile Include="Container\FeGUID.cpp" />
     <ClCompile Include="Container\FeString.cpp" />
-    <ClCompile Include="Core\FeEntry_Win.cpp" />
+    <ClCompile Include="Core\FeEntry.cpp" />
     <ClCompile Include="Core\FePrint.cpp" />
     <ClCompile Include="Core\FeUtility.cpp" />
     <ClCompile Include="System\Directory_Win.cpp" />

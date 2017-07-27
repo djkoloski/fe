@@ -64,3 +64,16 @@ public:
 	feRawString getLibraryFileExtension() const;
 	static feRawString getLibraryFileExtension(Compiler compiler);
 };
+
+inline Settings::Compiler &operator++(Settings::Compiler &compiler)
+{
+	return compiler = Settings::Compiler(feWord(compiler) + 1);
+}
+inline Settings::Platform &operator++(Settings::Platform &platform)
+{
+	return platform = Settings::Platform(feWord(platform) + 1);
+}
+inline Settings::Configuration &operator++(Settings::Configuration &configuration)
+{
+	return configuration = Settings::Configuration(feWord(configuration) + 1);
+}

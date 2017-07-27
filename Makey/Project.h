@@ -20,6 +20,7 @@ private:
 	feGUID _visualStudioGUID;
 	Type _type;
 	feVector<BuildCommand> _buildCommands;
+	BuildCommand _buildAlias;
 	feVector<const Module *> _modules;
 	feVector<feString> _headerFilePaths;
 	feVector<feString> _sourceFilePaths;
@@ -34,6 +35,8 @@ public:
 	void setType(Type type);
 	const feVector<BuildCommand> &getBuildCommands() const;
 	BuildCommand &addBuildCommand();
+	BuildCommand &getBuildAlias();
+	const BuildCommand &getBuildAlias() const;
 	const feVector<const Module *> &getModules() const;
 	void addModule(const Module *module);
 	void addHeaderFilePath(feStringView headerFilePath);

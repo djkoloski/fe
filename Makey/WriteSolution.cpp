@@ -85,6 +85,7 @@ void WriteNinjaFile(const Solution &solution)
 		{
 			n.writeBuild(command);
 		}
+		n.writeBuild(project.getBuildAlias());
 	}
 }
 
@@ -190,12 +191,12 @@ void WriteMSVCSolution(const Solution &solution)
 	for (
 		Settings::Configuration configuration = Settings::Configuration::First;
 		configuration <= Settings::Configuration::Last;
-		configuration = Settings::Configuration((feInt)configuration + 1))
+		++configuration)
 	{
 		for (
 			Settings::Platform platform = Settings::Platform::First;
 			platform <= Settings::Platform::Last;
-			platform = Settings::Platform((feInt)platform + 1))
+			++platform)
 		{
 			output
 				<< "\t\t"
@@ -220,12 +221,12 @@ void WriteMSVCSolution(const Solution &solution)
 		for (
 			Settings::Configuration configuration = Settings::Configuration::First;
 			configuration <= Settings::Configuration::Last;
-			configuration = Settings::Configuration((feInt)configuration + 1))
+			++configuration)
 		{
 			for (
 				Settings::Platform platform = Settings::Platform::First;
 				platform <= Settings::Platform::Last;
-				platform = Settings::Platform((feInt)platform + 1))
+				++platform)
 			{
 				output
 					<< "\t\t{"
@@ -286,12 +287,12 @@ void WriteMSVCProject(const Project &project)
 	for (
 		Settings::Configuration configuration = Settings::Configuration::First;
 		configuration <= Settings::Configuration::Last;
-		configuration = Settings::Configuration((feInt)configuration + 1))
+		++configuration)
 	{
 		for (
 			Settings::Platform platform = Settings::Platform::First;
 			platform <= Settings::Platform::Last;
-			platform = Settings::Platform((feInt)platform + 1))
+			++platform)
 		{
 			output
 				<< "    <ProjectConfiguration Include=\""
@@ -363,14 +364,14 @@ void WriteMSVCProject(const Project &project)
 	for (
 		Settings::Configuration configuration = Settings::Configuration::First;
 		configuration <= Settings::Configuration::Last;
-		configuration = Settings::Configuration((feInt)configuration + 1))
+		++configuration)
 	{
 		feBool useDebugLibraries = (configuration == Settings::Configuration::Debug);
 
 		for (
 			Settings::Platform platform = Settings::Platform::First;
 			platform <= Settings::Platform::Last;
-			platform = Settings::Platform((feInt)platform + 1))
+			++platform)
 		{
 			output
 				<< "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='"
@@ -406,12 +407,12 @@ void WriteMSVCProject(const Project &project)
 	for (
 		Settings::Configuration configuration = Settings::Configuration::First;
 		configuration <= Settings::Configuration::Last;
-		configuration = Settings::Configuration((feInt)configuration + 1))
+		++configuration)
 	{
 		for (
 			Settings::Platform platform = Settings::Platform::First;
 			platform <= Settings::Platform::Last;
-			platform = Settings::Platform((feInt)platform + 1))
+			++platform)
 		{
 			output
 				<< "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='"
@@ -446,7 +447,7 @@ void WriteMSVCProject(const Project &project)
 	for (
 		Settings::Configuration configuration = Settings::Configuration::First;
 		configuration <= Settings::Configuration::Last;
-		configuration = Settings::Configuration((feInt)configuration + 1))
+		++configuration)
 	{
 		feBool useDebugLibraries;
 		feString configurationMacro;
@@ -475,7 +476,7 @@ void WriteMSVCProject(const Project &project)
 		for (
 			Settings::Platform platform = Settings::Platform::First;
 			platform <= Settings::Platform::Last;
-			platform = Settings::Platform((feInt)platform + 1))
+			++platform)
 		{
 			feString platformMacro;
 			feString platformUCRTDirectoryName;
@@ -559,12 +560,12 @@ void WriteMSVCProject(const Project &project)
 	for (
 		Settings::Configuration configuration = Settings::Configuration::First;
 		configuration <= Settings::Configuration::Last;
-		configuration = Settings::Configuration((feInt)configuration + 1))
+		++configuration)
 	{
 		for (
 			Settings::Platform platform = Settings::Platform::First;
 			platform <= Settings::Platform::Last;
-			platform = Settings::Platform((feInt)platform + 1))
+			++platform)
 		{
 			output
 				<< "  <ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='"
