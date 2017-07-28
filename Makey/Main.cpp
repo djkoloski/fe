@@ -9,7 +9,7 @@ void ConfigureFe(Solution &solution);
 void ConfigureMakey(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
 
-void feMain(feInt argc, const feRawString *argv)
+feInt feMain(feInt argc, const feRawString *argv)
 {
 	auto solutionGUID = feGUID(
 		0x8B, 0xC9, 0xCE, 0xB8,
@@ -21,7 +21,7 @@ void feMain(feInt argc, const feRawString *argv)
 	solution.setSolutionDir(".");
 	if (ConfigureSettings(solution, argc, argv) == kFailure)
 	{
-		return;
+		return 1;
 	}
 
 	ConfigureRules(solution);
@@ -31,6 +31,8 @@ void feMain(feInt argc, const feRawString *argv)
 
 	WriteNinjaFile(solution);
 	WriteMSVCSolution(solution);
+
+	return 0;
 }
 
 void ConfigureFe(Solution &solution)

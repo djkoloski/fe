@@ -24,6 +24,7 @@ void WriteNinjaFile(const Solution &solution)
 	n.writeComment("Variables");
 	n.writeVariable("solutionDir", Directory::currentWorkingDirectory());
 	n.writeVariable("buildType", solution.getSettings().getIdentifier());
+	n.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType"));
 
 	// Modules
 	for (const auto &pair : solution.getModules())
@@ -60,7 +61,6 @@ void WriteNinjaFile(const Solution &solution)
 		n.writeVariable("project", project.getName());
 		n.writeVariable("sourceDir", Path::join("$solutionDir", "$project"));
 		n.writeVariable("buildDir", Path::join("$solutionDir", "Build", "$buildType", "$project"));
-		n.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType", "$project"));
 		n.writeNewline();
 
 		// Modules

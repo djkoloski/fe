@@ -2,4 +2,4 @@
 
 #include <Fe/Core/FeType.h>
 
-extern void feMain(feInt argc, const feRawString *argv);
+extern feInt feMain(feInt argc, const feRawString *argv);

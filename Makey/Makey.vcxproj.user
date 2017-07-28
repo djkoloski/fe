@@ -6,49 +6,49 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerCommand>Bin\Win_$(PlatformTarget)_$(Configuration)\$(ProjectName)\$(ProjectName).exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--run-unit-tests -o unittests.xml</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>

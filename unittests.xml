@@ -1,0 +1,26 @@
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--run-unit-tests is a Catch v1.9.6 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+Testing Catch
+-------------------------------------------------------------------------------
+D:\Projects\Fe\Makey\Rule.cpp(49)
+...............................................................................
+
+D:\Projects\Fe\Makey\Rule.cpp(51): 
+warning:
+  Testing warn
+
+D:\Projects\Fe\Makey\Rule.cpp(52): FAILED:
+  REQUIRE( (1 + 1) == 1 )
+with expansion:
+  2 == 1
+with message:
+  Testing info
+
+===============================================================================
+test cases: 1 | 1 failed
+assertions: 1 | 1 failed
+

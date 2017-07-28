@@ -13,12 +13,13 @@ rule lib
   command = lib $in /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE
   description = lib $out
 rule unitTest
-  command = $in --run-unit-tests
+  command = $in --run-unit-tests -r xml -o $in.unittests.xml
   description = unit test $in
 
 # Variables
 solutionDir = D:\Projects\Fe
 buildType = Win_x64_Release
+binDir = $solutionDir\Bin\$buildType
 
 # Fe Module
 FeIncludes = /I $solutionDir
