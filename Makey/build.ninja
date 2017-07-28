@@ -23,4 +23,4 @@ build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp
 build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp
 build $buildDir\WriteSolution.obj: compile $sourceDir\WriteSolution.cpp
 build $binDir\Makey.exe: link $buildDir\AccumulateProject.obj $buildDir\BuildCommand.obj $buildDir\ConfigureSolution.obj $buildDir\Main.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj $buildDir\WriteSolution.obj | $solutionDir\Bin\$buildType\Fe\Fe.lib
-build Makey: phony $solutionDir\Bin\$buildType\Makey\Makey.exe
+build Makey: unitTest $solutionDir\Bin\$buildType\Makey\Makey.exe

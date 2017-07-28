@@ -78,7 +78,18 @@ void AccumulateProject(Project &project, Solution &solution)
 	combine.setImplicitDependencies(allDependencies);
 
 	auto &alias = project.getBuildAlias();
-	alias.setRule(null);
+	switch (project.getType())
+	{
+	case Project::Type::Executable:
+		alias.setRule(solution.getRule("unitTest"));
+		break;
+	case Project::Type::Library:
+		// TODO: unit test a canary project
+		alias.setRule(null);
+		break;
+	default:
+		break;
+	}
 	alias.setInputs(Path::join("$solutionDir\\Bin\\$buildType", project.getName(), outputName));
 	alias.setOutputs(project.getName());
 }

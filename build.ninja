@@ -12,6 +12,9 @@ rule copy
 rule lib
   command = lib $in /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE
   description = lib $out
+rule unitTest
+  command = $in --run-unit-tests
+  description = unit test $in
 
 # Variables
 solutionDir = D:\Projects\Fe
