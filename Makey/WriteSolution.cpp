@@ -7,10 +7,12 @@
 #include <sstream>
 
 static void ReplaceFileIfChanged(feStringView path, feStringView newContents);
+static feString NinjaFileName(const Solution &solution);
 
 void WriteNinjaFile(const Solution &solution)
 {
-	auto n = NinjaFile("build.ninja");
+	auto ninjaFileName = NinjaFileName(solution);
+	auto n = NinjaFile(ninjaFileName);
 
 	// Rules
 	n.writeComment("Rules");
@@ -22,7 +24,7 @@ void WriteNinjaFile(const Solution &solution)
 	// Variables
 	n.writeNewline();
 	n.writeComment("Variables");
-	n.writeVariable("solutionDir", Directory::currentWorkingDirectory());
+	n.writeVariable("solutionDir", solution.getSolutionDir());
 	n.writeVariable("buildType", solution.getSettings().getIdentifier());
 	n.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType"));
 
@@ -50,11 +52,11 @@ void WriteNinjaFile(const Solution &solution)
 		const auto &project = *pair.second;
 		n.writeNewline();
 		n.writeComment(project.getName());
-		auto ninjaPath = Path::join("$solutionDir", project.getName(), "build.ninja");
+		auto ninjaPath = Path::join("$solutionDir", project.getName(), ninjaFileName);
 		n.writeSubninja(ninjaPath);
 
 		// Project NinjaFile
-		auto n = NinjaFile(Path::join(project.getName(), "build.ninja"));
+		auto n = NinjaFile(Path::join(project.getName(), ninjaFileName));
 
 		// Variables
 		n.writeComment("Variables");
@@ -270,12 +272,14 @@ void WriteMSVCSolution(const Solution &solution)
 	for (const auto &pair : solution.getProjects())
 	{
 		const auto &project = *pair.second;
-		WriteMSVCProject(project);
+		WriteMSVCProject(project, solution);
 	}
 }
 
-void WriteMSVCProject(const Project &project)
+void WriteMSVCProject(const Project &project, const Solution &solution)
 {
+	auto ninjaFileName = NinjaFileName(solution);
+
 	auto projectPath = Path::join(project.getName(), Path::addExtension(project.getName(), ".vcxproj"));
 	auto output = std::stringstream();
 
@@ -523,23 +527,31 @@ void WriteMSVCProject(const Project &project)
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\build.ninja $(ProjectName)</NMakeBuildCommandLine>\n";
+				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< ninjaFileName
+				<< " $(ProjectName)</NMakeBuildCommandLine>\n";
 
 			// Rebuild
 			output
 				<< "    <NMakeReBuildCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\build.ninja -t clean $(ProjectName)\n";
+				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< ninjaFileName
+				<< " -t clean $(ProjectName)\n";
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\build.ninja $(ProjectName)</NMakeReBuildCommandLine>\n";
+				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< ninjaFileName
+				<< " $(ProjectName)</NMakeReBuildCommandLine>\n";
 
 			// Clean
 			output
 				<< "    <NMakeCleanCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\build.ninja -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
+				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< ninjaFileName
+				<< " -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
 
 			// Include paths
 			output
@@ -600,15 +612,23 @@ void ReplaceFileIfChanged(feStringView path, feStringView newContents)
 	auto input = std::ifstream(path);
 	auto inputStr = feString();
 
-	input.seekg(0, std::ios::end);
-	inputStr.reserve(input.tellg());
-	input.seekg(0, std::ios::beg);
-	inputStr.assign((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
-	input.close();
+	if (!input.fail())
+	{
+		input.seekg(0, std::ios::end);
+		inputStr.reserve(input.tellg());
+		input.seekg(0, std::ios::beg);
+		inputStr.assign((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+		input.close();
+	}
 
-	if (inputStr != newContents)
+	if (input.fail() || inputStr != newContents)
 	{
 		auto output = std::ofstream(path);
 		output << newContents;
 	}
+}
+
+static feString NinjaFileName(const Solution &solution)
+{
+	return Path::addExtension(solution.getName(), ".ninja");
 }

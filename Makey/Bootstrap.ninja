@@ -1,0 +1,25 @@
+# Variables
+project = Makey
+sourceDir = $solutionDir\$project
+buildDir = $solutionDir\Build\$buildType\$project
+
+# Modules
+includes = $FeIncludes
+libPaths = $FeLibPaths
+libs = $FeLibs
+
+# Build
+build $buildDir\AccumulateProject.obj: compile $sourceDir\AccumulateProject.cpp
+build $buildDir\BuildCommand.obj: compile $sourceDir\BuildCommand.cpp
+build $buildDir\ConfigureSolution.obj: compile $sourceDir\ConfigureSolution.cpp
+build $buildDir\Main.obj: compile $sourceDir\Main.cpp
+build $buildDir\Module.obj: compile $sourceDir\Module.cpp
+build $buildDir\NinjaFile.obj: compile $sourceDir\NinjaFile.cpp
+build $buildDir\Project.obj: compile $sourceDir\Project.cpp
+build $buildDir\Rule.obj: compile $sourceDir\Rule.cpp
+build $buildDir\Settings.obj: compile $sourceDir\Settings.cpp
+build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp
+build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp
+build $buildDir\WriteSolution.obj: compile $sourceDir\WriteSolution.cpp
+build $binDir\Makey\Makey.exe: link $buildDir\AccumulateProject.obj $buildDir\BuildCommand.obj $buildDir\ConfigureSolution.obj $buildDir\Main.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj $buildDir\WriteSolution.obj | $binDir\Fe\Fe.lib
+build Makey: unitTest $binDir\Makey\Makey.exe

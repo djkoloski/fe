@@ -5,6 +5,7 @@
 #include <Makey/ConfigureSolution.h>
 #include <Makey/WriteSolution.h>
 
+void MakeBootstrap();
 void ConfigureFe(Solution &solution);
 void ConfigureMakey(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
@@ -18,7 +19,7 @@ feInt feMain(feInt argc, const feRawString *argv)
 		0xC9, 0x1B, 0xC9, 0x42);
 	auto solution = Solution("AllProjects", solutionGUID);
 
-	solution.setSolutionDir(".");
+	solution.setSolutionDir(Directory::currentWorkingDirectory());
 	if (ConfigureSettings(solution, argc, argv) == kFailure)
 	{
 		return 1;
@@ -32,7 +33,29 @@ feInt feMain(feInt argc, const feRawString *argv)
 	WriteNinjaFile(solution);
 	WriteMSVCSolution(solution);
 
+	MakeBootstrap();
+	
 	return 0;
+}
+
+void MakeBootstrap()
+{
+	auto bootstrap = Solution("Bootstrap", feGUID());
+
+	// Bootstrap is run from inside Build
+	bootstrap.setSolutionDir("..");
+
+	Settings settings;
+	settings.setCompiler(Settings::Compiler::MSVC);
+	settings.setConfiguration(Settings::Configuration::Release);
+	settings.setPlatform(Settings::Platform::Win_x64);
+	bootstrap.setSettings(settings);
+
+	ConfigureRules(bootstrap);
+	ConfigureFe(bootstrap);
+	ConfigureMakey(bootstrap);
+
+	WriteNinjaFile(bootstrap);
 }
 
 void ConfigureFe(Solution &solution)
