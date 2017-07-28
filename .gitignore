@@ -1,4 +1,9 @@
 Bin/*
-!Bin/Win_x64_Release
 Build
+*.ninja
+!Bootstrap.ninja
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 .vs

@@ -1,0 +1,29 @@
+# Rules
+rule compile
+  command = cl /c $in /Fo$out /showIncludes /I $solutionDir $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /O2
+  description = compile $out
+  deps = msvc
+rule link
+  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF
+  description = link $out
+rule copy
+  command = cmd /k copy $in $out
+  description = copy $in $out
+rule lib
+  command = lib $in /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE
+  description = lib $out
+
+# Variables
+solutionDir = ..
+buildType = Win_x64_Release
+
+# Fe Module
+FeIncludes = /I $solutionDir
+FeLibs = Fe.lib
+FeLibPaths = /LIBPATH:$solutionDir\Bin\$buildType\Fe
+
+# Fe
+subninja $solutionDir\Fe\Bootstrap.ninja
+
+# Makey
+subninja $solutionDir\Makey\Bootstrap.ninja
