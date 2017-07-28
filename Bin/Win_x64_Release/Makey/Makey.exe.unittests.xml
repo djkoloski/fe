@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catch name="--run-unit-tests">
+  <Group name="--run-unit-tests">
+    <TestCase name="Testing Catch" tags="[test]" filename="D:\Projects\Fe\Makey\Rule.cpp" line="49">
+      <OverallResult success="true"/>
+    </TestCase>
+    <OverallResults successes="1" failures="0" expectedFailures="0"/>
+  </Group>
+  <OverallResults successes="1" failures="0" expectedFailures="0"/>
+</Catch>

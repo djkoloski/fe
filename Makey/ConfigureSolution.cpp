@@ -141,7 +141,7 @@ void ConfigureRules(Solution &solution)
 	copy.setDescription("copy $in $out");
 
 	auto &unitTest = *solution.addRule("unitTest");
-	unitTest.setCommand("$in --run-unit-tests");
+	unitTest.setCommand("$in --run-unit-tests -r xml -o $in.unittests.xml");
 	unitTest.setDescription("unit test $in");
 
 	switch (solution.getSettings().getCompiler())

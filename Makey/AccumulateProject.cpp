@@ -40,14 +40,24 @@ void AccumulateProject(Project &project, Solution &solution)
 		},
 		true);
 
-	auto outputName = project.getName();
+	auto binaryPath = feString();
 	switch (project.getType())
 	{
 	case Project::Type::Executable:
-		outputName = Path::addExtension(outputName, solution.getSettings().getExecutableFileExtension());
+		binaryPath = Path::join(
+			"$binDir",
+			project.getName(),
+			Path::addExtension(
+				project.getName(),
+				solution.getSettings().getExecutableFileExtension()));
 		break;
 	case Project::Type::Library:
-		outputName = Path::addExtension(outputName, solution.getSettings().getLibraryFileExtension());
+		binaryPath = Path::join(
+			"$binDir",
+			project.getName(),
+			Path::addExtension(
+				project.getName(),
+				solution.getSettings().getLibraryFileExtension()));
 		break;
 	default:
 		break;
@@ -66,7 +76,7 @@ void AccumulateProject(Project &project, Solution &solution)
 		break;
 	}
 	combine.setInputs(allObjects);
-	combine.setOutputs(Path::join("$binDir", outputName));
+	combine.setOutputs(binaryPath);
 	auto allDependencies = feString();
 	for (const auto *module : project.getModules())
 	{
@@ -90,6 +100,6 @@ void AccumulateProject(Project &project, Solution &solution)
 	default:
 		break;
 	}
-	alias.setInputs(Path::join("$solutionDir\\Bin\\$buildType", project.getName(), outputName));
+	alias.setInputs(binaryPath);
 	alias.setOutputs(project.getName());
 }
