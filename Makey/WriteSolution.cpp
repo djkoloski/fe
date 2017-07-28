@@ -612,13 +612,16 @@ void ReplaceFileIfChanged(feStringView path, feStringView newContents)
 	auto input = std::ifstream(path);
 	auto inputStr = feString();
 
-	input.seekg(0, std::ios::end);
-	inputStr.reserve(input.tellg());
-	input.seekg(0, std::ios::beg);
-	inputStr.assign((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
-	input.close();
+	if (!input.fail())
+	{
+		input.seekg(0, std::ios::end);
+		inputStr.reserve(input.tellg());
+		input.seekg(0, std::ios::beg);
+		inputStr.assign((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+		input.close();
+	}
 
-	if (inputStr != newContents)
+	if (input.fail() || inputStr != newContents)
 	{
 		auto output = std::ofstream(path);
 		output << newContents;
