@@ -48,8 +48,8 @@ void WriteNinjaFile(const Solution &solution)
 		n.writeVariable("extDir", Path::join("$solutionDir", "External"));
 
 		// Modules
-		n.writeComment("Modules");
 		n.writeNewline();
+		n.writeComment("Modules");
 		for (const auto &pair : solution.getModules())
 		{
 			const auto &module = *pair.second;
@@ -73,9 +73,9 @@ void WriteNinjaFile(const Solution &solution)
 		n.writeVariable("project", project.getName());
 		n.writeVariable("sourceDir", Path::join("$solutionDir", "$project"));
 		n.writeVariable("buildDir", Path::join("$solutionDir", "Build", "$buildType", "$project"));
-		n.writeNewline();
 
 		// Modules
+		n.writeNewline();
 		n.writeComment("Modules");
 		auto includes = feString();
 		auto libPaths = feString();
