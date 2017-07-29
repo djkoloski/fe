@@ -5,12 +5,29 @@
 #include <Makey/ConfigureSolution.h>
 #include <Makey/WriteSolution.h>
 
-void MakeBootstrap();
+feStatus MakeAllProjects(feInt argc, const feRawString *argv);
+feStatus MakeBootstrap();
+void ConfigureExternal(Solution &solution);
 void ConfigureFe(Solution &solution);
 void ConfigureMakey(Solution &solution);
+void ConfigureCGen(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
 
 feInt feMain(feInt argc, const feRawString *argv)
+{
+	if (MakeAllProjects(argc, argv) == kFailure)
+	{
+		return 1;
+	}
+	if (MakeBootstrap() == kFailure)
+	{
+		return 2;
+	}
+	
+	return 0;
+}
+
+feStatus MakeAllProjects(feInt argc, const feRawString *argv)
 {
 	auto solutionGUID = feGUID(
 		0x8B, 0xC9, 0xCE, 0xB8,
@@ -22,23 +39,23 @@ feInt feMain(feInt argc, const feRawString *argv)
 	solution.setSolutionDir(Directory::currentWorkingDirectory());
 	if (ConfigureSettings(solution, argc, argv) == kFailure)
 	{
-		return 1;
+		return kFailure;
 	}
 
 	ConfigureRules(solution);
+	ConfigureExternal(solution);
 	ConfigureFe(solution);
 	ConfigureMakey(solution);
+	ConfigureCGen(solution);
 	ConfigureSolutionFolders(solution);
 
 	WriteNinjaFile(solution);
 	WriteMSVCSolution(solution);
 
-	MakeBootstrap();
-	
-	return 0;
+	return kSuccess;
 }
 
-void MakeBootstrap()
+feStatus MakeBootstrap()
 {
 	auto bootstrap = Solution("Bootstrap", feGUID());
 
@@ -52,10 +69,46 @@ void MakeBootstrap()
 	bootstrap.setSettings(settings);
 
 	ConfigureRules(bootstrap);
+	ConfigureExternal(bootstrap);
 	ConfigureFe(bootstrap);
 	ConfigureMakey(bootstrap);
 
 	WriteNinjaFile(bootstrap);
+
+	return kSuccess;
+}
+
+void ConfigureExternal(Solution &solution)
+{
+	// catch
+	auto &catchModule = *solution.addModule("catch");
+	catchModule.addInclude(
+		Path::join(
+			"$extDir",
+			"catch"));
+
+	// libclang
+	auto &libclangModule = *solution.addModule("libclang");
+
+	auto libclangDir = Path::join("$extDir", "LLVM");
+	libclangModule.addInclude(
+		Path::join(
+			libclangDir,
+			"include"));
+	libclangModule.addLib(
+		Path::join(
+			libclangDir,
+			"lib",
+			Path::addExtension(
+				"libclang",
+				solution.getSettings().getLibraryFileExtension())));
+	libclangModule.addSharedLib(
+		Path::join(
+			libclangDir,
+			"bin",
+			Path::addExtension(
+				"libclang",
+				solution.getSettings().getSharedLibraryFileExtension())));
 }
 
 void ConfigureFe(Solution &solution)
@@ -67,18 +120,16 @@ void ConfigureFe(Solution &solution)
 		0xEC, 0x62, 0xE5, 0x88);
 	auto &project = *solution.addProject("Fe", visualStudioGUID);
 	project.setType(Project::Type::Library);
+	project.addModule(solution.getModule("catch"));
 
 	AccumulateProject(project, solution);
 
 	// Module
 	auto &module = *solution.addModule("Fe");
 
-	module.addInclude("$solutionDir");
 	module.addLib(
 		Path::join(
-			"$solutionDir",
-			"Bin",
-			"$buildType",
+			"$binDir",
 			project.getName(),
 			Path::addExtension(
 				project.getName(),
@@ -96,6 +147,21 @@ void ConfigureMakey(Solution &solution)
 	auto &project = *solution.addProject("Makey", visualStudioGUID);
 	project.setType(Project::Type::Executable);
 	project.addModule(solution.getModule("Fe"));
+
+	AccumulateProject(project, solution);
+}
+
+void ConfigureCGen(Solution &solution)
+{
+	auto visualStudioGUID = feGUID(
+		0x2d, 0x71, 0x9d, 0xbb,
+		0x3e, 0xd3, 0x40, 0xd7,
+		0x9a, 0x68, 0xb6, 0x64,
+		0x41, 0xd6, 0xb6, 0x59);
+	auto &project = *solution.addProject("CGen", visualStudioGUID);
+	project.setType(Project::Type::Executable);
+	project.addModule(solution.getModule("Fe"));
+	project.addModule(solution.getModule("libclang"));
 
 	AccumulateProject(project, solution);
 }

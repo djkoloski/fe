@@ -20,5 +20,6 @@ public:
 	void writeVariable(feStringView name, feStringView value);
 	void writeRule(const Rule &rule);
 	void writeBuild(const BuildCommand &build);
+	void writeInclude(const feStringView path);
 	void writeSubninja(const feStringView path);
 };

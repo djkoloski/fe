@@ -50,15 +50,13 @@ feString feStringUtil::toUpper(feStringView str)
 
 	return result;
 }
-feString toUpper(feStringView str)
+feString feStringUtil::replace(feStringView source, feStringView pattern, feStringView replacement)
 {
-	auto result = feString();
-	result.resize(str.length());
-
-	for (auto i = 0; i < str.length(); ++i)
+	auto result = feString(source);
+	for (auto i = feString::size_type(0); (i = result.find(pattern, i)) != feString::npos;)
 	{
-		result[i] = toupper(str[i]);
+		result.replace(i, pattern.length(), replacement);
+		i += replacement.length();
 	}
-
 	return result;
 }

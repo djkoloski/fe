@@ -54,6 +54,10 @@ void NinjaFile::writeBuild(const BuildCommand &build)
 
 	_output << "\n";
 }
+void NinjaFile::writeInclude(const feStringView path)
+{
+	_output << "include " << path << "\n";
+}
 void NinjaFile::writeSubninja(const feStringView path)
 {
 	_output << "subninja " << path << "\n";

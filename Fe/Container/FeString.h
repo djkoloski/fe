@@ -21,6 +21,7 @@ public:
 	static feString append(feStringView str, feStringView append, feChar delimiter = ' ');
 	static feString toLower(feStringView str);
 	static feString toUpper(feStringView str);
+	static feString replace(feStringView source, feStringView pattern, feStringView replacement);
 
 private:
 	template <typename ...Rest>

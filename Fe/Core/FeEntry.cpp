@@ -7,7 +7,7 @@
 #if FE_USING(FE_FEATURE_UNIT_TESTS)
 
 #define CATCH_CONFIG_RUNNER
-#include <External/catch.hpp>
+#include <catch.hpp>
 
 struct FeUnitTestListener : Catch::TestEventListenerBase
 {

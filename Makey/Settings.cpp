@@ -141,3 +141,17 @@ feRawString Settings::getLibraryFileExtension(Compiler compiler)
 		return "";
 	}
 }
+feRawString Settings::getSharedLibraryFileExtension() const
+{
+	return getSharedLibraryFileExtension(_compiler);
+}
+feRawString Settings::getSharedLibraryFileExtension(Compiler compiler)
+{
+	switch (compiler)
+	{
+	case Settings::Compiler::MSVC:
+		return ".dll";
+	default:
+		return "";
+	}
+}

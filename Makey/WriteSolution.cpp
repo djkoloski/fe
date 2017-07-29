@@ -8,64 +8,74 @@
 
 static void ReplaceFileIfChanged(feStringView path, feStringView newContents);
 static feString NinjaFileName(const Solution &solution);
+static feString NinjaPathToMSVCPath(feStringView path, const Settings &settings);
 
 void WriteNinjaFile(const Solution &solution)
 {
 	auto ninjaFileName = NinjaFileName(solution);
-	auto n = NinjaFile(ninjaFileName);
 
-	// Rules
-	n.writeComment("Rules");
-	for (const auto &i : solution.getRules())
-	{
-		n.writeRule(*i.second);
-	}
+	// Solution NinjaFile
+	auto solutionNinjaFile = NinjaFile(ninjaFileName);
 
-	// Variables
-	n.writeNewline();
-	n.writeComment("Variables");
-	n.writeVariable("solutionDir", solution.getSolutionDir());
-	n.writeVariable("buildType", solution.getSettings().getIdentifier());
-	n.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType"));
-
-	// Modules
-	for (const auto &pair : solution.getModules())
-	{
-		const auto &module = *pair.second;
-		n.writeNewline();
-		n.writeComment(module.getName() + " Module");
-		n.writeVariable(module.getName() + "Includes", feStringUtil::joinRangeWrapped("/I ", "", " ", module.getIncludes().begin(), module.getIncludes().end()));
-		auto allLibs = feString();
-		auto allLibPaths = feString();
-		for (const auto &libPath : module.getLibs())
-		{
-			allLibs = feStringUtil::append(allLibs, Path::baseName(libPath));
-			allLibPaths = feStringUtil::append(allLibPaths, "/LIBPATH:" + Path::dirName(libPath));
-		}
-		n.writeVariable(module.getName() + "Libs", allLibs);
-		n.writeVariable(module.getName() + "LibPaths", allLibPaths);
-	}
+	solutionNinjaFile.writeComment("Variables");
+	solutionNinjaFile.writeVariable("solutionDir", solution.getSolutionDir());
 
 	// Projects
 	for (const auto &pair : solution.getProjects())
 	{
 		const auto &project = *pair.second;
-		n.writeNewline();
-		n.writeComment(project.getName());
+		solutionNinjaFile.writeNewline();
+		solutionNinjaFile.writeComment(project.getName());
 		auto ninjaPath = Path::join("$solutionDir", project.getName(), ninjaFileName);
-		n.writeSubninja(ninjaPath);
+		solutionNinjaFile.writeSubninja(ninjaPath);
 
 		// Project NinjaFile
 		auto n = NinjaFile(Path::join(project.getName(), ninjaFileName));
 
+		// Rules
+		n.writeComment("Rules");
+		for (const auto &i : solution.getRules())
+		{
+			n.writeRule(*i.second);
+		}
+
 		// Variables
+		n.writeNewline();
+		n.writeComment("Variables");
+		n.writeVariable("solutionDir", solution.getSolutionDir());
+		n.writeVariable("buildType", solution.getSettings().getIdentifier());
+		n.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType"));
+		n.writeVariable("extDir", Path::join("$solutionDir", "External"));
+
+		// Modules
+		n.writeNewline();
+		n.writeComment("Modules");
+		for (const auto &pair : solution.getModules())
+		{
+			const auto &module = *pair.second;
+			n.writeNewline();
+			n.writeComment(module.getName() + " Module");
+			n.writeVariable(module.getName() + "Includes", feStringUtil::joinRangeWrapped("/I ", "", " ", module.getIncludes().begin(), module.getIncludes().end()));
+			auto allLibs = feString();
+			auto allLibPaths = feString();
+			for (const auto &libPath : module.getLibs())
+			{
+				allLibs = feStringUtil::append(allLibs, Path::baseName(libPath));
+				allLibPaths = feStringUtil::append(allLibPaths, "/LIBPATH:" + Path::dirName(libPath));
+			}
+			n.writeVariable(module.getName() + "Libs", allLibs);
+			n.writeVariable(module.getName() + "LibPaths", allLibPaths);
+		}
+
+		// Variables
+		n.writeNewline();
 		n.writeComment("Variables");
 		n.writeVariable("project", project.getName());
 		n.writeVariable("sourceDir", Path::join("$solutionDir", "$project"));
 		n.writeVariable("buildDir", Path::join("$solutionDir", "Build", "$buildType", "$project"));
-		n.writeNewline();
 
 		// Modules
+		n.writeNewline();
 		n.writeComment("Modules");
 		auto includes = feString();
 		auto libPaths = feString();
@@ -528,6 +538,8 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
 				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< project.getName()
+				<< "\\"
 				<< ninjaFileName
 				<< " $(ProjectName)</NMakeBuildCommandLine>\n";
 
@@ -536,12 +548,16 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 				<< "    <NMakeReBuildCommandLine>cd $(SolutionDir)\n";
 			output
 				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< project.getName()
+				<< "\\"
 				<< ninjaFileName
 				<< " -t clean $(ProjectName)\n";
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
 				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< project.getName()
+				<< "\\"
 				<< ninjaFileName
 				<< " $(ProjectName)</NMakeReBuildCommandLine>\n";
 
@@ -550,12 +566,27 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 				<< "    <NMakeCleanCommandLine>cd $(SolutionDir)\n";
 			output
 				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< project.getName()
+				<< "\\"
 				<< ninjaFileName
 				<< " -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
 
 			// Include paths
+			auto includePaths = feString("$(SolutionDir)");
+			for (const auto *module : project.getModules())
+			{
+				for (const auto &path : module->getIncludes())
+				{
+					includePaths = feStringUtil::append(
+						includePaths,
+						NinjaPathToMSVCPath(path, solution.getSettings()),
+						';');
+				}
+			}
 			output
-				<< "    <IncludePath>$(VC_IncludePath);$(WIndowsSDK_IncludePath);$(UCRTContentRoot)include\\$(TargetUniversalCRTVersion)\\um;$(UCRTContentRoot)include\\$(TargetUniversalCRTVersion)\\shared;$(SolutionDir)</IncludePath>\n";
+				<< "    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(UCRTContentRoot)include\\$(TargetUniversalCRTVersion)\\um;$(UCRTContentRoot)include\\$(TargetUniversalCRTVersion)\\shared;"
+				<< includePaths
+				<< "</IncludePath>\n";
 
 			// Library paths
 			output
@@ -628,7 +659,29 @@ void ReplaceFileIfChanged(feStringView path, feStringView newContents)
 	}
 }
 
-static feString NinjaFileName(const Solution &solution)
+feString NinjaFileName(const Solution &solution)
 {
 	return Path::addExtension(solution.getName(), ".ninja");
+}
+
+feString NinjaPathToMSVCPath(feStringView path, const Settings &settings)
+{
+	auto result = feString(path);
+	result = feStringUtil::replace(
+		result,
+		"$solutionDir",
+		"$(SolutionDir)");
+	result = feStringUtil::replace(
+		result,
+		"$extDir",
+		Path::join(
+			"$(SolutionDir)",
+			"External"));
+	result = feStringUtil::replace(
+		result,
+		"$binDir",
+		Path::join(
+			"$(SolutionDir)",
+			settings.getIdentifier()));
+	return result;
 }
