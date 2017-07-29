@@ -40,6 +40,38 @@ void AccumulateProject(Project &project, Solution &solution)
 		},
 		true);
 
+	auto libraryDependencies = feString();
+	for (const auto *module : project.getModules())
+	{
+		// Add library dependencies
+		libraryDependencies = feStringUtil::append(
+			libraryDependencies,
+			feStringUtil::joinRangeWrapped(
+				"",
+				"",
+				" ",
+				module->getLibs().begin(),
+				module->getLibs().end()));
+
+		// Copy shared libraries to the bin directory
+		for (const auto &sharedLibPath : module->getSharedLibs())
+		{
+			auto destPath = Path::join(
+				"$binDir",
+				project.getName(),
+				Path::baseName(sharedLibPath));
+
+			auto &copySharedLibrary = project.addBuildCommand();
+			copySharedLibrary.setRule(solution.getRule("copy"));
+			copySharedLibrary.setInputs(sharedLibPath);
+			copySharedLibrary.setOutputs(destPath);
+
+			libraryDependencies = feStringUtil::append(
+				libraryDependencies,
+				destPath);
+		}
+	}
+
 	auto binaryPath = feString();
 	switch (project.getType())
 	{
@@ -77,15 +109,7 @@ void AccumulateProject(Project &project, Solution &solution)
 	}
 	combine.setInputs(allObjects);
 	combine.setOutputs(binaryPath);
-	auto allDependencies = feString();
-	for (const auto *module : project.getModules())
-	{
-		for (const auto *project : module->getDependencies())
-		{
-			allDependencies = feStringUtil::append(allDependencies, project->getBuildAlias().getInputs());
-		}
-	}
-	combine.setImplicitDependencies(allDependencies);
+	combine.setImplicitDependencies(libraryDependencies);
 
 	auto &alias = project.getBuildAlias();
 	switch (project.getType())

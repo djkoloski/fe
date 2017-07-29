@@ -63,6 +63,8 @@ public:
 	static feRawString getExecutableFileExtension(Compiler compiler);
 	feRawString getLibraryFileExtension() const;
 	static feRawString getLibraryFileExtension(Compiler compiler);
+	feRawString getSharedLibraryFileExtension() const;
+	static feRawString getSharedLibraryFileExtension(Compiler compiler);
 };
 
 inline Settings::Compiler &operator++(Settings::Compiler &compiler)

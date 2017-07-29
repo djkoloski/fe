@@ -1,12 +1,53 @@
+# Rules
+rule compile
+  command = cl /c $in /Fo$out /showIncludes /I $solutionDir $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /O2
+  description = compile $out
+  deps = msvc
+rule link
+  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF
+  description = link $out
+rule copy
+  command = cmd /k copy $in $out
+  description = copy $in $out
+rule lib
+  command = lib $in /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE
+  description = lib $out
+rule unitTest
+  command = $in --run-unit-tests -r xml -o $in.unittests.xml
+  description = unit test $in
+
+# Variables
+solutionDir = ..
+buildType = Win_x64_Release
+binDir = $solutionDir\Bin\$buildType
+extDir = $solutionDir\External
+# Modules
+
+
+# Fe Module
+FeIncludes = 
+FeLibs = Fe.lib
+FeLibPaths = /LIBPATH:$binDir\Fe
+
+# catch Module
+catchIncludes = /I $extDir\catch
+catchLibs = 
+catchLibPaths = 
+
+# libclang Module
+libclangIncludes = /I $extDir\LLVM\include
+libclangLibs = libclang.lib
+libclangLibPaths = /LIBPATH:$extDir\LLVM\lib
+
 # Variables
 project = Fe
 sourceDir = $solutionDir\$project
 buildDir = $solutionDir\Build\$buildType\$project
 
 # Modules
-includes = 
-libPaths = 
-libs = 
+includes = $catchIncludes
+libPaths = $catchLibPaths
+libs = $catchLibs
 
 # Build
 build $buildDir\Algorithm\Hash.obj: compile $sourceDir\Algorithm\Hash.cpp
