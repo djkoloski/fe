@@ -24,9 +24,10 @@ void WriteNinjaFile(const Solution &solution)
 	for (const auto &pair : solution.getProjects())
 	{
 		const auto &project = *pair.second;
+		auto ninjaPath = Path::join("$solutionDir", project.getName(), ninjaFileName);
+
 		solutionNinjaFile.writeNewline();
 		solutionNinjaFile.writeComment(project.getName());
-		auto ninjaPath = Path::join("$solutionDir", project.getName(), ninjaFileName);
 		solutionNinjaFile.writeSubninja(ninjaPath);
 
 		// Project NinjaFile
@@ -39,52 +40,52 @@ void WriteNinjaFile(const Solution &solution)
 			n.writeRule(*i.second);
 		}
 
-		// Variables
+		// Solution Variables
 		n.writeNewline();
-		n.writeComment("Variables");
+		n.writeComment("Solution variables");
 		n.writeVariable("solutionDir", solution.getSolutionDir());
 		n.writeVariable("buildType", solution.getSettings().getIdentifier());
 		n.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType"));
 		n.writeVariable("extDir", Path::join("$solutionDir", "External"));
 
-		// Modules
+		// Project Variables
 		n.writeNewline();
-		n.writeComment("Modules");
-		for (const auto &pair : solution.getModules())
-		{
-			const auto &module = *pair.second;
-			n.writeNewline();
-			n.writeComment(module.getName() + " Module");
-			n.writeVariable(module.getName() + "Includes", feStringUtil::joinRangeWrapped("/I ", "", " ", module.getIncludes().begin(), module.getIncludes().end()));
-			auto allLibs = feString();
-			auto allLibPaths = feString();
-			for (const auto &libPath : module.getLibs())
-			{
-				allLibs = feStringUtil::append(allLibs, Path::baseName(libPath));
-				allLibPaths = feStringUtil::append(allLibPaths, "/LIBPATH:" + Path::dirName(libPath));
-			}
-			n.writeVariable(module.getName() + "Libs", allLibs);
-			n.writeVariable(module.getName() + "LibPaths", allLibPaths);
-		}
-
-		// Variables
-		n.writeNewline();
-		n.writeComment("Variables");
+		n.writeComment("Project variables");
 		n.writeVariable("project", project.getName());
 		n.writeVariable("sourceDir", Path::join("$solutionDir", "$project"));
 		n.writeVariable("buildDir", Path::join("$solutionDir", "Build", "$buildType", "$project"));
 
 		// Modules
 		n.writeNewline();
-		n.writeComment("Modules");
+		n.writeComment("Compile settings");
+		auto modules = feHashTable<feString, const Module *>();
+		project.collectDependentModules(modules);
+
 		auto includes = feString();
 		auto libPaths = feString();
 		auto libs = feString();
-		for (const auto *module : project.getModules())
+		for (const auto &pair : modules)
 		{
-			includes = feStringUtil::append(includes, "$" + module->getName() + "Includes");
-			libPaths = feStringUtil::append(libPaths, "$" + module->getName() + "LibPaths");
-			libs = feStringUtil::append(libs, "$" + module->getName() + "Libs");
+			const auto &module = *pair.second;
+
+			includes = feStringUtil::append(
+				includes,
+				feStringUtil::joinRangeWrapped(
+					"/I ",
+					"",
+					" ",
+					module.getIncludes().begin(),
+					module.getIncludes().end()));
+
+			for (const auto &lib : module.getLibs())
+			{
+				libPaths = feStringUtil::append(
+					libPaths,
+					"/LIBPATH:" + Path::dirName(lib));
+				libs = feStringUtil::append(
+					libs,
+					Path::baseName(lib));
+			}
 		}
 		n.writeVariable("includes", includes);
 		n.writeVariable("libPaths", libPaths);
@@ -573,6 +574,8 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 
 			// Include paths
 			auto includePaths = feString("$(SolutionDir)");
+			auto modules = feHashTable<feString, const Module *>();
+			project.collectDependentModules(modules);
 			for (const auto *module : project.getModules())
 			{
 				for (const auto &path : module->getIncludes())

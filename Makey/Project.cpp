@@ -69,3 +69,17 @@ const feVector<feString> &Project::getOtherFilePaths() const
 {
 	return _otherFilePaths;
 }
+void Project::collectDependentModules(feHashTable<feString, const Module *> &modules) const
+{
+	for (const auto *module : _modules)
+	{
+		if (modules.count(module->getName()) == 0)
+		{
+			modules[module->getName()] = module;
+		}
+		for (const auto *dependency : module->getDependencies())
+		{
+			dependency->collectDependentModules(modules);
+		}
+	}
+}
