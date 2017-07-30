@@ -16,38 +16,21 @@ rule unitTest
   command = $in --run-unit-tests -r xml -o $in.unittests.xml
   description = unit test $in
 
-# Variables
+# Solution variables
 solutionDir = ..
 buildType = Win_x64_Release
 binDir = $solutionDir\Bin\$buildType
 extDir = $solutionDir\External
 
-# Modules
-
-# Fe Module
-FeIncludes = 
-FeLibs = Fe.lib
-FeLibPaths = /LIBPATH:$binDir\Fe
-
-# catch Module
-catchIncludes = /I $extDir\catch
-catchLibs = 
-catchLibPaths = 
-
-# libclang Module
-libclangIncludes = /I $extDir\LLVM\include
-libclangLibs = libclang.lib
-libclangLibPaths = /LIBPATH:$extDir\LLVM\lib
-
-# Variables
+# Project variables
 project = Fe
 sourceDir = $solutionDir\$project
 buildDir = $solutionDir\Build\$buildType\$project
 
-# Modules
-includes = $catchIncludes
-libPaths = $catchLibPaths
-libs = $catchLibs
+# Compile settings
+includes = /I $extDir\catch
+libPaths = 
+libs = 
 
 # Build
 build $buildDir\Algorithm\Hash.obj: compile $sourceDir\Algorithm\Hash.cpp

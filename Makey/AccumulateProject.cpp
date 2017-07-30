@@ -6,6 +6,7 @@ void AccumulateProject(Project &project, Solution &solution)
 {
 	auto sourceDir = project.getName();
 
+	// Collect files and add .cpp build rules
 	auto allObjects = feString();
 	Directory::iterate(
 		sourceDir,
@@ -40,9 +41,14 @@ void AccumulateProject(Project &project, Solution &solution)
 		},
 		true);
 
+	auto modules = feHashTable<feString, const Module *>();
+	project.collectDependentModules(modules);
+
 	auto libraryDependencies = feString();
-	for (const auto *module : project.getModules())
+	for (const auto &pair : modules)
 	{
+		const auto &module = *pair.second;
+
 		// Add library dependencies
 		libraryDependencies = feStringUtil::append(
 			libraryDependencies,
@@ -50,11 +56,11 @@ void AccumulateProject(Project &project, Solution &solution)
 				"",
 				"",
 				" ",
-				module->getLibs().begin(),
-				module->getLibs().end()));
+				module.getLibs().begin(),
+				module.getLibs().end()));
 
 		// Copy shared libraries to the bin directory
-		for (const auto &sharedLibPath : module->getSharedLibs())
+		for (const auto &sharedLibPath : module.getSharedLibs())
 		{
 			auto destPath = Path::join(
 				"$binDir",
