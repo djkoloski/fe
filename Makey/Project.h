@@ -3,6 +3,7 @@
 #include <Fe/Container/FeGUID.h>
 #include <Fe/Container/FeString.h>
 #include <Fe/Container/FeVector.h>
+#include <Fe/Container/FeHashTable.h>
 #include <Makey/BuildCommand.h>
 #include <Makey/Module.h>
 
@@ -45,4 +46,5 @@ public:
 	const feVector<feString> &getSourceFilePaths() const;
 	void addOtherFilePath(feStringView otherFilePath);
 	const feVector<feString> &getOtherFilePaths() const;
+	void collectDependentModules(feHashTable<feString, const Module *> &modules) const;
 };

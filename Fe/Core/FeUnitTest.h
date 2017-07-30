@@ -4,6 +4,6 @@
 
 #if FE_USING(FE_FEATURE_UNIT_TESTS)
 
-#include <External/catch.hpp>
+#include <catch.hpp>
 
 #endif
