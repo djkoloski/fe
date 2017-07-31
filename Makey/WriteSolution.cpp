@@ -456,6 +456,7 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 		nMakeOutput += Settings::getLibraryFileExtension(Settings::Compiler::MSVC);
 		break;
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		break;
 	}
 
@@ -485,6 +486,7 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			configurationMacro = "CONFIG_FINAL";
 			break;
 		default:
+			FE_ERROR_SWITCH_VALUE();
 			break;
 		}
 
@@ -506,6 +508,7 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 				platformUCRTDirectoryName = "x64";
 				break;
 			default:
+				FE_ERROR_SWITCH_VALUE();
 				break;
 			}
 
@@ -576,9 +579,10 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			auto includePaths = feString("$(SolutionDir)");
 			auto modules = feHashTable<feString, const Module *>();
 			project.collectDependentModules(modules);
-			for (const auto *module : project.getModules())
+			for (const auto &pair : modules)
 			{
-				for (const auto &path : module->getIncludes())
+				const auto &module = *pair.second;
+				for (const auto &path : module.getIncludes())
 				{
 					includePaths = feStringUtil::append(
 						includePaths,
