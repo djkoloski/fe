@@ -18,6 +18,6 @@ void fePrint(feRawString fmt, ...);
 #endif
 
 // Logging
-#define FE_LOG(level, fmt, ...) FE_PRINT(#level ": " fmt, __VA_ARGS__)
+#define FE_LOG(level, fmt, ...) FE_PRINT(#level ": " fmt "\n", __VA_ARGS__)
 #define FE_LOG_WARNING(fmt, ...) FE_LOG(WARNING, fmt, __VA_ARGS__)
 #define FE_LOG_ERROR(fmt, ...) FE_LOG(ERROR, fmt, __VA_ARGS__)

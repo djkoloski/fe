@@ -48,6 +48,7 @@ void WindowsDirectory::iterate(feStringView path, T eval, feBool recurse)
 			}
 			break;
 		default:
+			FE_ERROR_SWITCH_VALUE();
 			break;
 		}
 	}
