@@ -541,48 +541,46 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C "
-				<< Path::join("Build", solution.getSettings().getIdentifier(), project.getName())
-				<< " -f $(SolutionDir)\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " $(ProjectName)</NMakeBuildCommandLine>\n";
 
 			// Rebuild
 			output
 				<< "    <NMakeReBuildCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C "
-				<< Path::join("Build", solution.getSettings().getIdentifier(), project.getName())
-				<< " -f $(SolutionDir)\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " -t clean $(ProjectName)\n";
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\..\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " $(ProjectName)</NMakeReBuildCommandLine>\n";
 
 			// Clean
 			output
 				<< "    <NMakeCleanCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C "
-				<< Path::join("Build", solution.getSettings().getIdentifier(), project.getName())
-				<< " -f $(SolutionDir)\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
 
 			// Include paths
-			auto includePaths = feString("$(SolutionDir)\\Build\\Win_$(PlatformTarget)_$(Configuration)");
+			auto includePaths = Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)");
 			auto modules = feHashTable<feString, const Module *>();
 			project.collectDependentModules(modules);
 			for (const auto &pair : modules)
