@@ -14,6 +14,7 @@ using feBool = bool;
 using feChar = char;
 using feRawString = const feChar *;
 using feFloat = float;
+using feDouble = double;
 using Null = decltype(nullptr);
 #define null nullptr
 

@@ -141,6 +141,12 @@ void ConfigureRules(Solution &solution)
 #endif
 	copy.setDescription("copy $in $out");
 
+	auto &cgen = *solution.addRule("cgen");
+#if FE_IS_TARGET(WINDOWS)
+	cgen.setCommand("cmd /k copy $in $out");
+#endif
+	cgen.setDescription("cgen $in $out");
+
 	auto &unitTest = *solution.addRule("unitTest");
 	unitTest.setCommand("$in --run-unit-tests -r xml -o $in.unittests.xml");
 	unitTest.setDescription("unit test $in");
@@ -149,7 +155,7 @@ void ConfigureRules(Solution &solution)
 	{
 	case Settings::Compiler::MSVC:
 		// Compile
-		compileCommand = "cl /c $in /Fo$out /showIncludes /I $solutionDir $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms";
+		compileCommand = "cl /c $in /Fo$out /showIncludes /I $solutionDir\\Build\\$buildType $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms";
 		compile.setDeps("msvc");
 
 		// Link
