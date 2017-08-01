@@ -24,7 +24,8 @@ feRawString Settings::getCompilerString(Compiler compiler)
 	case Settings::Compiler::MSVC:
 		return "MSVC";
 	default:
-		return "Unknown";
+		FE_ERROR_SWITCH_VALUE();
+		return "";
 	}
 }
 Settings::Platform Settings::getPlatform() const
@@ -48,6 +49,7 @@ feRawString Settings::getPlatformString(Platform platform)
 	case Settings::Platform::Win_x64:
 		return "Win_x64";
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		return "Unknown";
 	}
 }
@@ -64,6 +66,7 @@ feRawString Settings::getMSVCPlatformString(Platform platform)
 	case Settings::Platform::Win_x64:
 		return "x64";
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		return "Unknown";
 	}
 }
@@ -92,6 +95,7 @@ feRawString Settings::getConfigurationString(Configuration configuration)
 	case Settings::Configuration::Final:
 		return "Final";
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		return "Unknown";
 	}
 }
@@ -110,6 +114,7 @@ feRawString Settings::getObjectFileExtension(Compiler compiler)
 	case Settings::Compiler::MSVC:
 		return ".obj";
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		return "";
 	}
 }
@@ -124,6 +129,7 @@ feRawString Settings::getExecutableFileExtension(Compiler compiler)
 	case Settings::Compiler::MSVC:
 		return ".exe";
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		return "";
 	}
 }
@@ -138,6 +144,7 @@ feRawString Settings::getLibraryFileExtension(Compiler compiler)
 	case Settings::Compiler::MSVC:
 		return ".lib";
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		return "";
 	}
 }
@@ -152,6 +159,7 @@ feRawString Settings::getSharedLibraryFileExtension(Compiler compiler)
 	case Settings::Compiler::MSVC:
 		return ".dll";
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		return "";
 	}
 }

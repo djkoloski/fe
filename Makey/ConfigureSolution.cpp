@@ -2,7 +2,6 @@
 
 static const auto k_usageString =
 	"usage: Makey [variable=value...]\n"
-	"\n"
 	"variables:\n"
 	"  platform\tThe platform to generate ninja build files for\n"
 	"    win_x86\tWindows 32-bit\n"
@@ -11,7 +10,9 @@ static const auto k_usageString =
 	"    debug\tIncludes debugging symbols, asserts on, optimizations off\n"
 	"    release\tIncludes debugging symbols, asserts on, some optimizations on\n"
 	"    profile\tNo debugging symbols, asserts on, optimizations on\n"
-	"    final\tNo debugging symbols, asserts off, optimizations on\n";
+	"    final\tNo debugging symbols, asserts off, optimizations on\n"
+	"  compiler\tThe compiler to generate ninja build files for\n"
+	"    msvc\tMicrosoft Visual Studio Compiler";
 
 feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *argv)
 {
@@ -34,7 +35,7 @@ feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *ar
 		{
 			if (settings.getCompiler() != Settings::Compiler::Unknown)
 			{
-				FE_LOG_WARNING("Duplicate compiler, was previously set to %s\n", settings.getCompilerString());
+				FE_LOG_WARNING("Duplicate compiler, was previously set to %s", settings.getCompilerString());
 			}
 
 			if (value == "msvc")
@@ -43,14 +44,14 @@ feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *ar
 			}
 			else
 			{
-				FE_LOG_WARNING("Unrecognized compiler '%s'\n", value.c_str());
+				FE_LOG_WARNING("Unrecognized compiler '%s'", value.c_str());
 			}
 		}
 		else if (variable == "platform")
 		{
 			if (settings.getPlatform() != Settings::Platform::Unknown)
 			{
-				FE_LOG_WARNING("Duplicate platform, was previously set to %s\n", settings.getPlatformString());
+				FE_LOG_WARNING("Duplicate platform, was previously set to %s", settings.getPlatformString());
 			}
 
 			if (value == "win_x86")
@@ -63,14 +64,14 @@ feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *ar
 			}
 			else
 			{
-				FE_LOG_WARNING("Unrecognized platform '%s'\n", value.c_str());
+				FE_LOG_WARNING("Unrecognized platform '%s'", value.c_str());
 			}
 		}
 		else if (variable == "config")
 		{
 			if (settings.getConfiguration() != Settings::Configuration::Unknown)
 			{
-				FE_LOG_WARNING("Duplicate configuration, was previously set to %s\n", settings.getConfigurationString());
+				FE_LOG_WARNING("Duplicate configuration, was previously set to %s", settings.getConfigurationString());
 			}
 
 			if (value == "debug")
@@ -91,28 +92,28 @@ feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *ar
 			}
 			else
 			{
-				FE_LOG_WARNING("Unrecognized configuration '%s'\n", value.c_str());
+				FE_LOG_WARNING("Unrecognized configuration '%s'", value.c_str());
 			}
 		}
 		else
 		{
-			FE_LOG_WARNING("Unrecognized variable '%s' with value '%s'\n", variable.c_str(), value.c_str());
+			FE_LOG_WARNING("Unrecognized variable '%s' with value '%s'", variable.c_str(), value.c_str());
 		}
 	}
 
 	if (settings.getCompiler() == Settings::Compiler::Unknown)
 	{
-		FE_LOG_ERROR("Compiler not set\n%s", k_usageString);
+		FE_LOG_ERROR("Compiler not set\n\n%s", k_usageString);
 		return kFailure;
 	}
 	if (settings.getPlatform() == Settings::Platform::Unknown)
 	{
-		FE_LOG_ERROR("Platform not set\n%s", k_usageString);
+		FE_LOG_ERROR("Platform not set\n\n%s", k_usageString);
 		return kFailure;
 	}
 	if (settings.getConfiguration() == Settings::Configuration::Unknown)
 	{
-		FE_LOG_ERROR("Configuration not set\n%s", k_usageString);
+		FE_LOG_ERROR("Configuration not set\n\n%s", k_usageString);
 		return kFailure;
 	}
 
@@ -172,6 +173,7 @@ void ConfigureRules(Solution &solution)
 			libCommand += " /MACHINE:X64";
 			break;
 		default:
+			FE_ERROR_SWITCH_VALUE();
 			break;
 		}
 
@@ -202,10 +204,12 @@ void ConfigureRules(Solution &solution)
 			libCommand += " /SUBSYSTEM:WINDOWS /LTCG";
 			break;
 		default:
+			FE_ERROR_SWITCH_VALUE();
 			break;
 		}
 		break;
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		break;
 	}
 

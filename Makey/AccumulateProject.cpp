@@ -98,6 +98,7 @@ void AccumulateProject(Project &project, Solution &solution)
 				solution.getSettings().getLibraryFileExtension()));
 		break;
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		break;
 	}
 
@@ -111,6 +112,7 @@ void AccumulateProject(Project &project, Solution &solution)
 		combine.setRule(solution.getRule("lib"));
 		break;
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		break;
 	}
 	combine.setInputs(allObjects);
@@ -128,6 +130,7 @@ void AccumulateProject(Project &project, Solution &solution)
 		alias.setRule(null);
 		break;
 	default:
+		FE_ERROR_SWITCH_VALUE();
 		break;
 	}
 	alias.setInputs(binaryPath);
