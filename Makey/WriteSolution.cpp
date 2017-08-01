@@ -541,7 +541,9 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< "External\\ninja\\ninja.exe -C "
+				<< Path::join("Build", solution.getSettings().getIdentifier(), project.getName())
+				<< " -f $(SolutionDir)\\"
 				<< project.getName()
 				<< "\\"
 				<< ninjaFileName
@@ -551,7 +553,9 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< "    <NMakeReBuildCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< "External\\ninja\\ninja.exe -C "
+				<< Path::join("Build", solution.getSettings().getIdentifier(), project.getName())
+				<< " -f $(SolutionDir)\\"
 				<< project.getName()
 				<< "\\"
 				<< ninjaFileName
@@ -559,7 +563,7 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< "External\\ninja\\ninja.exe -C Build -f ..\\..\\"
 				<< project.getName()
 				<< "\\"
 				<< ninjaFileName
@@ -569,7 +573,9 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< "    <NMakeCleanCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
+				<< "External\\ninja\\ninja.exe -C "
+				<< Path::join("Build", solution.getSettings().getIdentifier(), project.getName())
+				<< " -f $(SolutionDir)\\"
 				<< project.getName()
 				<< "\\"
 				<< ninjaFileName

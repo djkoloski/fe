@@ -1,6 +1,6 @@
 # Rules
 rule compile
-  command = cl /c $in /Fo$out /showIncludes /I $solutionDir $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /O2
+  command = cl /c $in /Fo$out /showIncludes /I $solutionDir\Build\$buildType $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /O2
   description = compile $out
   deps = msvc
 rule link
@@ -12,6 +12,9 @@ rule copy
 rule lib
   command = lib $in /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE
   description = lib $out
+rule cgen
+  command = cmd /k copy $in $out
+  description = cgen $in $out
 rule unitTest
   command = $in --run-unit-tests -r xml -o $in.unittests.xml
   description = unit test $in
@@ -33,17 +36,29 @@ libPaths = /LIBPATH:$binDir\Fe
 libs = Fe.lib
 
 # Build
-build $buildDir\AccumulateProject.obj: compile $sourceDir\AccumulateProject.cpp
-build $buildDir\BuildCommand.obj: compile $sourceDir\BuildCommand.cpp
-build $buildDir\ConfigureSolution.obj: compile $sourceDir\ConfigureSolution.cpp
-build $buildDir\Main.obj: compile $sourceDir\Main.cpp
-build $buildDir\Module.obj: compile $sourceDir\Module.cpp
-build $buildDir\NinjaFile.obj: compile $sourceDir\NinjaFile.cpp
-build $buildDir\Project.obj: compile $sourceDir\Project.cpp
-build $buildDir\Rule.obj: compile $sourceDir\Rule.cpp
-build $buildDir\Settings.obj: compile $sourceDir\Settings.cpp
-build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp
-build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp
-build $buildDir\WriteSolution.obj: compile $sourceDir\WriteSolution.cpp
+build $buildDir\AccumulateProject.obj: compile $sourceDir\AccumulateProject.cpp || Makey_codegen
+build $buildDir\AccumulateProject.h: cgen $sourceDir\AccumulateProject.h
+build $buildDir\BuildCommand.obj: compile $sourceDir\BuildCommand.cpp || Makey_codegen
+build $buildDir\BuildCommand.h: cgen $sourceDir\BuildCommand.h
+build $buildDir\ConfigureSolution.obj: compile $sourceDir\ConfigureSolution.cpp || Makey_codegen
+build $buildDir\ConfigureSolution.h: cgen $sourceDir\ConfigureSolution.h
+build $buildDir\Main.obj: compile $sourceDir\Main.cpp || Makey_codegen
+build $buildDir\Module.obj: compile $sourceDir\Module.cpp || Makey_codegen
+build $buildDir\Module.h: cgen $sourceDir\Module.h
+build $buildDir\NinjaFile.obj: compile $sourceDir\NinjaFile.cpp || Makey_codegen
+build $buildDir\NinjaFile.h: cgen $sourceDir\NinjaFile.h
+build $buildDir\Project.obj: compile $sourceDir\Project.cpp || Makey_codegen
+build $buildDir\Project.h: cgen $sourceDir\Project.h
+build $buildDir\Rule.obj: compile $sourceDir\Rule.cpp || Makey_codegen
+build $buildDir\Rule.h: cgen $sourceDir\Rule.h
+build $buildDir\Settings.obj: compile $sourceDir\Settings.cpp || Makey_codegen
+build $buildDir\Settings.h: cgen $sourceDir\Settings.h
+build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp || Makey_codegen
+build $buildDir\Solution.h: cgen $sourceDir\Solution.h
+build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp || Makey_codegen
+build $buildDir\SolutionFolder.h: cgen $sourceDir\SolutionFolder.h
+build $buildDir\WriteSolution.obj: compile $sourceDir\WriteSolution.cpp || Makey_codegen
+build $buildDir\WriteSolution.h: cgen $sourceDir\WriteSolution.h
+build Makey_codegen: phony $buildDir\AccumulateProject.h $buildDir\BuildCommand.h $buildDir\ConfigureSolution.h $buildDir\Module.h $buildDir\NinjaFile.h $buildDir\Project.h $buildDir\Rule.h $buildDir\Settings.h $buildDir\Solution.h $buildDir\SolutionFolder.h $buildDir\WriteSolution.h
 build $binDir\Makey\Makey.exe: link $buildDir\AccumulateProject.obj $buildDir\BuildCommand.obj $buildDir\ConfigureSolution.obj $buildDir\Main.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj $buildDir\WriteSolution.obj | $binDir\Fe\Fe.lib
 build Makey: unitTest $binDir\Makey\Makey.exe

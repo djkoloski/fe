@@ -6,11 +6,12 @@ void AccumulateProject(Project &project, Solution &solution)
 {
 	auto sourceDir = project.getName();
 
-	// Collect files and add .cpp build rules
+	// Collect files and add .h and .cpp build rules
+	auto allHeaders = feString();
 	auto allObjects = feString();
 	Directory::iterate(
 		sourceDir,
-		[compile = solution.getRule("compile"), &solution = solution, &project = project, &allObjects = allObjects, &sourceDir = sourceDir](const FileInfo &fileInfo)
+		[compile = solution.getRule("compile"), cgen = solution.getRule("cgen"), copy = solution.getRule("copy"), &solution = solution, &project = project, &allHeaders = allHeaders, &allObjects = allObjects, &sourceDir = sourceDir](const FileInfo &fileInfo)
 		{
 			const auto &relPath = Path::removePrefix(fileInfo.getPath(), sourceDir);
 			feString extension = Path::extension(relPath);
@@ -20,6 +21,26 @@ void AccumulateProject(Project &project, Solution &solution)
 				if (extension == ".h")
 				{
 					project.addHeaderFilePath(relPath);
+
+					auto header = Path::join("$sourceDir", relPath);
+					auto genHeader = Path::join("$buildDir", relPath);
+					auto &build = project.addBuildCommand();
+					build.setRule(cgen);
+					build.setInputs(header);
+					build.setOutputs(genHeader);
+					allHeaders = feStringUtil::append(allHeaders, genHeader);
+				}
+				if (extension == ".inl")
+				{
+					project.addOtherFilePath(relPath);
+
+					auto header = Path::join("$sourceDir", relPath);
+					auto genHeader = Path::join("$buildDir", relPath);
+					auto &build = project.addBuildCommand();
+					build.setRule(copy);
+					build.setInputs(header);
+					build.setOutputs(genHeader);
+					allHeaders = feStringUtil::append(allHeaders, genHeader);
 				}
 				else if (extension == ".cpp")
 				{
@@ -31,6 +52,7 @@ void AccumulateProject(Project &project, Solution &solution)
 					build.setRule(compile);
 					build.setInputs(source);
 					build.setOutputs(object);
+					build.setOrderOnlyDependencies(project.getName() + "_codegen");
 					allObjects = feStringUtil::append(allObjects, object);
 				}
 				else if (extension != ".vcxproj" && extension != ".vcxproj.filters" && extension != ".vcxproj.user")
@@ -40,6 +62,11 @@ void AccumulateProject(Project &project, Solution &solution)
 			}
 		},
 		true);
+
+	auto &codegen = project.addBuildCommand();
+	codegen.setRule(null);
+	codegen.setInputs(allHeaders);
+	codegen.setOutputs(project.getName() + "_codegen");
 
 	auto modules = feHashTable<feString, const Module *>();
 	project.collectDependentModules(modules);
