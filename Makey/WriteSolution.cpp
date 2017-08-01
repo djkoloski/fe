@@ -582,7 +582,7 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 				<< " -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
 
 			// Include paths
-			auto includePaths = feString("$(SolutionDir)");
+			auto includePaths = feString("$(SolutionDir)\\Build\\Win_$(PlatformTarget)_$(Configuration)");
 			auto modules = feHashTable<feString, const Module *>();
 			project.collectDependentModules(modules);
 			for (const auto &pair : modules)
