@@ -11,6 +11,7 @@ void ConfigureExternal(Solution &solution);
 void ConfigureFe(Solution &solution);
 void ConfigureMakey(Solution &solution);
 void ConfigureCGen(Solution &solution);
+void ConfigureTest(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
 
 feInt feMain(feInt argc, const feRawString *argv)
@@ -47,6 +48,7 @@ feStatus MakeAllProjects(feInt argc, const feRawString *argv)
 	ConfigureFe(solution);
 	ConfigureMakey(solution);
 	ConfigureCGen(solution);
+	ConfigureTest(solution);
 	ConfigureSolutionFolders(solution);
 
 	WriteNinjaFile(solution);
@@ -162,6 +164,20 @@ void ConfigureCGen(Solution &solution)
 	project.setType(Project::Type::Executable);
 	project.addModule(solution.getModule("Fe"));
 	project.addModule(solution.getModule("libclang"));
+
+	AccumulateProject(project, solution, false);
+}
+
+void ConfigureTest(Solution &solution)
+{
+	auto visualStudioGUID = feGUID(
+		0x11, 0x1a, 0x98, 0x10,
+		0xe1, 0xb2, 0x42, 0x0c,
+		0x90, 0x87, 0x8c, 0x24,
+		0x3c, 0x83, 0x21, 0x38);
+	auto &project = *solution.addProject("Test", visualStudioGUID);
+	project.setType(Project::Type::Executable);
+	project.addModule(solution.getModule("Fe"));
 
 	AccumulateProject(project, solution);
 }

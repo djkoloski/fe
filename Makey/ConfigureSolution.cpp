@@ -141,11 +141,11 @@ void ConfigureRules(Solution &solution)
 #endif
 	copy.setDescription("copy $in $out");
 
-	auto &cgen = *solution.addRule("cgen");
+	auto &codegen = *solution.addRule("codegen");
 #if FE_IS_TARGET(WINDOWS)
-	cgen.setCommand("cmd /k copy $in $out");
+	codegen.setCommand("cmd /k copy $in $out");
 #endif
-	cgen.setDescription("cgen $in $out");
+	codegen.setDescription("cgen $in $out");
 
 	auto &unitTest = *solution.addRule("unitTest");
 	unitTest.setCommand("$in --run-unit-tests -r xml -o $in.unittests.xml");

@@ -2,16 +2,21 @@
 
 #include <Fe/System/Directory.h>
 
-void AccumulateProject(Project &project, Solution &solution)
+void AccumulateProject(Project &project, Solution &solution, feBool codegenEnabled)
 {
 	auto sourceDir = project.getName();
+
+	// Get rules
+	auto *compile = solution.getRule("compile");
+	auto *copy = solution.getRule("copy");
+	auto *codegen = (codegenEnabled ? solution.getRule("codegen") : copy);
 
 	// Collect files and add .h and .cpp build rules
 	auto allHeaders = feString();
 	auto allObjects = feString();
 	Directory::iterate(
 		sourceDir,
-		[compile = solution.getRule("compile"), cgen = solution.getRule("cgen"), copy = solution.getRule("copy"), &solution = solution, &project = project, &allHeaders = allHeaders, &allObjects = allObjects, &sourceDir = sourceDir](const FileInfo &fileInfo)
+		[compile = compile, copy = copy, codegen = codegen, &solution = solution, &project = project, &allHeaders = allHeaders, &allObjects = allObjects, &sourceDir = sourceDir](const FileInfo &fileInfo)
 		{
 			const auto &relPath = Path::removePrefix(fileInfo.getPath(), sourceDir);
 			feString extension = Path::extension(relPath);
@@ -25,7 +30,7 @@ void AccumulateProject(Project &project, Solution &solution)
 					auto header = Path::join("$sourceDir", relPath);
 					auto genHeader = Path::join("$buildDir", relPath);
 					auto &build = project.addBuildCommand();
-					build.setRule(cgen);
+					build.setRule(codegen);
 					build.setInputs(header);
 					build.setOutputs(genHeader);
 					allHeaders = feStringUtil::append(allHeaders, genHeader);
@@ -63,10 +68,10 @@ void AccumulateProject(Project &project, Solution &solution)
 		},
 		true);
 
-	auto &codegen = project.addBuildCommand();
-	codegen.setRule(null);
-	codegen.setInputs(allHeaders);
-	codegen.setOutputs(project.getName() + "_codegen");
+	auto &codegenPhase = project.addBuildCommand();
+	codegenPhase.setRule(null);
+	codegenPhase.setInputs(allHeaders);
+	codegenPhase.setOutputs(project.getName() + "_codegen");
 
 	auto modules = feHashTable<feString, const Module *>();
 	project.collectDependentModules(modules);
