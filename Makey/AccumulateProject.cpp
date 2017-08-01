@@ -30,7 +30,7 @@ void AccumulateProject(Project &project, Solution &solution)
 					build.setOutputs(genHeader);
 					allHeaders = feStringUtil::append(allHeaders, genHeader);
 				}
-				if (extension == ".inl")
+				else if (extension == ".inl")
 				{
 					project.addOtherFilePath(relPath);
 
