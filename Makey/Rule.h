@@ -10,6 +10,7 @@ private:
 	feString _description;
 	feString _deps;
 	feBool _isGenerator;
+	feBool _restat;
 
 public:
 	Rule(feStringView name);
@@ -23,4 +24,6 @@ public:
 	void setDeps(feStringView deps);
 	feBool getIsGenerator() const;
 	void setIsGenerator(feBool isGenerator);
+	feBool getRestat() const;
+	void setRestat(feBool restat);
 };

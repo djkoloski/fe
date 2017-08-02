@@ -2,7 +2,8 @@
 
 Rule::Rule(feStringView name) :
 	_name(name),
-	_isGenerator(false)
+	_isGenerator(false),
+	_restat(false)
 {}
 const feString &Rule::getName() const
 {
@@ -39,6 +40,14 @@ feBool Rule::getIsGenerator() const
 void Rule::setIsGenerator(feBool isGenerator)
 {
 	_isGenerator = isGenerator;
+}
+feBool Rule::getRestat() const
+{
+	return _restat;
+}
+void Rule::setRestat(feBool restat)
+{
+	_restat = restat;
 }
 
 

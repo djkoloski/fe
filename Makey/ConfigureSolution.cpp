@@ -1,5 +1,7 @@
 #include <Makey/ConfigureSolution.h>
 
+#include <Fe/System/Path.h>
+
 static const auto k_usageString =
 	"usage: Makey [variable=value...]\n"
 	"variables:\n"
@@ -143,8 +145,9 @@ void ConfigureRules(Solution &solution)
 
 	auto &codegen = *solution.addRule("codegen");
 #if FE_IS_TARGET(WINDOWS)
-	codegen.setCommand("cmd /c type $in > $out");
+	codegen.setCommand(Path::join("$solutionDir", "Bin", "Win_x64_Release", "CGen", Path::addExtension("CGen", solution.getSettings().getExecutableFileExtension())) + " $in $out");
 #endif
+	codegen.setRestat(true);
 	codegen.setDescription("codegen $in $out");
 
 	auto &unitTest = *solution.addRule("unitTest");
@@ -155,7 +158,7 @@ void ConfigureRules(Solution &solution)
 	{
 	case Settings::Compiler::MSVC:
 		// Compile
-		compileCommand = "cl /c $in /Fo$out /showIncludes /I $solutionDir\\Build\\$buildType $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms";
+		compileCommand = "cl /c $in /Fo$out /showIncludes /I " + Path::join("$solutionDir", "Build", "$buildType") + " $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms";
 		compile.setDeps("msvc");
 
 		// Link
