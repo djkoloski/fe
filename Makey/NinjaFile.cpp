@@ -30,6 +30,11 @@ void NinjaFile::writeRule(const Rule &rule)
 	{
 		_output << "  generator = true\n";
 	}
+
+	if (rule.getRestat())
+	{
+		_output << "  restat = true\n";
+	}
 }
 void NinjaFile::writeBuild(const BuildCommand &build)
 {

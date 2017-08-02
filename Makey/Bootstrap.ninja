@@ -1,7 +1,8 @@
 # Rules
 rule codegen
-  command = cmd /c type $in > $out
+  command = $solutionDir\Bin\Win_x64_Release\CGen\CGen.exe $in $out
   description = codegen $in $out
+  restat = true
 rule compile
   command = cl /c $in /Fo$out /showIncludes /I $solutionDir\Build\$buildType $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /O2
   description = compile $out
