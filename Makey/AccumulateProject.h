@@ -2,4 +2,4 @@
 
 #include <Makey/Solution.h>
 
-void AccumulateProject(Project &project, Solution &solution, feBool codegenEnabled = true);
+void AccumulateProject(Project &project, Solution &solution);

@@ -1,6 +1,9 @@
 # Variables
 solutionDir = ..
 
+# CGen
+subninja $solutionDir\CGen\Bootstrap.ninja
+
 # Fe
 subninja $solutionDir\Fe\Bootstrap.ninja
 

@@ -2,7 +2,8 @@
 
 Project::Project(feStringView name, const feGUID &visualStudioGUID) :
 	_name(name),
-	_visualStudioGUID(visualStudioGUID)
+	_visualStudioGUID(visualStudioGUID),
+	_codegenEnabled(true)
 {}
 const feString &Project::getName() const
 {
@@ -44,6 +45,14 @@ const feVector<const Module *> &Project::getModules() const
 void Project::addModule(const Module *module)
 {
 	_modules.push_back(module);
+}
+feBool Project::getCodegenEnabled() const
+{
+	return _codegenEnabled;
+}
+void Project::setCodegenEnabled(feBool codegenEnabled)
+{
+	_codegenEnabled = codegenEnabled;
 }
 void Project::addHeaderFilePath(feStringView headerFilePath)
 {

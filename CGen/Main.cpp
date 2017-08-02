@@ -1,20 +1,20 @@
-#include <Fe/Core/Core.h>
+#include <cstdio>
 
 #include <clang-c/Index.h>
 
-feInt feMain(feInt argc, const feRawString *argv)
+int main(int argc, char **argv)
 {
 	auto index = clang_createIndex(0, 0);
 	auto translationUnit = clang_createTranslationUnitFromSourceFile(
 		index,
 		argv[1], argc - 2, argv + 2,
 		0,
-		null);
+		nullptr);
 
 	clang_disposeTranslationUnit(translationUnit);
 	clang_disposeIndex(index);
 
-	FE_PRINT("Code generation goes here\n");
+	printf("%s -> %s\n", argv[0], argv[1]);
 
 	return 0;
 }
