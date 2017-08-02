@@ -2,20 +2,6 @@
 
 #include <Fe/System/Path.h>
 
-static const auto k_usageString =
-	"usage: Makey [variable=value...]\n"
-	"variables:\n"
-	"  platform\tThe platform to generate ninja build files for\n"
-	"    win_x86\tWindows 32-bit\n"
-	"    win_x64\tWindows 64-bit\n"
-	"  config\tThe configuration to generate ninja build files for\n"
-	"    debug\tIncludes debugging symbols, asserts on, optimizations off\n"
-	"    release\tIncludes debugging symbols, asserts on, some optimizations on\n"
-	"    profile\tNo debugging symbols, asserts on, optimizations on\n"
-	"    final\tNo debugging symbols, asserts off, optimizations on\n"
-	"  compiler\tThe compiler to generate ninja build files for\n"
-	"    msvc\tMicrosoft Visual Studio Compiler";
-
 feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *argv)
 {
 	auto settings = Settings();
@@ -105,17 +91,17 @@ feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *ar
 
 	if (settings.getCompiler() == Settings::Compiler::Unknown)
 	{
-		FE_LOG_ERROR("Compiler not set\n\n%s", k_usageString);
+		FE_LOG_ERROR("Compiler not set");
 		return kFailure;
 	}
 	if (settings.getPlatform() == Settings::Platform::Unknown)
 	{
-		FE_LOG_ERROR("Platform not set\n\n%s", k_usageString);
+		FE_LOG_ERROR("Platform not set");
 		return kFailure;
 	}
 	if (settings.getConfiguration() == Settings::Configuration::Unknown)
 	{
-		FE_LOG_ERROR("Configuration not set\n\n%s", k_usageString);
+		FE_LOG_ERROR("Configuration not set");
 		return kFailure;
 	}
 
@@ -128,6 +114,22 @@ void ConfigureRules(Solution &solution)
 	auto &compile = *solution.addRule("compile");
 	compile.setDescription("compile $out");
 	auto compileCommand = feString();
+
+	auto &codegen = *solution.addRule("codegen");
+	codegen.setRestat(true);
+	codegen.setDescription("codegen $in $out");
+	auto codegenFlags = "-Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field";
+	auto codegenCommand =
+		Path::join(
+			"$solutionDir",
+			"Bin",
+			"Win_x64_Release",
+			"CGen",
+			Path::addExtension(
+				"CGen",
+				solution.getSettings().getExecutableFileExtension()))
+		+ " $in $out -I$solutionDir $codegenIncludes "
+		+ codegenFlags;
 
 	auto &link = *solution.addRule("link");
 	link.setDescription("link $out");
@@ -143,13 +145,6 @@ void ConfigureRules(Solution &solution)
 #endif
 	copy.setRestat(true);
 	copy.setDescription("copy $in $out");
-
-	auto &codegen = *solution.addRule("codegen");
-#if FE_IS_TARGET(WINDOWS)
-	codegen.setCommand(Path::join("$solutionDir", "Bin", "Win_x64_Release", "CGen", Path::addExtension("CGen", solution.getSettings().getExecutableFileExtension())) + " $in $out");
-#endif
-	codegen.setRestat(true);
-	codegen.setDescription("codegen $in $out");
 
 	auto &unitTest = *solution.addRule("unitTest");
 	unitTest.setCommand("$in --run-unit-tests -r xml -o $in.unittests.xml");
@@ -173,12 +168,14 @@ void ConfigureRules(Solution &solution)
 		case Settings::Platform::Win_x86:
 			// Win x86
 			compileCommand += " /DPLATFORM_WIN_X86";
+			codegenCommand += " -DPLATFORM_WIN_X86";
 			linkCommand += " /MACHINE:X86";
 			libCommand += " /MACHINE:X86";
 			break;
 		case Settings::Platform::Win_x64:
 			// Win x64
 			compileCommand += " /DPLATFORM_WIN_X64";
+			codegenCommand += " -DPLATFORM_WIN_X64";
 			linkCommand += " /MACHINE:X64";
 			libCommand += " /MACHINE:X64";
 			break;
@@ -192,24 +189,28 @@ void ConfigureRules(Solution &solution)
 		case Settings::Configuration::Debug:
 			// Debug
 			compileCommand += " /DCONFIG_DEBUG /Z7";
+			codegenCommand += " -DCONFIG_DEBUG";
 			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Release:
 			// Release
 			compileCommand += " /DCONFIG_RELEASE /Z7 /O2";
+			codegenCommand += " -DCONFIG_RELEASE";
 			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Profile:
 			// Profile
 			compileCommand += " /DCONFIG_PROFILE /O2 /GL";
+			codegenCommand += " -DCONFIG_PROFILE";
 			linkCommand += " /SUBSYSTEM:CONSOLE /LTCG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE /LTCG";
 			break;
 		case Settings::Configuration::Final:
 			// Final
 			compileCommand += " /DCONFIG_FINAL /O2 /GL";
+			codegenCommand += " -DCONFIG_FINAL";
 			linkCommand += " /SUBSYSTEM:WINDOWS /LTCG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:WINDOWS /LTCG";
 			break;
@@ -224,6 +225,7 @@ void ConfigureRules(Solution &solution)
 	}
 
 	compile.setCommand(compileCommand);
+	codegen.setCommand(codegenCommand);
 	link.setCommand(linkCommand);
 	lib.setCommand(libCommand);
 }

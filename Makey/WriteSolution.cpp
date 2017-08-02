@@ -62,6 +62,7 @@ void WriteNinjaFile(const Solution &solution)
 		project.collectDependentModules(modules);
 
 		auto includes = feString();
+		auto codegenIncludes = feString();
 		auto libPaths = feString();
 		auto libs = feString();
 		for (const auto &pair : modules)
@@ -72,6 +73,15 @@ void WriteNinjaFile(const Solution &solution)
 				includes,
 				feStringUtil::joinRangeWrapped(
 					"/I ",
+					"",
+					" ",
+					module.getIncludes().begin(),
+					module.getIncludes().end()));
+
+			codegenIncludes = feStringUtil::append(
+				codegenIncludes,
+				feStringUtil::joinRangeWrapped(
+					"-I",
 					"",
 					" ",
 					module.getIncludes().begin(),
@@ -88,6 +98,7 @@ void WriteNinjaFile(const Solution &solution)
 			}
 		}
 		n.writeVariable("includes", includes);
+		n.writeVariable("codegenIncludes", codegenIncludes);
 		n.writeVariable("libPaths", libPaths);
 		n.writeVariable("libs", libs);
 		n.writeNewline();
