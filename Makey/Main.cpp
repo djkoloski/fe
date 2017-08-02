@@ -8,19 +8,36 @@
 feStatus MakeAllProjects(feInt argc, const feRawString *argv);
 feStatus MakeBootstrap();
 void ConfigureExternal(Solution &solution);
+void ConfigureCGen(Solution &solution);
 void ConfigureFe(Solution &solution);
 void ConfigureMakey(Solution &solution);
-void ConfigureCGen(Solution &solution);
+void ConfigureTest(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
+
+static const auto k_usageString =
+	"usage: Makey [variable=value...]\n"
+	"variables:\n"
+	"  platform\tThe platform to generate ninja build files for\n"
+	"    win_x86\tWindows 32-bit\n"
+	"    win_x64\tWindows 64-bit\n"
+	"  config\tThe configuration to generate ninja build files for\n"
+	"    debug\tIncludes debugging symbols, asserts on, optimizations off\n"
+	"    release\tIncludes debugging symbols, asserts on, some optimizations on\n"
+	"    profile\tNo debugging symbols, asserts on, optimizations on\n"
+	"    final\tNo debugging symbols, asserts off, optimizations on\n"
+	"  compiler\tThe compiler to generate ninja build files for\n"
+	"    msvc\tMicrosoft Visual Studio Compiler";
 
 feInt feMain(feInt argc, const feRawString *argv)
 {
 	if (MakeAllProjects(argc, argv) == kFailure)
 	{
+		FE_PRINT("\n%s\n", k_usageString);
 		return 1;
 	}
 	if (MakeBootstrap() == kFailure)
 	{
+		FE_PRINT("\n%s\n", k_usageString);
 		return 2;
 	}
 	
@@ -44,9 +61,10 @@ feStatus MakeAllProjects(feInt argc, const feRawString *argv)
 
 	ConfigureRules(solution);
 	ConfigureExternal(solution);
+	ConfigureCGen(solution);
 	ConfigureFe(solution);
 	ConfigureMakey(solution);
-	ConfigureCGen(solution);
+	ConfigureTest(solution);
 	ConfigureSolutionFolders(solution);
 
 	WriteNinjaFile(solution);
@@ -70,6 +88,7 @@ feStatus MakeBootstrap()
 
 	ConfigureRules(bootstrap);
 	ConfigureExternal(bootstrap);
+	ConfigureCGen(bootstrap);
 	ConfigureFe(bootstrap);
 	ConfigureMakey(bootstrap);
 
@@ -111,6 +130,21 @@ void ConfigureExternal(Solution &solution)
 				solution.getSettings().getSharedLibraryFileExtension())));
 }
 
+void ConfigureCGen(Solution &solution)
+{
+	auto visualStudioGUID = feGUID(
+		0x2d, 0x71, 0x9d, 0xbb,
+		0x3e, 0xd3, 0x40, 0xd7,
+		0x9a, 0x68, 0xb6, 0x64,
+		0x41, 0xd6, 0xb6, 0x59);
+	auto &project = *solution.addProject("CGen", visualStudioGUID);
+	project.setType(Project::Type::Executable);
+	project.addModule(solution.getModule("libclang"));
+	project.setCodegenEnabled(false);
+
+	AccumulateProject(project, solution);
+}
+
 void ConfigureFe(Solution &solution)
 {
 	auto visualStudioGUID = feGUID(
@@ -125,7 +159,7 @@ void ConfigureFe(Solution &solution)
 	AccumulateProject(project, solution);
 
 	// Module
-	auto &module = *solution.addModule("Fe");
+	auto &module = *solution.addModule("fe");
 
 	module.addLib(
 		Path::join(
@@ -134,7 +168,7 @@ void ConfigureFe(Solution &solution)
 			Path::addExtension(
 				project.getName(),
 				solution.getSettings().getLibraryFileExtension())));
-	module.addDependency(solution.getProject("Fe"));
+	module.addDependency(&project);
 }
 
 void ConfigureMakey(Solution &solution)
@@ -146,22 +180,21 @@ void ConfigureMakey(Solution &solution)
 		0x5C, 0x15, 0x49, 0x58);
 	auto &project = *solution.addProject("Makey", visualStudioGUID);
 	project.setType(Project::Type::Executable);
-	project.addModule(solution.getModule("Fe"));
+	project.addModule(solution.getModule("fe"));
 
 	AccumulateProject(project, solution);
 }
 
-void ConfigureCGen(Solution &solution)
+void ConfigureTest(Solution &solution)
 {
 	auto visualStudioGUID = feGUID(
-		0x2d, 0x71, 0x9d, 0xbb,
-		0x3e, 0xd3, 0x40, 0xd7,
-		0x9a, 0x68, 0xb6, 0x64,
-		0x41, 0xd6, 0xb6, 0x59);
-	auto &project = *solution.addProject("CGen", visualStudioGUID);
+		0x11, 0x1a, 0x98, 0x10,
+		0xe1, 0xb2, 0x42, 0x0c,
+		0x90, 0x87, 0x8c, 0x24,
+		0x3c, 0x83, 0x21, 0x38);
+	auto &project = *solution.addProject("Test", visualStudioGUID);
 	project.setType(Project::Type::Executable);
-	project.addModule(solution.getModule("Fe"));
-	project.addModule(solution.getModule("libclang"));
+	project.addModule(solution.getModule("fe"));
 
 	AccumulateProject(project, solution);
 }

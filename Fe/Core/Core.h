@@ -6,6 +6,7 @@
 #include <Fe/Core/FeEntry.h>
 #include <Fe/Core/FeError.h>
 #include <Fe/Core/FeFeature.h>
+#include <Fe/Core/FeMeta.h>
 #include <Fe/Core/FePlatform.h>
 #include <Fe/Core/FePrint.h>
 #include <Fe/Core/FeType.h>

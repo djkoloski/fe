@@ -6,11 +6,17 @@ void AccumulateProject(Project &project, Solution &solution)
 {
 	auto sourceDir = project.getName();
 
-	// Collect files and add .cpp build rules
+	// Get rules
+	auto *compile = solution.getRule("compile");
+	auto *copy = solution.getRule("copy");
+	auto *codegen = solution.getRule("codegen");
+
+	// Collect files and add .h and .cpp build rules
+	auto allHeaders = feString();
 	auto allObjects = feString();
 	Directory::iterate(
 		sourceDir,
-		[compile = solution.getRule("compile"), &solution = solution, &project = project, &allObjects = allObjects, &sourceDir = sourceDir](const FileInfo &fileInfo)
+		[compile = compile, copy = copy, codegen = codegen, &solution = solution, &project = project, &allHeaders = allHeaders, &allObjects = allObjects, &sourceDir = sourceDir](const FileInfo &fileInfo)
 		{
 			const auto &relPath = Path::removePrefix(fileInfo.getPath(), sourceDir);
 			feString extension = Path::extension(relPath);
@@ -20,6 +26,34 @@ void AccumulateProject(Project &project, Solution &solution)
 				if (extension == ".h")
 				{
 					project.addHeaderFilePath(relPath);
+
+					auto header = Path::join("$sourceDir", relPath);
+					auto genHeader = Path::join("$buildDir", relPath);
+					auto &build = project.addBuildCommand();
+					if (project.getCodegenEnabled())
+					{
+						build.setRule(codegen);
+						build.setImplicitDependencies(solution.getProject("CGen")->getBuildAlias().getInputs());
+					}
+					else
+					{
+						build.setRule(copy);
+					}
+					build.setInputs(header);
+					build.setOutputs(genHeader);
+					allHeaders = feStringUtil::append(allHeaders, genHeader);
+				}
+				else if (extension == ".inl")
+				{
+					project.addOtherFilePath(relPath);
+
+					auto header = Path::join("$sourceDir", relPath);
+					auto genHeader = Path::join("$buildDir", relPath);
+					auto &build = project.addBuildCommand();
+					build.setRule(copy);
+					build.setInputs(header);
+					build.setOutputs(genHeader);
+					allHeaders = feStringUtil::append(allHeaders, genHeader);
 				}
 				else if (extension == ".cpp")
 				{
@@ -31,6 +65,7 @@ void AccumulateProject(Project &project, Solution &solution)
 					build.setRule(compile);
 					build.setInputs(source);
 					build.setOutputs(object);
+					build.setOrderOnlyDependencies(project.getName() + "_codegen");
 					allObjects = feStringUtil::append(allObjects, object);
 				}
 				else if (extension != ".vcxproj" && extension != ".vcxproj.filters" && extension != ".vcxproj.user")
@@ -40,6 +75,11 @@ void AccumulateProject(Project &project, Solution &solution)
 			}
 		},
 		true);
+
+	auto &codegenPhase = project.addBuildCommand();
+	codegenPhase.setRule(null);
+	codegenPhase.setInputs(allHeaders);
+	codegenPhase.setOutputs(project.getName() + "_codegen");
 
 	auto modules = feHashTable<feString, const Module *>();
 	project.collectDependentModules(modules);

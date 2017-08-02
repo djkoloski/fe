@@ -62,6 +62,7 @@ void WriteNinjaFile(const Solution &solution)
 		project.collectDependentModules(modules);
 
 		auto includes = feString();
+		auto codegenIncludes = feString();
 		auto libPaths = feString();
 		auto libs = feString();
 		for (const auto &pair : modules)
@@ -72,6 +73,15 @@ void WriteNinjaFile(const Solution &solution)
 				includes,
 				feStringUtil::joinRangeWrapped(
 					"/I ",
+					"",
+					" ",
+					module.getIncludes().begin(),
+					module.getIncludes().end()));
+
+			codegenIncludes = feStringUtil::append(
+				codegenIncludes,
+				feStringUtil::joinRangeWrapped(
+					"-I",
 					"",
 					" ",
 					module.getIncludes().begin(),
@@ -88,6 +98,7 @@ void WriteNinjaFile(const Solution &solution)
 			}
 		}
 		n.writeVariable("includes", includes);
+		n.writeVariable("codegenIncludes", codegenIncludes);
 		n.writeVariable("libPaths", libPaths);
 		n.writeVariable("libs", libs);
 		n.writeNewline();
@@ -134,17 +145,11 @@ void WriteMSVCSolution(const Solution &solution)
 			<< "}\"\n";
 
 		// Dependencies
-		feBool hasDependencies = false;
+		output << "\tProjectSection(ProjectDependencies) = postProject\n";
 		for (const auto *module : project.getModules())
 		{
 			for (const auto *dependency : module->getDependencies())
 			{
-				if (!hasDependencies)
-				{
-					output << "\tProjectSection(ProjectDependencies) = postProject\n";
-					hasDependencies = true;
-				}
-
 				output
 					<< "\t\t{"
 					<< dependency->getVisualStudioGUID().toString()
@@ -153,10 +158,18 @@ void WriteMSVCSolution(const Solution &solution)
 					<< "}\n";
 			}
 		}
-		if (hasDependencies)
+		// Also depend on CGen if codegen is enabled
+		if (project.getCodegenEnabled())
 		{
-			output << "\tEndProjectSection\n";
+			const auto &cgen = solution.getProject("CGen");
+			output
+				<< "\t\t{"
+				<< cgen->getVisualStudioGUID().toString()
+				<< "} = {"
+				<< cgen->getVisualStudioGUID().toString()
+				<< "}\n";
 		}
+		output << "\tEndProjectSection\n";
 
 		output << "EndProject\n";
 	}
@@ -541,42 +554,46 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " $(ProjectName)</NMakeBuildCommandLine>\n";
 
 			// Rebuild
 			output
 				<< "    <NMakeReBuildCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " -t clean $(ProjectName)\n";
 			output
 				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " $(ProjectName)</NMakeReBuildCommandLine>\n";
 
 			// Clean
 			output
 				<< "    <NMakeCleanCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "External\\ninja\\ninja.exe -C Build -f ..\\"
-				<< project.getName()
-				<< "\\"
-				<< ninjaFileName
+				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< " -C "
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< " -f "
+				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
 
 			// Include paths
-			auto includePaths = feString("$(SolutionDir)");
+			auto includePaths = Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)");
 			auto modules = feHashTable<feString, const Module *>();
 			project.collectDependentModules(modules);
 			for (const auto &pair : modules)
