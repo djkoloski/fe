@@ -14,14 +14,30 @@ void ConfigureMakey(Solution &solution);
 void ConfigureTest(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
 
+static const auto k_usageString =
+	"usage: Makey [variable=value...]\n"
+	"variables:\n"
+	"  platform\tThe platform to generate ninja build files for\n"
+	"    win_x86\tWindows 32-bit\n"
+	"    win_x64\tWindows 64-bit\n"
+	"  config\tThe configuration to generate ninja build files for\n"
+	"    debug\tIncludes debugging symbols, asserts on, optimizations off\n"
+	"    release\tIncludes debugging symbols, asserts on, some optimizations on\n"
+	"    profile\tNo debugging symbols, asserts on, optimizations on\n"
+	"    final\tNo debugging symbols, asserts off, optimizations on\n"
+	"  compiler\tThe compiler to generate ninja build files for\n"
+	"    msvc\tMicrosoft Visual Studio Compiler";
+
 feInt feMain(feInt argc, const feRawString *argv)
 {
 	if (MakeAllProjects(argc, argv) == kFailure)
 	{
+		FE_PRINT("\n%s\n", k_usageString);
 		return 1;
 	}
 	if (MakeBootstrap() == kFailure)
 	{
+		FE_PRINT("\n%s\n", k_usageString);
 		return 2;
 	}
 	
