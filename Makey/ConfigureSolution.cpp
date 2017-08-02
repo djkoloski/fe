@@ -139,8 +139,9 @@ void ConfigureRules(Solution &solution)
 
 	auto &copy = *solution.addRule("copy");
 #if FE_IS_TARGET(WINDOWS)
-	copy.setCommand("cmd /c type $in > $out");
+	copy.setCommand("cmd /c copy $in $out");
 #endif
+	copy.setRestat(true);
 	copy.setDescription("copy $in $out");
 
 	auto &codegen = *solution.addRule("codegen");

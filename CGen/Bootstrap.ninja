@@ -11,8 +11,9 @@ rule link
   command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF
   description = link $out
 rule copy
-  command = cmd /c type $in > $out
+  command = cmd /c copy $in $out
   description = copy $in $out
+  restat = true
 rule lib
   command = lib $in /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE
   description = lib $out
