@@ -134,17 +134,11 @@ void WriteMSVCSolution(const Solution &solution)
 			<< "}\"\n";
 
 		// Dependencies
-		feBool hasDependencies = false;
+		output << "\tProjectSection(ProjectDependencies) = postProject\n";
 		for (const auto *module : project.getModules())
 		{
 			for (const auto *dependency : module->getDependencies())
 			{
-				if (!hasDependencies)
-				{
-					output << "\tProjectSection(ProjectDependencies) = postProject\n";
-					hasDependencies = true;
-				}
-
 				output
 					<< "\t\t{"
 					<< dependency->getVisualStudioGUID().toString()
@@ -153,10 +147,18 @@ void WriteMSVCSolution(const Solution &solution)
 					<< "}\n";
 			}
 		}
-		if (hasDependencies)
+		// Also depend on CGen if codegen is enabled
+		if (project.getCodegenEnabled())
 		{
-			output << "\tEndProjectSection\n";
+			const auto &cgen = solution.getProject("CGen");
+			output
+				<< "\t\t{"
+				<< cgen->getVisualStudioGUID().toString()
+				<< "} = {"
+				<< cgen->getVisualStudioGUID().toString()
+				<< "}\n";
 		}
+		output << "\tEndProjectSection\n";
 
 		output << "EndProject\n";
 	}

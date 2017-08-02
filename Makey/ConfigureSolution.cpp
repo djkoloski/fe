@@ -137,15 +137,15 @@ void ConfigureRules(Solution &solution)
 
 	auto &copy = *solution.addRule("copy");
 #if FE_IS_TARGET(WINDOWS)
-	copy.setCommand("cmd /k copy $in $out");
+	copy.setCommand("cmd /c type $in > $out");
 #endif
 	copy.setDescription("copy $in $out");
 
 	auto &codegen = *solution.addRule("codegen");
 #if FE_IS_TARGET(WINDOWS)
-	codegen.setCommand("cmd /k copy $in $out");
+	codegen.setCommand("cmd /c type $in > $out");
 #endif
-	codegen.setDescription("cgen $in $out");
+	codegen.setDescription("codegen $in $out");
 
 	auto &unitTest = *solution.addRule("unitTest");
 	unitTest.setCommand("$in --run-unit-tests -r xml -o $in.unittests.xml");

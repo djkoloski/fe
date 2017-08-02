@@ -2,14 +2,14 @@
 
 #include <Fe/System/Directory.h>
 
-void AccumulateProject(Project &project, Solution &solution, feBool codegenEnabled)
+void AccumulateProject(Project &project, Solution &solution)
 {
 	auto sourceDir = project.getName();
 
 	// Get rules
 	auto *compile = solution.getRule("compile");
 	auto *copy = solution.getRule("copy");
-	auto *codegen = (codegenEnabled ? solution.getRule("codegen") : copy);
+	auto *codegen = solution.getRule("codegen");
 
 	// Collect files and add .h and .cpp build rules
 	auto allHeaders = feString();
@@ -30,7 +30,15 @@ void AccumulateProject(Project &project, Solution &solution, feBool codegenEnabl
 					auto header = Path::join("$sourceDir", relPath);
 					auto genHeader = Path::join("$buildDir", relPath);
 					auto &build = project.addBuildCommand();
-					build.setRule(codegen);
+					if (project.getCodegenEnabled())
+					{
+						build.setRule(codegen);
+						build.setImplicitDependencies(solution.getProject("CGen")->getBuildAlias().getInputs());
+					}
+					else
+					{
+						build.setRule(copy);
+					}
 					build.setInputs(header);
 					build.setOutputs(genHeader);
 					allHeaders = feStringUtil::append(allHeaders, genHeader);
