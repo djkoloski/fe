@@ -1,4 +1,7 @@
 # Rules
+rule linkWholeArchive
+  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF /WHOLEARCHIVE
+  description = linkWholeArchive $out
 rule codegen
   command = $solutionDir\Bin\Win_x64_Release\CGen\CGen.exe $in $out -I$solutionDir $codegenIncludes -Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field -DPLATFORM_WIN_X64 -DCONFIG_RELEASE
   description = codegen $in $out
