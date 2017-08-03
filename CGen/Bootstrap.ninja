@@ -39,9 +39,12 @@ libPaths = /LIBPATH:$extDir\LLVM\lib
 libs = libclang.lib
 
 # Build
-build $buildDir\Check.h: copy $sourceDir\Check.h
+build $buildDir\CursorUtil.obj: compile $sourceDir\CursorUtil.cpp || CGen_codegen
+build $buildDir\CursorUtil.h: copy $sourceDir\CursorUtil.h
 build $buildDir\Main.obj: compile $sourceDir\Main.cpp || CGen_codegen
-build CGen_codegen: phony $buildDir\Check.h
+build $buildDir\StringUtil.obj: compile $sourceDir\StringUtil.cpp || CGen_codegen
+build $buildDir\StringUtil.h: copy $sourceDir\StringUtil.h
+build CGen_codegen: phony $buildDir\CursorUtil.h $buildDir\StringUtil.h
 build $binDir\CGen\libclang.dll: copy $extDir\LLVM\bin\libclang.dll
-build $binDir\CGen\CGen.exe: link $buildDir\Main.obj | $extDir\LLVM\lib\libclang.lib $binDir\CGen\libclang.dll
+build $binDir\CGen\CGen.exe: link $buildDir\CursorUtil.obj $buildDir\Main.obj $buildDir\StringUtil.obj | $extDir\LLVM\lib\libclang.lib $binDir\CGen\libclang.dll
 build CGen: unitTest $binDir\CGen\CGen.exe

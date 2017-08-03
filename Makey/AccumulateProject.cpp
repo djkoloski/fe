@@ -42,6 +42,19 @@ void AccumulateProject(Project &project, Solution &solution)
 					build.setInputs(header);
 					build.setOutputs(genHeader);
 					allHeaders = feStringUtil::append(allHeaders, genHeader);
+
+					if (project.getCodegenEnabled())
+					{
+						auto source = Path::join("$buildDir", Path::addExtension(Path::removeExtension(relPath) + "-cgen", ".cpp"));
+						build.setImplicitOutputs(source);
+						auto object = Path::addExtension(Path::removeExtension(source), solution.getSettings().getObjectFileExtension());
+						auto &sourceBuild = project.addBuildCommand();
+						sourceBuild.setRule(compile);
+						sourceBuild.setInputs(source);
+						sourceBuild.setOutputs(object);
+						sourceBuild.setImplicitDependencies(genHeader);
+						allObjects = feStringUtil::append(allObjects, object);
+					}
 				}
 				else if (extension == ".inl")
 				{
