@@ -5,17 +5,79 @@
 #include <sstream>
 #include <fstream>
 
-class Output
+class Writer
 {
+private:
+	size_t _offset;
+	std::ifstream _inputHeader;
+	std::stringstream _outputHeader;
+	std::stringstream _outputSource;
 public:
-	std::stringstream header;
-	std::stringstream source;
+	Writer(const std::string &inputHeaderPath, const std::string &outputHeaderPath, const std::string &outputSourcePath);
+
+	std::stringstream &header();
+	const std::stringstream &header() const;
+	std::stringstream &source();
+	const std::stringstream &source() const;
+
+	void advanceToOffset(size_t offset);
+	void advanceToCursorStart(CXCursor cursor, int shift = 0);
+	void advanceToCursorEnd(CXCursor cursor, int shift = 0);
 };
 
-void parseField(CXCursor cursor, CXCursor parent, Output &output, int fieldCount, bool isStatic)
+Writer::Writer(const std::string &inputHeaderPath, const std::string &outputHeaderPath, const std::string &outputSourcePath) :
+	_offset(0),
+	_inputHeader(inputHeaderPath, std::ios::binary)
+{}
+std::stringstream &Writer::header()
+{
+	return _outputHeader;
+}
+const std::stringstream &Writer::header() const
+{
+	return _outputHeader;
+}
+std::stringstream &Writer::source()
+{
+	return _outputSource;
+}
+const std::stringstream &Writer::source() const
+{
+	return _outputSource;
+}
+void Writer::advanceToOffset(size_t offset)
+{
+	if (offset < _offset)
+	{
+		return;
+	}
+
+	std::string buffer;
+	buffer.resize(offset - _offset);
+	_inputHeader.read(&buffer[0], buffer.size());
+	_outputHeader.write(&buffer[0], buffer.size());
+	_offset = offset;
+}
+void Writer::advanceToCursorStart(CXCursor cursor, int shift)
+{
+	auto extent = clang_getCursorExtent(cursor);
+	auto start = clang_getRangeStart(extent);
+	unsigned int offset;
+	clang_getFileLocation(start, nullptr, nullptr, nullptr, &offset);
+	advanceToOffset(offset + shift);
+}
+void Writer::advanceToCursorEnd(CXCursor cursor, int shift)
+{
+	auto extent = clang_getCursorExtent(cursor);
+	auto start = clang_getRangeEnd(extent);
+	unsigned int offset;
+	clang_getFileLocation(start, nullptr, nullptr, nullptr, &offset);
+	advanceToOffset(offset + shift);
+}
+
+void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer &writer)
 {
 	auto parentSpelling = CursorUtil::getSpelling(parent);
-	auto accessSpecifier = clang_getCXXAccessSpecifier(cursor);
 	auto type = clang_getCursorType(cursor);
 	auto spelling = CursorUtil::getSpelling(cursor);
 	auto name = StringUtil::fieldName(spelling);
@@ -23,167 +85,112 @@ void parseField(CXCursor cursor, CXCursor parent, Output &output, int fieldCount
 	auto typeSpelling = CursorUtil::getSpelling(type);
 	auto attribs = CursorUtil::getAttributes(cursor);
 
-	// Type declaration
-	output.header << "public:\n\tusing Field" << fieldCount << "Type = " << typeSpelling << ";\n";
-	// Access specifier
-	output.header << CursorUtil::getAccessSpecifierSpelling(accessSpecifier) << ":\n";
-	// Field declaration
-	output.header
-		<< "\t"
-		<< (isStatic ? "static " : "")
-		<< (clang_CXXField_isMutable(cursor) ? "mutable " : "")
-		<< (clang_CXXMethod_isVirtual(cursor) ? "virtual " : "")
-		<< "Field" << fieldCount << "Type " << spelling;
-	if (clang_CXXMethod_isDefaulted(cursor))
-	{
-		output.header << " = default";
-	}
-	if (clang_CXXMethod_isPureVirtual(cursor))
-	{
-		output.header << " = 0";
-	}
-	output.header << ";\n";
+	writer.header()
+		// Type declaration
+		<< "public:\r\n\tusing Field"
+		<< properName <<
+		"Type = "
+		<< typeSpelling << ";\r\n";
+
+	metaData +=
+		"\t\tfeMetaField(sizeof("
+		+ parentSpelling
+		+ "::"
+		+ spelling
+		+ "), offsetof("
+		+ parentSpelling
+		+ ", "
+		+ spelling
+		+ ")),\r\n";
 
 	bool hasGet = attribs.count("Get");
 	bool hasSet = attribs.count("Set");
 
-	if (hasGet || hasSet)
-	{
-		output.header << "public:\n";
-	}
-
 	if (hasGet)
 	{
 		// Getter
-		output.header << "\tconst Field" << fieldCount << "Type &get" << properName << "() const;\n";
+		writer.header()
+			<< "\tconst Field"
+			<< properName
+			<< "Type &get"
+			<< properName
+			<< "() const;\r\n";
 
-		output.source << "const " << parentSpelling << "::Field" << fieldCount << "Type &" << parentSpelling << "::get" << properName << "() const\n";
-		output.source << "{\n";
-		output.source << "\treturn " << spelling << ";\n";
-		output.source << "}\n";
+		writer.source()
+			<< "const "
+			<< parentSpelling
+			<< "::Field"
+			<< properName
+			<< "Type &"
+			<< parentSpelling
+			<< "::get"
+			<< properName
+			<< "() const\r\n{\r\n\treturn "
+			<< spelling << ";\r\n}\r\n";
 	}
 
 	if (hasSet)
 	{
 		// Setter
-		output.header << "\tvoid set" << properName << "(const Field" << fieldCount << "Type &value);\n";
+		writer.header()
+			<< "\tvoid set"
+			<< properName
+			<< "(const Field"
+			<< properName
+			<< "Type &value);\r\n";
 
-		output.source << "void " << parentSpelling << "::set" << properName << "(const " << parentSpelling << "::Field" << fieldCount << "Type &value)\n";
-		output.source << "{\n";
-		output.source << "\t" << spelling << " = value;\n";
-		output.source << "}\n";
+		writer.source()
+			<< "void "
+			<< parentSpelling
+			<< "::set"
+			<< properName
+			<< "(const "
+			<< parentSpelling
+			<< "::Field"
+			<< properName
+			<< "Type &value)\r\n{\r\n\t"
+			<< spelling << " = value;\r\n}\r\n";
 	}
 }
 
-void parseConstructor(CXCursor cursor, CXCursor parent, Output &output)
+class ParseClassData
 {
-	auto accessSpecifier = clang_getCXXAccessSpecifier(cursor);
-	auto type = clang_getCursorType(cursor);
-	auto spelling = CursorUtil::getSpelling(cursor);
+public:
+	Writer &writer;
+	std::string &metaData;
+	size_t &metaFieldCount;
 
-	output.header << CursorUtil::getAccessSpecifierSpelling(accessSpecifier) << ":\n";
-	output.header << "\t" << spelling << "(";
-	auto argCount = clang_getNumArgTypes(type);
-	for (auto i = 0; i < argCount; ++i)
-	{
-		auto argType = clang_getArgType(type, i);
-		if (i > 0)
-		{
-			output.header << ", ";
-		}
-		output.header << CursorUtil::getSpelling(argType);
-	}
-	output.header << ")";
-	if (clang_CXXMethod_isDefaulted(cursor))
-	{
-		output.header << " = default";
-	}
-	output.header << ";\n";
-}
-
-void parseMethod(CXCursor cursor, CXCursor parent, Output &output, int fieldCount, bool isStatic)
-{
-	parseField(cursor, parent, output, fieldCount, isStatic);
-}
-
-void startClassBody(Output &output)
-{
-	output.header << "\n{\n";
-}
-
-struct ClassParsingData
-{
-	Output &output;
-	bool startedBody;
-	bool startedBases;
-	int fieldCount;
-
-	ClassParsingData(Output &output) :
-		output(output),
-		startedBody(false),
-		startedBases(false),
-		fieldCount(0)
-	{}
+	ParseClassData(Writer &writer, std::string &metaData, size_t &metaFieldCount);
 };
 
-void parseClass(CXCursor cursor, Output &output)
-{
-	output.header << "class " << CursorUtil::getSpelling(cursor);
+ParseClassData::ParseClassData(Writer &writer, std::string &metaData, size_t &metaFieldCount) :
+	writer(writer),
+	metaData(metaData),
+	metaFieldCount(metaFieldCount)
+{}
 
-	auto data = ClassParsingData(output);
+void parseClass(CXCursor cursor, Writer &writer)
+{
+	auto spelling = CursorUtil::getSpelling(cursor);
+
+	writer.advanceToCursorEnd(cursor, -1);
+	writer.header() << "\r\n// CGen generated code\r\n";
+
+	auto metaData = std::string();
+	auto metaFieldCount = size_t(0);
+	auto data = ParseClassData(writer, metaData, metaFieldCount);
 
 	clang_visitChildren(
 		cursor,
 		[](CXCursor cursor, CXCursor parent, CXClientData clientData)
 		{
-			auto &data = *static_cast<ClassParsingData *>(clientData);
-			auto &output = data.output;
-			auto &startedBody = data.startedBody;
-			auto &startedBases = data.startedBases;
-			auto &fieldCount = data.fieldCount;
+			auto &data = *static_cast<ParseClassData *>(clientData);
 
 			switch (clang_getCursorKind(cursor))
 			{
-			case CXCursor_CXXBaseSpecifier:
-				output.header
-					<< (startedBases ? ", " : " : ")
-					<< CursorUtil::getAccessSpecifierSpelling(
-						CursorUtil::getAccessSpecifier(cursor))
-					<< " "
-					<< CursorUtil::getSpelling(cursor).substr(6);
-				startedBases = true;
-				break;
 			case CXCursor_FieldDecl:
-				if (!startedBody)
-				{
-					startClassBody(output);
-					startedBody = true;
-				}
-				parseField(cursor, parent, output, fieldCount++, false);
-				break;
-			case CXCursor_VarDecl:
-				if (!startedBody)
-				{
-					startClassBody(output);
-					startedBody = true;
-				}
-				parseField(cursor, parent, output, fieldCount++, true);
-				break;
-			case CXCursor_CXXMethod:
-				if (!startedBody)
-				{
-					startClassBody(output);
-					startedBody = true;
-				}
-				parseMethod(cursor, parent, output, fieldCount++, clang_Cursor_getStorageClass(cursor) == CX_SC_Static);
-				break;
-			case CXCursor_Constructor:
-				if (!startedBody)
-				{
-					startClassBody(output);
-					startedBody = true;
-				}
-				parseConstructor(cursor, parent, output);
+				++data.metaFieldCount;
+				parseField(cursor, parent, data.metaData, data.writer);
 				break;
 			default:
 				break;
@@ -192,21 +199,38 @@ void parseClass(CXCursor cursor, Output &output)
 		},
 		(void *)&data);
 
-	if (!data.startedBody)
-	{
-		startClassBody(output);
-		data.startedBody = true;
-	}
-	output.header << "};\n\n";
+	writer.header() << "public:\r\n\tstatic const feMetaObject *getClassMeta();\r\n\tvirtual const feMetaObject *getMetaObject() override; \r\n";
+	writer.source()
+		<< "const feMetaObject *"
+		<< spelling
+		<< "::getClassMeta()\r\n{\r\n\tstatic const auto k_"
+		<< spelling
+		<< "MetaFieldCount = "
+		<< metaFieldCount
+		<< ";\r\n\tstatic const feMetaField k_"
+		<< spelling
+		<< "MetaFields[k_"
+		<< spelling
+		<< "MetaFieldCount] = {\r\n"
+		<< metaData
+		<< "\t};\r\n\tstatic const auto k_"
+		<< spelling
+		<< "MetaObject = feMetaObject(k_"
+		<< spelling
+		<< "MetaFieldCount, k_"
+		<< spelling
+		<< "MetaFields);\r\n\treturn &k_"
+		<< spelling
+		<< "MetaObject;\r\n}\r\nconst feMetaObject *TestClass::getMetaObject()\r\n{\r\n\treturn getClassMeta();\r\n}\r\n";
 }
 
-void parseTranslationUnit(CXCursor cursor, Output &output)
+void parseTranslationUnit(CXCursor cursor, Writer &writer)
 {
 	clang_visitChildren(
 		cursor,
 		[](CXCursor cursor, CXCursor parent, CXClientData clientData)
 		{
-			auto &output = *static_cast<Output *>(clientData);
+			auto &writer = *static_cast<Writer *>(clientData);
 
 			// Only process cursors in our source file
 			if (!clang_Location_isFromMainFile(clang_getCursorLocation(cursor)))
@@ -217,17 +241,18 @@ void parseTranslationUnit(CXCursor cursor, Output &output)
 			switch (clang_getCursorKind(cursor))
 			{
 			case CXCursor_InclusionDirective:
-				output.header << "#include <" << CursorUtil::getSpelling(cursor) << ">\n\n";
 				break;
 			case CXCursor_ClassDecl:
-				parseClass(cursor, output);
+				parseClass(cursor, writer);
 				break;
 			default:
 				break;
 			}
 			return CXChildVisit_Continue;
 		},
-		(void *)&output);
+		(void *)&writer);
+
+	writer.advanceToCursorEnd(cursor);
 }
 
 static size_t BaseNameLength(const std::string &path)
@@ -303,10 +328,17 @@ int main(int argc, char **argv)
 		0,
 		nullptr);
 
+	// Report diagnostics
 	auto numDiagnostics = clang_getNumDiagnostics(translationUnit);
 	for (auto i = (unsigned int)0; i < numDiagnostics; ++i)
 	{
 		auto diagnostic = clang_getDiagnostic(translationUnit, i);
+
+		if (clang_Location_isInSystemHeader(clang_getDiagnosticLocation(diagnostic)))
+		{
+			continue;
+		}
+
 		auto string = clang_formatDiagnostic(diagnostic, CXDiagnostic_DisplaySourceLocation);
 
 		std::cerr << clang_getCString(string) << std::endl;
@@ -315,28 +347,32 @@ int main(int argc, char **argv)
 		clang_disposeDiagnostic(diagnostic);
 	}
 
+	auto writer = Writer(inputHeaderPath, outputHeaderPath, outputSourcePath);
+
+	// Parse translation unit
+	writer.header()
+		<< "// Generated by CGen. DO NOT EDIT!\r\n"
+		<< "// Input header file: " << inputHeaderPath << "\r\n\r\n";
+
+	writer.source()
+		<< "// Generated by CGen. DO NOT EDIT!\r\n"
+		<< "// Input header file: " << inputHeaderPath << "\r\n\r\n"
+		<< "#include \"" << BaseName(outputHeaderPath) << "\"\r\n\r\n";
+
 	auto cursor = clang_getTranslationUnitCursor(translationUnit);
-	auto output = Output();
 
-	output.header << "// Generated by CGen. DO NOT EDIT!\n";
-	output.header << "// Input header file: " << inputHeaderPath << "\n\n";
-	output.header << "#pragma once\n\n";
-
-	output.source << "// Generated by CGen. DO NOT EDIT!\n";
-	output.source << "// Input header file: " << inputHeaderPath << "\n\n";
-	output.source << "#include \"" << BaseName(outputHeaderPath) << "\"\n\n";
-
-	parseTranslationUnit(cursor, output);
+	parseTranslationUnit(cursor, writer);
 
 	clang_disposeTranslationUnit(translationUnit);
 	clang_disposeIndex(index);
 
-	auto headerOutput = std::ofstream(outputHeaderPath);
-	headerOutput << output.header.str();
+	// Write output
+	auto headerOutput = std::ofstream(outputHeaderPath, std::ios::binary);
+	headerOutput << writer.header().str();
 	headerOutput.close();
 
-	auto sourceOutput = std::ofstream(outputSourcePath);
-	sourceOutput << output.source.str();
+	auto sourceOutput = std::ofstream(outputSourcePath, std::ios::binary);
+	sourceOutput << writer.source().str();
 	sourceOutput.close();
 
 	return 0;
