@@ -79,6 +79,7 @@ void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer 
 {
 	auto parentSpelling = CursorUtil::getSpelling(parent);
 	auto type = clang_getCursorType(cursor);
+	auto canonicalType = clang_getCanonicalType(type);
 	auto spelling = CursorUtil::getSpelling(cursor);
 	auto name = StringUtil::fieldName(spelling);
 	auto properName = StringUtil::fieldProperName(spelling);
@@ -92,6 +93,54 @@ void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer 
 		"Type = "
 		<< typeSpelling << ";\r\n";
 
+	auto typeName = std::string();
+	std::cout << canonicalType.kind << std::endl;
+	switch (canonicalType.kind)
+	{
+	case CXType_Bool:
+		typeName = "feBool";
+		break;
+	case CXType_Char_U:
+	case CXType_Char_S:
+		typeName = "feChar";
+		break;
+	case CXType_Float:
+		typeName = "feFloat";
+		break;
+	case CXType_Double:
+		typeName = "feDouble";
+		break;
+	case CXType_SChar:
+		typeName = "feByte";
+		break;
+	case CXType_UChar:
+		typeName = "feUByte";
+		break;
+	case CXType_Short:
+		typeName = "feShort";
+		break;
+	case CXType_UShort:
+		typeName = "feUShort";
+		break;
+	case CXType_Int:
+	case CXType_Long:
+		typeName = "feInt";
+		break;
+	case CXType_UInt:
+	case CXType_ULong:
+		typeName = "feUInt";
+		break;
+	case CXType_LongLong:
+		typeName = "feLong";
+		break;
+	case CXType_ULongLong:
+		typeName = "feULong";
+		break;
+	default:
+		typeName = "feObject";
+		break;
+	}
+
 	metaData +=
 		"\t\tfeMetaField(sizeof("
 		+ parentSpelling
@@ -101,7 +150,9 @@ void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer 
 		+ parentSpelling
 		+ ", "
 		+ spelling
-		+ ")),\r\n";
+		+ "), feMetaObject::k_"
+		+ typeName
+		+ "MetaObject),\r\n";
 
 	bool hasGet = attribs.count("Get");
 	bool hasSet = attribs.count("Set");
@@ -215,7 +266,7 @@ void parseClass(CXCursor cursor, Writer &writer)
 		<< metaData
 		<< "\t};\r\n\tstatic const auto k_"
 		<< spelling
-		<< "MetaObject = feMetaObject(k_"
+		<< "MetaObject = feMetaObject(feMetaObject::IntrinsicType::feObject, k_"
 		<< spelling
 		<< "MetaFieldCount, k_"
 		<< spelling

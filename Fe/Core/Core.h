@@ -7,6 +7,7 @@
 #include <Fe/Core/FeError.h>
 #include <Fe/Core/FeFeature.h>
 #include <Fe/Core/FeMeta.h>
+#include <Fe/Core/FeMetaAttribute.h>
 #include <Fe/Core/FeMetaObject.h>
 #include <Fe/Core/FeObject.h>
 #include <Fe/Core/FePlatform.h>

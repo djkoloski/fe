@@ -31,7 +31,7 @@ feString feStringUtil::toLower(feStringView str)
 	auto result = feString();
 	result.resize(str.length());
 
-	for (auto i = 0; i < str.length(); ++i)
+	for (auto i = feUInt(0); i < str.length(); ++i)
 	{
 		result[i] = tolower(str[i]);
 	}
@@ -43,7 +43,7 @@ feString feStringUtil::toUpper(feStringView str)
 	auto result = feString();
 	result.resize(str.length());
 
-	for (auto i = 0; i < str.length(); ++i)
+	for (auto i = feUInt(0); i < str.length(); ++i)
 	{
 		result[i] = toupper(str[i]);
 	}

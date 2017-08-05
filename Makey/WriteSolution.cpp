@@ -670,7 +670,7 @@ void ReplaceFileIfChanged(feStringView path, feStringView newContents)
 	if (!input.fail())
 	{
 		input.seekg(0, std::ios::end);
-		inputStr.reserve(input.tellg());
+		inputStr.reserve(feUInt(input.tellg()));
 		input.seekg(0, std::ios::beg);
 		inputStr.assign((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
 		input.close();
