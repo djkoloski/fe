@@ -130,6 +130,7 @@ void ConfigureExternal(Solution &solution)
 	default:
 		FE_ERROR_SWITCH_VALUE();
 	}
+
 	libclangModule.addLib(
 		Path::join(
 			libclangDir,
