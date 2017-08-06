@@ -94,7 +94,6 @@ void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer 
 		<< typeSpelling << ";\r\n";
 
 	auto typeName = std::string();
-	std::cout << canonicalType.kind << std::endl;
 	switch (canonicalType.kind)
 	{
 	case CXType_Bool:
@@ -137,6 +136,7 @@ void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer 
 		typeName = "feULong";
 		break;
 	default:
+		std::cout << "Found unknown field " << spelling << " of type " << canonicalType.kind << std::endl;
 		typeName = "feObject";
 		break;
 	}
@@ -250,7 +250,7 @@ void parseClass(CXCursor cursor, Writer &writer)
 		},
 		(void *)&data);
 
-	writer.header() << "public:\r\n\tstatic const feMetaObject *getClassMeta();\r\n\tvirtual const feMetaObject *getMetaObject() override; \r\n";
+	writer.header() << "public:\r\n\tstatic const feMetaObject *getClassMeta();\r\n\tvirtual const feMetaObject *getMetaObject() const override; \r\n";
 	writer.source()
 		<< "const feMetaObject *"
 		<< spelling
@@ -272,7 +272,9 @@ void parseClass(CXCursor cursor, Writer &writer)
 		<< spelling
 		<< "MetaFields);\r\n\treturn &k_"
 		<< spelling
-		<< "MetaObject;\r\n}\r\nconst feMetaObject *TestClass::getMetaObject()\r\n{\r\n\treturn getClassMeta();\r\n}\r\n";
+		<< "MetaObject;\r\n}\r\nconst feMetaObject *"
+		<< spelling
+		<< "::getMetaObject() const\r\n{\r\n\treturn getClassMeta();\r\n}\r\n";
 }
 
 void parseTranslationUnit(CXCursor cursor, Writer &writer)
@@ -360,7 +362,6 @@ int main(int argc, char **argv)
 	auto outputHeaderPath = std::string(argv[2]);
 	auto outputSourcePath = outputHeaderPath;
 	outputSourcePath.replace(outputSourcePath.end() - 2, outputSourcePath.end(), "-cgen.cpp");
-	std::cout << outputSourcePath << std::endl;
 
 	// ---------------------------------------------------------------------
 	// TODO: remove after thorough testing

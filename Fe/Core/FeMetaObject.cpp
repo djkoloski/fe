@@ -84,6 +84,18 @@ static const auto k_feULongMetaObject = feMetaObject(
 	feMetaObject::IntrinsicType::feULong,
 	0,
 	nullptr);
+static const auto k_feUniqueMetaObject = feMetaObject(
+	feMetaObject::IntrinsicType::feUnique,
+	0,
+	nullptr);
+static const auto k_feSharedMetaObject = feMetaObject(
+	feMetaObject::IntrinsicType::feShared,
+	0,
+	nullptr);
+static const auto k_feWeakMetaObject = feMetaObject(
+	feMetaObject::IntrinsicType::feWeak,
+	0,
+	nullptr);
 
 const feMetaObject *feMetaObject::k_feBoolMetaObject = &::k_feBoolMetaObject;
 const feMetaObject *feMetaObject::k_feCharMetaObject = &::k_feCharMetaObject;
@@ -97,3 +109,6 @@ const feMetaObject *feMetaObject::k_feIntMetaObject = &::k_feIntMetaObject;
 const feMetaObject *feMetaObject::k_feUIntMetaObject = &::k_feUIntMetaObject;
 const feMetaObject *feMetaObject::k_feLongMetaObject = &::k_feLongMetaObject;
 const feMetaObject *feMetaObject::k_feULongMetaObject = &::k_feULongMetaObject;
+const feMetaObject *feMetaObject::k_feUniqueMetaObject = &::k_feUniqueMetaObject;
+const feMetaObject *feMetaObject::k_feSharedMetaObject = &::k_feSharedMetaObject;
+const feMetaObject *feMetaObject::k_feWeakMetaObject = &::k_feWeakMetaObject;

@@ -39,7 +39,10 @@ public:
 		feUInt,
 		feLong,
 		feULong,
-		feObject
+		feObject,
+		feUnique,
+		feShared,
+		feWeak
 	};
 
 	static const feMetaObject *k_feBoolMetaObject;
@@ -54,6 +57,9 @@ public:
 	static const feMetaObject *k_feUIntMetaObject;
 	static const feMetaObject *k_feLongMetaObject;
 	static const feMetaObject *k_feULongMetaObject;
+	static const feMetaObject *k_feUniqueMetaObject;
+	static const feMetaObject *k_feSharedMetaObject;
+	static const feMetaObject *k_feWeakMetaObject;
 
 private:
 	const IntrinsicType _intrinsicType;

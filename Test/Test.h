@@ -1,9 +1,17 @@
 #pragma once
 
 #include <Fe/Core/Core.h>
+#include <Fe/Container/FePointer.h>
 
 #include <string>
 #include <unordered_set>
+
+class HelperTestClass : public feObject
+{
+private:
+	feInt _a;
+	feInt _b;
+};
 
 class TestClass : public feObject
 {
@@ -28,10 +36,8 @@ private:
 	feInt _int;
 	Meta(Get, Set)
 	feUInt _uint;
-#if FE_IS_ARCH(64BIT)
-	Meta(Get, Set)
-	feLong _long;
-	Meta(Get, Set)
-	feULong _ulong;
-#endif
+/*	feUnique<TestClass> _unique;
+	feShared<TestClass> _shared;
+	feWeak<TestClass> _weak;
+	HelperTestClass _helper;*/
 };
