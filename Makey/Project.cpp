@@ -92,3 +92,11 @@ void Project::collectDependentModules(feHashTable<feString, const Module *> &mod
 		}
 	}
 }
+const feString &Project::getVisualStudioDebuggerDefaultArguments() const
+{
+	return _visualStudioDebuggerDefaultArguments;
+}
+void Project::setVisualStudioDebuggerDefaultArguments(feStringView arguments)
+{
+	_visualStudioDebuggerDefaultArguments = arguments;
+}

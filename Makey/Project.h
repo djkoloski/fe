@@ -27,6 +27,7 @@ private:
 	feVector<feString> _headerFilePaths;
 	feVector<feString> _sourceFilePaths;
 	feVector<feString> _otherFilePaths;
+	feString _visualStudioDebuggerDefaultArguments;
 
 public:
 	Project(feStringView name, const feGUID &visualStudioGUID);
@@ -50,4 +51,6 @@ public:
 	void addOtherFilePath(feStringView otherFilePath);
 	const feVector<feString> &getOtherFilePaths() const;
 	void collectDependentModules(feHashTable<feString, const Module *> &modules) const;
+	const feString &getVisualStudioDebuggerDefaultArguments() const;
+	void setVisualStudioDebuggerDefaultArguments(feStringView arguments);
 };

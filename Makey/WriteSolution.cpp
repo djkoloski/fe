@@ -1,12 +1,16 @@
 #include <Makey/WriteSolution.h>
 
 #include <Fe/System/Directory.h>
+#include <Fe/System/File.h>
 
 #include <Makey/NinjaFile.h>
 
 #include <sstream>
 
+static void WriteMSVCProject(const Project &project, const Solution &solution);
+static void WriteMSVCProjectUserFile(const Solution &solution, const Project &project);
 static void ReplaceFileIfChanged(feStringView path, feStringView newContents);
+static void WriteFileIfNew(feStringView path, feStringView contents);
 static feString NinjaFileName(const Solution &solution);
 static feString NinjaPathToMSVCPath(feStringView path, const Settings &settings);
 
@@ -660,6 +664,57 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 
 	ReplaceFileIfChanged(projectPath, output.str());
 	output.clear();
+
+	WriteMSVCProjectUserFile(solution, project);
+}
+
+void WriteMSVCProjectUserFile(const Solution &solution, const Project &project)
+{
+	auto projectPath = Path::join(project.getName(), Path::addExtension(project.getName(), ".vcxproj.user"));
+	auto output = std::stringstream();
+
+	output
+		<< "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+		<< "<Project ToolsVersion=\"15.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+		<< "  <PropertyGroup>\n"
+		<< "    <ShowAllFiles>true</ShowAllFiles>\n"
+		<< "  </PropertyGroup>\n";
+
+	for (
+		Settings::Configuration configuration = Settings::Configuration::First;
+		configuration <= Settings::Configuration::Last;
+		++configuration)
+	{
+		for (
+			Settings::Platform platform = Settings::Platform::First;
+			platform <= Settings::Platform::Last;
+			++platform)
+		{
+			output
+				<< "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='"
+				<< solution.getSettings().getConfigurationString()
+				<< "|"
+				<< solution.getSettings().getMSVCPlatformString()
+				<< "'\">\n"
+				<< "    <LocalDebuggerCommand>$(SolutionDir)Bin\\Win_$(PlatformTarget)_$(Configuration)\\$(ProjectName)\\$(ProjectName)"
+				<< solution.getSettings().getExecutableFileExtension()
+				<< "</LocalDebuggerCommand>\n";
+			output
+				<< "    <LocalDebuggerCommandArguments>"
+				<< project.getVisualStudioDebuggerDefaultArguments()
+				<< "</LocalDebuggerCommandArguments>\n";
+			output
+				<< "    <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>\n";
+			output
+				<< "    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>\n";
+			output
+				<< "  </PropertyGroup>\n";
+		}
+	}
+
+	output << "</Project>";
+
+	WriteFileIfNew(projectPath, output.str());
 }
 
 void ReplaceFileIfChanged(feStringView path, feStringView newContents)
@@ -680,6 +735,15 @@ void ReplaceFileIfChanged(feStringView path, feStringView newContents)
 	{
 		auto output = std::ofstream(path);
 		output << newContents;
+	}
+}
+
+void WriteFileIfNew(feStringView path, feStringView contents)
+{
+	if (!File::exists(path))
+	{
+		auto output = std::ofstream(path);
+		output << contents;
 	}
 }
 
