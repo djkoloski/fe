@@ -739,6 +739,8 @@ void WriteGitIntegration()
 
 	postmerge
 		<< "#!/bin/sh\n"
+		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
+		<< "git add \"./*Bootstrap.ninja\"\n"
 		<< "git commit -m \"Update ninja bootstraps\"\n";
 
 	auto postMergeOutput = std::ofstream(Path::join(".git", "hooks", "post-merge"));
