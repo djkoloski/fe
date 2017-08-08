@@ -716,9 +716,7 @@ void WriteGitHooks()
 
 	precommit
 		<< "#!/bin/sh\n"
-		<< "./"
-		<< Path::join("Bin", "Win_x64_Release", "Makey", "Makey.exe")
-		<< " --bootstrap\n"
+		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
 		<< "git add \"./*Bootstrap.ninja\"\n";
 
 	auto precommitOutput = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
