@@ -40,39 +40,28 @@ libs = Fe.lib
 
 # Build
 build $buildDir\AccumulateProject.obj: compile $sourceDir\AccumulateProject.cpp || Makey_codegen
-build $buildDir\AccumulateProject.h | $buildDir\AccumulateProject-cgen.cpp: codegen $sourceDir\AccumulateProject.h | $binDir\CGen\CGen.exe
-build $buildDir\AccumulateProject-cgen.obj: compile $buildDir\AccumulateProject-cgen.cpp | $buildDir\AccumulateProject.h
+build $buildDir\AccumulateProject.h: codegen $sourceDir\AccumulateProject.h | $binDir\CGen\CGen.exe
 build $buildDir\BuildCommand.obj: compile $sourceDir\BuildCommand.cpp || Makey_codegen
-build $buildDir\BuildCommand.h | $buildDir\BuildCommand-cgen.cpp: codegen $sourceDir\BuildCommand.h | $binDir\CGen\CGen.exe
-build $buildDir\BuildCommand-cgen.obj: compile $buildDir\BuildCommand-cgen.cpp | $buildDir\BuildCommand.h
+build $buildDir\BuildCommand.h: codegen $sourceDir\BuildCommand.h | $binDir\CGen\CGen.exe
 build $buildDir\ConfigureSolution.obj: compile $sourceDir\ConfigureSolution.cpp || Makey_codegen
-build $buildDir\ConfigureSolution.h | $buildDir\ConfigureSolution-cgen.cpp: codegen $sourceDir\ConfigureSolution.h | $binDir\CGen\CGen.exe
-build $buildDir\ConfigureSolution-cgen.obj: compile $buildDir\ConfigureSolution-cgen.cpp | $buildDir\ConfigureSolution.h
+build $buildDir\ConfigureSolution.h: codegen $sourceDir\ConfigureSolution.h | $binDir\CGen\CGen.exe
 build $buildDir\Main.obj: compile $sourceDir\Main.cpp || Makey_codegen
 build $buildDir\Module.obj: compile $sourceDir\Module.cpp || Makey_codegen
-build $buildDir\Module.h | $buildDir\Module-cgen.cpp: codegen $sourceDir\Module.h | $binDir\CGen\CGen.exe
-build $buildDir\Module-cgen.obj: compile $buildDir\Module-cgen.cpp | $buildDir\Module.h
+build $buildDir\Module.h: codegen $sourceDir\Module.h | $binDir\CGen\CGen.exe
 build $buildDir\NinjaFile.obj: compile $sourceDir\NinjaFile.cpp || Makey_codegen
-build $buildDir\NinjaFile.h | $buildDir\NinjaFile-cgen.cpp: codegen $sourceDir\NinjaFile.h | $binDir\CGen\CGen.exe
-build $buildDir\NinjaFile-cgen.obj: compile $buildDir\NinjaFile-cgen.cpp | $buildDir\NinjaFile.h
+build $buildDir\NinjaFile.h: codegen $sourceDir\NinjaFile.h | $binDir\CGen\CGen.exe
 build $buildDir\Project.obj: compile $sourceDir\Project.cpp || Makey_codegen
-build $buildDir\Project.h | $buildDir\Project-cgen.cpp: codegen $sourceDir\Project.h | $binDir\CGen\CGen.exe
-build $buildDir\Project-cgen.obj: compile $buildDir\Project-cgen.cpp | $buildDir\Project.h
+build $buildDir\Project.h: codegen $sourceDir\Project.h | $binDir\CGen\CGen.exe
 build $buildDir\Rule.obj: compile $sourceDir\Rule.cpp || Makey_codegen
-build $buildDir\Rule.h | $buildDir\Rule-cgen.cpp: codegen $sourceDir\Rule.h | $binDir\CGen\CGen.exe
-build $buildDir\Rule-cgen.obj: compile $buildDir\Rule-cgen.cpp | $buildDir\Rule.h
+build $buildDir\Rule.h: codegen $sourceDir\Rule.h | $binDir\CGen\CGen.exe
 build $buildDir\Settings.obj: compile $sourceDir\Settings.cpp || Makey_codegen
-build $buildDir\Settings.h | $buildDir\Settings-cgen.cpp: codegen $sourceDir\Settings.h | $binDir\CGen\CGen.exe
-build $buildDir\Settings-cgen.obj: compile $buildDir\Settings-cgen.cpp | $buildDir\Settings.h
+build $buildDir\Settings.h: codegen $sourceDir\Settings.h | $binDir\CGen\CGen.exe
 build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp || Makey_codegen
-build $buildDir\Solution.h | $buildDir\Solution-cgen.cpp: codegen $sourceDir\Solution.h | $binDir\CGen\CGen.exe
-build $buildDir\Solution-cgen.obj: compile $buildDir\Solution-cgen.cpp | $buildDir\Solution.h
+build $buildDir\Solution.h: codegen $sourceDir\Solution.h | $binDir\CGen\CGen.exe
 build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp || Makey_codegen
-build $buildDir\SolutionFolder.h | $buildDir\SolutionFolder-cgen.cpp: codegen $sourceDir\SolutionFolder.h | $binDir\CGen\CGen.exe
-build $buildDir\SolutionFolder-cgen.obj: compile $buildDir\SolutionFolder-cgen.cpp | $buildDir\SolutionFolder.h
+build $buildDir\SolutionFolder.h: codegen $sourceDir\SolutionFolder.h | $binDir\CGen\CGen.exe
 build $buildDir\WriteSolution.obj: compile $sourceDir\WriteSolution.cpp || Makey_codegen
-build $buildDir\WriteSolution.h | $buildDir\WriteSolution-cgen.cpp: codegen $sourceDir\WriteSolution.h | $binDir\CGen\CGen.exe
-build $buildDir\WriteSolution-cgen.obj: compile $buildDir\WriteSolution-cgen.cpp | $buildDir\WriteSolution.h
+build $buildDir\WriteSolution.h: codegen $sourceDir\WriteSolution.h | $binDir\CGen\CGen.exe
 build Makey_codegen: phony $buildDir\AccumulateProject.h $buildDir\BuildCommand.h $buildDir\ConfigureSolution.h $buildDir\Module.h $buildDir\NinjaFile.h $buildDir\Project.h $buildDir\Rule.h $buildDir\Settings.h $buildDir\Solution.h $buildDir\SolutionFolder.h $buildDir\WriteSolution.h
-build $binDir\Makey\Makey.exe: link $buildDir\AccumulateProject.obj $buildDir\AccumulateProject-cgen.obj $buildDir\BuildCommand.obj $buildDir\BuildCommand-cgen.obj $buildDir\ConfigureSolution.obj $buildDir\ConfigureSolution-cgen.obj $buildDir\Main.obj $buildDir\Module.obj $buildDir\Module-cgen.obj $buildDir\NinjaFile.obj $buildDir\NinjaFile-cgen.obj $buildDir\Project.obj $buildDir\Project-cgen.obj $buildDir\Rule.obj $buildDir\Rule-cgen.obj $buildDir\Settings.obj $buildDir\Settings-cgen.obj $buildDir\Solution.obj $buildDir\Solution-cgen.obj $buildDir\SolutionFolder.obj $buildDir\SolutionFolder-cgen.obj $buildDir\WriteSolution.obj $buildDir\WriteSolution-cgen.obj | $binDir\Fe\Fe.lib
+build $binDir\Makey\Makey.exe: link $buildDir\AccumulateProject.obj $buildDir\BuildCommand.obj $buildDir\ConfigureSolution.obj $buildDir\Main.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj $buildDir\WriteSolution.obj | $binDir\Fe\Fe.lib
 build Makey: unitTest $binDir\Makey\Makey.exe
