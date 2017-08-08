@@ -734,6 +734,9 @@ void WriteGitIntegration()
 	precommitOutput << bootstrap.str();
 	precommitOutput.close();
 
+	bootstrap
+		<< "git commit -m \"Update ninja bootstraps\"\n";
+
 	auto postMergeOutput = std::ofstream(Path::join(".git", "hooks", "post-merge"));
 	postMergeOutput << bootstrap.str();
 	postMergeOutput.close();
