@@ -13,6 +13,7 @@ void ConfigureFe(Solution &solution);
 void ConfigureMakey(Solution &solution);
 void ConfigureTest(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
+void PerformGitIntegration();
 
 static const auto k_usageString =
 	"usage: Makey [variable=value...]\n"
@@ -39,7 +40,7 @@ feInt feMain(feInt argc, const feRawString *argv)
 		}
 	}
 
-	WriteGitIntegration();
+	PerformGitIntegration();
 
 	if (!bootstrap)
 	{
@@ -241,4 +242,12 @@ void ConfigureSolutionFolders(Solution &solution)
 				}
 			}
 		});
+}
+
+void PerformGitIntegration()
+{
+	system("git config merge.ours.name ours");
+	system("git config merge.ours.driver true");
+
+	WriteGitIntegration();
 }
