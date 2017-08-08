@@ -36,8 +36,9 @@ private:
 	feInt _int;
 	Meta(Get, Set)
 	feUInt _uint;
-/*	feUnique<TestClass> _unique;
+	feUnique<TestClass> _unique;
 	feShared<TestClass> _shared;
 	feWeak<TestClass> _weak;
-	HelperTestClass _helper;*/
+	Meta(Get, Set)
+	HelperTestClass _helper;
 };

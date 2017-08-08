@@ -93,51 +93,86 @@ void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer 
 		"Type = "
 		<< typeSpelling << ";\r\n";
 
-	auto typeName = std::string();
+	auto metaObjectName = std::string();
 	switch (canonicalType.kind)
 	{
 	case CXType_Bool:
-		typeName = "feBool";
+		metaObjectName = "feMetaObject::k_feBoolMetaObject";
 		break;
 	case CXType_Char_U:
 	case CXType_Char_S:
-		typeName = "feChar";
+		metaObjectName = "feMetaObject::k_feCharMetaObject";
 		break;
 	case CXType_Float:
-		typeName = "feFloat";
+		metaObjectName = "feMetaObject::k_feFloatMetaObject";
 		break;
 	case CXType_Double:
-		typeName = "feDouble";
+		metaObjectName = "feMetaObject::k_feDoubleMetaObject";
 		break;
 	case CXType_SChar:
-		typeName = "feByte";
+		metaObjectName = "feMetaObject::k_feByteMetaObject";
 		break;
 	case CXType_UChar:
-		typeName = "feUByte";
+		metaObjectName = "feMetaObject::k_feUByteMetaObject";
 		break;
 	case CXType_Short:
-		typeName = "feShort";
+		metaObjectName = "feMetaObject::k_feShortMetaObject";
 		break;
 	case CXType_UShort:
-		typeName = "feUShort";
+		metaObjectName = "feMetaObject::k_feUShortMetaObject";
 		break;
 	case CXType_Int:
 	case CXType_Long:
-		typeName = "feInt";
+		metaObjectName = "feMetaObject::k_feIntMetaObject";
 		break;
 	case CXType_UInt:
 	case CXType_ULong:
-		typeName = "feUInt";
+		metaObjectName = "feMetaObject::k_feUIntMetaObject";
 		break;
 	case CXType_LongLong:
-		typeName = "feLong";
+		metaObjectName = "feMetaObject::k_feLongMetaObject";
 		break;
 	case CXType_ULongLong:
-		typeName = "feULong";
+		metaObjectName = "feMetaObject::k_feULongMetaObject";
 		break;
+	case CXType_Record:
+	{
+		auto numTemplateArguments = clang_Type_getNumTemplateArguments(type);
+		if (numTemplateArguments == 1)
+		{
+			auto argumentType = clang_Type_getTemplateArgumentAsType(type, 0);
+			auto argumentTypeSpelling = CursorUtil::getSpelling(argumentType);
+
+			if (typeSpelling == "feUnique<" + argumentTypeSpelling + ">")
+			{
+				metaObjectName = "feMetaObject::k_feUniqueMetaObject";
+			}
+			else if (typeSpelling == "feShared<" + argumentTypeSpelling + ">")
+			{
+				metaObjectName = "feMetaObject::k_feSharedMetaObject";
+			}
+			else if (typeSpelling == "feWeak<" + argumentTypeSpelling + ">")
+			{
+				metaObjectName = "feMetaObject::k_feWeakMetaObject";
+			}
+			else
+			{
+				std::cerr
+					<< "Can't serialize type \""
+					<< typeSpelling
+					<< "\""
+					<< std::endl;
+				metaObjectName = "";
+			}
+		}
+		else
+		{
+			metaObjectName = typeSpelling + "::getClassMeta()";
+		}
+		break;
+	}
 	default:
 		std::cout << "Found unknown field " << spelling << " of type " << canonicalType.kind << std::endl;
-		typeName = "feObject";
 		break;
 	}
 
@@ -150,9 +185,9 @@ void parseField(CXCursor cursor, CXCursor parent, std::string &metaData, Writer 
 		+ parentSpelling
 		+ ", "
 		+ spelling
-		+ "), feMetaObject::k_"
-		+ typeName
-		+ "MetaObject),\r\n";
+		+ "), "
+		+ metaObjectName
+		+ "),\r\n";
 
 	bool hasGet = attribs.count("Get");
 	bool hasSet = attribs.count("Set");
