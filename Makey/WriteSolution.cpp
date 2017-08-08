@@ -709,3 +709,18 @@ feString NinjaPathToMSVCPath(feStringView path, const Settings &settings)
 			settings.getIdentifier()));
 	return result;
 }
+
+void WriteGitHooks()
+{
+	auto precommit = std::stringstream();
+
+	precommit
+		<< "#!/bin/sh\n"
+		<< "./"
+		<< Path::join("Bin", "Win_x64_Release", "Makey", "Makey.exe")
+		<< " --bootstrap\n"
+		<< "git add \"./*Bootstrap.ninja\"\n";
+
+	auto precommitOutput = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
+	precommitOutput << precommit.str();
+}
