@@ -722,15 +722,19 @@ void WriteGitIntegration()
 	attributesOutput << attributes.str();
 	attributesOutput.close();
 
-	// Precommit
-	auto precommit = std::stringstream();
+	// Pre-commit and post-merge
+	auto bootstrap = std::stringstream();
 
-	precommit
+	bootstrap
 		<< "#!/bin/sh\n"
 		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
 		<< "git add \"./*Bootstrap.ninja\"\n";
 
 	auto precommitOutput = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
-	precommitOutput << precommit.str();
+	precommitOutput << bootstrap.str();
 	precommitOutput.close();
+
+	auto postMergeOutput = std::ofstream(Path::join(".git", "hooks", "post-merge"));
+	postMergeOutput << bootstrap.str();
+	postMergeOutput.close();
 }
