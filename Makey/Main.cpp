@@ -39,7 +39,7 @@ feInt feMain(feInt argc, const feRawString *argv)
 		}
 	}
 
-	WriteGitHooks();
+	WriteGitIntegration();
 
 	if (!bootstrap)
 	{

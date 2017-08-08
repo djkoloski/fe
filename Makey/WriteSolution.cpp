@@ -710,8 +710,19 @@ feString NinjaPathToMSVCPath(feStringView path, const Settings &settings)
 	return result;
 }
 
-void WriteGitHooks()
+void WriteGitIntegration()
 {
+	// Attributes
+	auto attributes = std::stringstream();
+
+	attributes
+		<< "Bootstrap.ninja\tmerge=ours\n";
+
+	auto attributesOutput = std::ofstream(Path::join(".git", "info", "attributes"));
+	attributesOutput << attributes.str();
+	attributesOutput.close();
+
+	// Precommit
 	auto precommit = std::stringstream();
 
 	precommit
@@ -721,4 +732,5 @@ void WriteGitHooks()
 
 	auto precommitOutput = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
 	precommitOutput << precommit.str();
+	precommitOutput.close();
 }
