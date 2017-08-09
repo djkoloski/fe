@@ -55,7 +55,8 @@ void Rule::setRestat(feBool restat)
 
 #include <Fe/Core/FeUnitTest.h>
 
-TEST_CASE("Testing Catch", "[test]") {
+TEST_CASE("Testing Catch", "[test]")
+{
 	REQUIRE((1 + 1) == 2);
 }
 

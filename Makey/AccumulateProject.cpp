@@ -2,6 +2,26 @@
 
 #include <Fe/System/Directory.h>
 
+static feString GetBinaryPath(const Project &project, const Solution &solution)
+{
+	return Path::join(
+		"$binDir",
+		project.getName(),
+		Path::addExtension(
+			project.getName(),
+			solution.getSettings().getExecutableFileExtension()));
+}
+
+static feString GetLibraryPath(const Project &project, const Solution &solution)
+{
+	return Path::join(
+			"$binDir",
+			project.getName(),
+			Path::addExtension(
+				project.getName(),
+				solution.getSettings().getLibraryFileExtension()));
+}
+
 void AccumulateProject(Project &project, Solution &solution)
 {
 	auto sourceDir = project.getName();
@@ -14,9 +34,12 @@ void AccumulateProject(Project &project, Solution &solution)
 	// Collect files and add .h and .cpp build rules
 	auto allHeaders = feString();
 	auto allObjects = feString();
+
+	auto mainObject = feString();
+
 	Directory::iterate(
 		sourceDir,
-		[compile = compile, copy = copy, codegen = codegen, &solution = solution, &project = project, &allHeaders = allHeaders, &allObjects = allObjects, &sourceDir = sourceDir](const FileInfo &fileInfo)
+		[compile = compile, copy = copy, codegen = codegen, &solution = solution, &project = project, &allHeaders = allHeaders, &allObjects = allObjects, &sourceDir = sourceDir, &mainObject = mainObject](const FileInfo &fileInfo)
 		{
 			const auto &relPath = Path::removePrefix(fileInfo.getPath(), sourceDir);
 			feString extension = Path::extension(relPath);
@@ -66,6 +89,12 @@ void AccumulateProject(Project &project, Solution &solution)
 					build.setInputs(source);
 					build.setOutputs(object);
 					build.setOrderOnlyDependencies(project.getName() + "_codegen");
+
+					if (Path::fileName(relPath) == "Main")
+					{
+						mainObject = object;
+					}
+
 					allObjects = feStringUtil::append(allObjects, object);
 				}
 				else if (extension != ".vcxproj" && extension != ".vcxproj.filters" && extension != ".vcxproj.user")
@@ -118,61 +147,59 @@ void AccumulateProject(Project &project, Solution &solution)
 		}
 	}
 
-	auto binaryPath = feString();
+	auto &targetCommand = project.addBuildCommand();
+	auto targetInputs = feString();
+	auto targetOutputPath = feString();
 	switch (project.getType())
 	{
 	case Project::Type::Executable:
-		binaryPath = Path::join(
-			"$binDir",
-			project.getName(),
-			Path::addExtension(
-				project.getName(),
-				solution.getSettings().getExecutableFileExtension()));
+		targetCommand.setRule(solution.getRule("link"));
+		targetInputs = allObjects;
+		targetOutputPath = GetBinaryPath(project, solution);
 		break;
 	case Project::Type::Library:
-		binaryPath = Path::join(
-			"$binDir",
-			project.getName(),
-			Path::addExtension(
-				project.getName(),
-				solution.getSettings().getLibraryFileExtension()));
+		targetCommand.setRule(solution.getRule("lib"));
+		targetInputs = allObjects.erase(allObjects.find(mainObject), mainObject.length());
+		targetOutputPath = GetLibraryPath(project, solution);
 		break;
 	default:
 		FE_ERROR_SWITCH_VALUE();
 		break;
 	}
 
-	auto &combine = project.addBuildCommand();
+	targetCommand.setInputs(targetInputs);
+	targetCommand.setOutputs(targetOutputPath);
+	targetCommand.setImplicitDependencies(libraryDependencies);
+
+	auto unitTestInputPath = feString();
 	switch (project.getType())
 	{
 	case Project::Type::Executable:
-		combine.setRule(solution.getRule("link"));
+	{
+		unitTestInputPath = targetOutputPath;
 		break;
+	}
 	case Project::Type::Library:
-		combine.setRule(solution.getRule("lib"));
+	{
+		// Unit test our libraries with a canary exectuable
+		auto &canaryCommand = project.addBuildCommand();
+		canaryCommand.setRule(solution.getRule("linkWholeArchive"));
+		canaryCommand.setInputs(feStringUtil::append(targetOutputPath, mainObject));
+
+		auto canaryOutputPath = GetBinaryPath(project, solution);
+		canaryCommand.setOutputs(canaryOutputPath);
+
+		unitTestInputPath = canaryOutputPath;
 		break;
+	}
 	default:
 		FE_ERROR_SWITCH_VALUE();
 		break;
 	}
-	combine.setInputs(allObjects);
-	combine.setOutputs(binaryPath);
-	combine.setImplicitDependencies(libraryDependencies);
 
 	auto &alias = project.getBuildAlias();
-	switch (project.getType())
-	{
-	case Project::Type::Executable:
-		alias.setRule(solution.getRule("unitTest"));
-		break;
-	case Project::Type::Library:
-		// TODO: unit test a canary project
-		alias.setRule(null);
-		break;
-	default:
-		FE_ERROR_SWITCH_VALUE();
-		break;
-	}
-	alias.setInputs(binaryPath);
+	alias.setRule(solution.getRule("unitTest"));
+
+	alias.setInputs(unitTestInputPath);
 	alias.setOutputs(project.getName());
 }

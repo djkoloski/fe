@@ -135,6 +135,10 @@ void ConfigureRules(Solution &solution)
 	link.setDescription("link $out");
 	auto linkCommand = feString();
 
+	auto &linkWholeArchive = *solution.addRule("linkWholeArchive");
+	linkWholeArchive.setDescription("linkWholeArchive $out");
+	auto linkWholeArchiveFlag = feString();
+
 	auto &lib = *solution.addRule("lib");
 	lib.setDescription("lib $out");
 	auto libCommand = feString();
@@ -159,6 +163,9 @@ void ConfigureRules(Solution &solution)
 
 		// Link
 		linkCommand = "link $in $libPaths $libs /OUT:$out /nologo /WX";
+
+		// Link whole archive
+		linkWholeArchiveFlag = "/WHOLEARCHIVE";
 
 		// Lib
 		libCommand = "lib $in /OUT:$out /nologo /WX";
@@ -227,5 +234,6 @@ void ConfigureRules(Solution &solution)
 	compile.setCommand(compileCommand);
 	codegen.setCommand(codegenCommand);
 	link.setCommand(linkCommand);
+	linkWholeArchive.setCommand(linkCommand + " " + linkWholeArchiveFlag);
 	lib.setCommand(libCommand);
 }
