@@ -35,7 +35,7 @@ buildDir = $solutionDir\Build\$buildType\$project
 # Compile settings
 includes = /I $extDir\LLVM\include
 codegenIncludes = -I$extDir\LLVM\include
-libPaths = /LIBPATH:$extDir\LLVM\lib
+libPaths = /LIBPATH:$extDir\LLVM\lib_x64
 libs = libclang.lib
 
 # Build
@@ -45,6 +45,6 @@ build $buildDir\Main.obj: compile $sourceDir\Main.cpp || CGen_codegen
 build $buildDir\StringUtil.obj: compile $sourceDir\StringUtil.cpp || CGen_codegen
 build $buildDir\StringUtil.h: copy $sourceDir\StringUtil.h
 build CGen_codegen: phony $buildDir\CursorUtil.h $buildDir\StringUtil.h
-build $binDir\CGen\libclang.dll: copy $extDir\LLVM\bin\libclang.dll
-build $binDir\CGen\CGen.exe: link $buildDir\CursorUtil.obj $buildDir\Main.obj $buildDir\StringUtil.obj | $extDir\LLVM\lib\libclang.lib $binDir\CGen\libclang.dll
+build $binDir\CGen\libclang.dll: copy $extDir\LLVM\bin_x64\libclang.dll
+build $binDir\CGen\CGen.exe: link $buildDir\CursorUtil.obj $buildDir\Main.obj $buildDir\StringUtil.obj | $extDir\LLVM\lib_x64\libclang.lib $binDir\CGen\libclang.dll
 build CGen: unitTest $binDir\CGen\CGen.exe
