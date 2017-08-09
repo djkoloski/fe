@@ -9,6 +9,9 @@
 static void ReplaceFileIfChanged(feStringView path, feStringView newContents);
 static feString NinjaFileName(const Solution &solution);
 static feString NinjaPathToMSVCPath(feStringView path, const Settings &settings);
+static void WriteGitAttributes();
+static void WriteGitPreCommit();
+static void WriteGitPostMerge();
 
 void WriteNinjaFile(const Solution &solution)
 {
@@ -712,38 +715,45 @@ feString NinjaPathToMSVCPath(feStringView path, const Settings &settings)
 
 void WriteGitIntegration()
 {
-	// Attributes
-	auto attributes = std::stringstream();
+	WriteGitAttributes();
+	WriteGitPreCommit();
+	WriteGitPostMerge();
+}
 
-	attributes
+void WriteGitAttributes()
+{
+	auto content = std::stringstream();
+
+	content
 		<< "Bootstrap.ninja\tmerge=ours\n";
 
-	auto attributesOutput = std::ofstream(Path::join(".git", "info", "attributes"));
-	attributesOutput << attributes.str();
-	attributesOutput.close();
+	auto output = std::ofstream(Path::join(".git", "info", "attributes"));
+	output << content.str();
+}
 
-	// Pre-commit
-	auto precommit = std::stringstream();
+void WriteGitPreCommit()
+{
+	auto content = std::stringstream();
 
-	precommit
+	content
 		<< "#!/bin/sh\n"
 		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
 		<< "git add \"./*Bootstrap.ninja\"\n";
 
-	auto precommitOutput = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
-	precommitOutput << precommit.str();
-	precommitOutput.close();
+	auto output = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
+	output << content.str();
+}
 
-	// Post-merge
-	auto postmerge = std::stringstream();
+void WriteGitPostMerge()
+{
+	auto content = std::stringstream();
 
-	postmerge
+	content
 		<< "#!/bin/sh\n"
 		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
 		<< "git add \"./*Bootstrap.ninja\"\n"
 		<< "git commit -m \"Update ninja bootstraps\"\n";
 
-	auto postMergeOutput = std::ofstream(Path::join(".git", "hooks", "post-merge"));
-	postMergeOutput << postmerge.str();
-	postMergeOutput.close();
+	auto output = std::ofstream(Path::join(".git", "hooks", "post-merge"));
+	output << content.str();
 }

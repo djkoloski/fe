@@ -60,3 +60,7 @@ feString feStringUtil::replace(feStringView source, feStringView pattern, feStri
 	}
 	return result;
 }
+feBool feStringUtil::isEqual(feStringView first, feStringView second)
+{
+	return !strcmp(first.c_str(), second.c_str());
+}

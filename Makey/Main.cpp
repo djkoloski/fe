@@ -34,7 +34,7 @@ feInt feMain(feInt argc, const feRawString *argv)
 	auto bootstrap = false;
 	for (auto i = 0; i < argc; ++i)
 	{
-		if (!strcmp(argv[i], "--bootstrap"))
+		if (feStringUtil::isEqual(argv[i], "--bootstrap"))
 		{
 			bootstrap = true;
 		}
