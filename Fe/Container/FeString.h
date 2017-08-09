@@ -22,6 +22,7 @@ public:
 	static feString toLower(feStringView str);
 	static feString toUpper(feStringView str);
 	static feString replace(feStringView source, feStringView pattern, feStringView replacement);
+	static feBool isEqual(feStringView first, feStringView second);
 
 private:
 	template <typename ...Rest>

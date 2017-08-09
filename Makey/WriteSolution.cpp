@@ -13,6 +13,9 @@ static void ReplaceFileIfChanged(feStringView path, feStringView newContents);
 static void WriteFileIfNew(feStringView path, feStringView contents);
 static feString NinjaFileName(const Solution &solution);
 static feString NinjaPathToMSVCPath(feStringView path, const Settings &settings);
+static void WriteGitAttributes();
+static void WriteGitPreCommit();
+static void WriteGitPostMerge();
 
 void WriteNinjaFile(const Solution &solution)
 {
@@ -772,4 +775,49 @@ feString NinjaPathToMSVCPath(feStringView path, const Settings &settings)
 			"$(SolutionDir)",
 			settings.getIdentifier()));
 	return result;
+}
+
+void WriteGitIntegration()
+{
+	WriteGitAttributes();
+	WriteGitPreCommit();
+	WriteGitPostMerge();
+}
+
+void WriteGitAttributes()
+{
+	auto content = std::stringstream();
+
+	content
+		<< "Bootstrap.ninja\tmerge=ours\n";
+
+	auto output = std::ofstream(Path::join(".git", "info", "attributes"));
+	output << content.str();
+}
+
+void WriteGitPreCommit()
+{
+	auto content = std::stringstream();
+
+	content
+		<< "#!/bin/sh\n"
+		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
+		<< "git add \"./*Bootstrap.ninja\"\n";
+
+	auto output = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
+	output << content.str();
+}
+
+void WriteGitPostMerge()
+{
+	auto content = std::stringstream();
+
+	content
+		<< "#!/bin/sh\n"
+		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
+		<< "git add \"./*Bootstrap.ninja\"\n"
+		<< "git commit -m \"Update ninja bootstraps\"\n";
+
+	auto output = std::ofstream(Path::join(".git", "hooks", "post-merge"));
+	output << content.str();
 }

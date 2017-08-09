@@ -13,6 +13,7 @@ void ConfigureFe(Solution &solution);
 void ConfigureMakey(Solution &solution);
 void ConfigureTest(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
+void PerformGitIntegration();
 
 static const auto k_usageString =
 	"usage: Makey [variable=value...]\n"
@@ -30,10 +31,24 @@ static const auto k_usageString =
 
 feInt feMain(feInt argc, const feRawString *argv)
 {
-	if (MakeAllProjects(argc, argv) == kFailure)
+	auto bootstrap = false;
+	for (auto i = 0; i < argc; ++i)
 	{
-		FE_PRINT("\n%s\n", k_usageString);
-		return 1;
+		if (feStringUtil::isEqual(argv[i], "--bootstrap"))
+		{
+			bootstrap = true;
+		}
+	}
+
+	PerformGitIntegration();
+
+	if (!bootstrap)
+	{
+		if (MakeAllProjects(argc, argv) == kFailure)
+		{
+			FE_PRINT("\n%s\n", k_usageString);
+			return 1;
+		}
 	}
 	if (MakeBootstrap() == kFailure)
 	{
@@ -227,4 +242,12 @@ void ConfigureSolutionFolders(Solution &solution)
 				}
 			}
 		});
+}
+
+void PerformGitIntegration()
+{
+	system("git config merge.ours.name ours");
+	system("git config merge.ours.driver true");
+
+	WriteGitIntegration();
 }
