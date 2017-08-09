@@ -1,4 +1,7 @@
 # Rules
+rule linkWholeArchive
+  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF /WHOLEARCHIVE
+  description = linkWholeArchive $out
 rule codegen
   command = $solutionDir\Bin\Win_x64_Release\CGen\CGen.exe $in $out -I$solutionDir $codegenIncludes -Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field -DPLATFORM_WIN_X64 -DCONFIG_RELEASE
   description = codegen $in $out
@@ -68,11 +71,12 @@ build $buildDir\Core\FeUnitTest.h: codegen $sourceDir\Core\FeUnitTest.h | $binDi
 build $buildDir\Core\FeUtility.obj: compile $sourceDir\Core\FeUtility.cpp || Fe_codegen
 build $buildDir\Core\FeUtility.h: codegen $sourceDir\Core\FeUtility.h | $binDir\CGen\CGen.exe
 build $buildDir\Core\FeWindows.h: codegen $sourceDir\Core\FeWindows.h | $binDir\CGen\CGen.exe
+build $buildDir\Main.obj: compile $sourceDir\Main.cpp || Fe_codegen
 build $buildDir\System\Directory.h: codegen $sourceDir\System\Directory.h | $binDir\CGen\CGen.exe
 build $buildDir\System\Directory_Win.obj: compile $sourceDir\System\Directory_Win.cpp || Fe_codegen
 build $buildDir\System\Directory_Win.h: codegen $sourceDir\System\Directory_Win.h | $binDir\CGen\CGen.exe
 build $buildDir\System\Directory_Win.inl: copy $sourceDir\System\Directory_Win.inl
-build $buildDir\System\File.h: codegen $sourceDir\System\File.h | $binDir\CGen\CGen.exe
+build $buildDir\System\FeStringStream.h: codegen $sourceDir\System\FeStringStream.h | $binDir\CGen\CGen.exe
 build $buildDir\System\FileInfo.obj: compile $sourceDir\System\FileInfo.cpp || Fe_codegen
 build $buildDir\System\FileInfo.h: codegen $sourceDir\System\FileInfo.h | $binDir\CGen\CGen.exe
 build $buildDir\System\File_Win.obj: compile $sourceDir\System\File_Win.cpp || Fe_codegen
@@ -80,6 +84,7 @@ build $buildDir\System\File_Win.h: codegen $sourceDir\System\File_Win.h | $binDi
 build $buildDir\System\Path.obj: compile $sourceDir\System\Path.cpp || Fe_codegen
 build $buildDir\System\Path.h: codegen $sourceDir\System\Path.h | $binDir\CGen\CGen.exe
 build $buildDir\System\Path.inl: copy $sourceDir\System\Path.inl
-build Fe_codegen: phony $buildDir\Algorithm\Hash.h $buildDir\Algorithm\Internal\sha1.h $buildDir\Container\FeGUID.h $buildDir\Container\FeHashTable.h $buildDir\Container\FePointer.h $buildDir\Container\FeString.h $buildDir\Container\FeString.inl $buildDir\Container\FeVector.h $buildDir\Core\Core.h $buildDir\Core\FeCompiler.h $buildDir\Core\FeConfig.h $buildDir\Core\FeDebugBreak.h $buildDir\Core\FeEntry.h $buildDir\Core\FeError.h $buildDir\Core\FeFeature.h $buildDir\Core\FeMeta.h $buildDir\Core\FePlatform.h $buildDir\Core\FePrint.h $buildDir\Core\FeType.h $buildDir\Core\FeUnitTest.h $buildDir\Core\FeUtility.h $buildDir\Core\FeWindows.h $buildDir\System\Directory.h $buildDir\System\Directory_Win.h $buildDir\System\Directory_Win.inl $buildDir\System\File.h $buildDir\System\FileInfo.h $buildDir\System\File_Win.h $buildDir\System\Path.h $buildDir\System\Path.inl
-build $binDir\Fe\Fe.lib: lib $buildDir\Algorithm\Hash.obj $buildDir\Algorithm\Internal\sha1.obj $buildDir\Container\FeGUID.obj $buildDir\Container\FeString.obj $buildDir\Core\FeEntry.obj $buildDir\Core\FePrint.obj $buildDir\Core\FeUtility.obj $buildDir\System\Directory_Win.obj $buildDir\System\FileInfo.obj $buildDir\System\File_Win.obj $buildDir\System\Path.obj
-build Fe: phony $binDir\Fe\Fe.lib
+build Fe_codegen: phony $buildDir\Algorithm\Hash.h $buildDir\Algorithm\Internal\sha1.h $buildDir\Container\FeGUID.h $buildDir\Container\FeHashTable.h $buildDir\Container\FePointer.h $buildDir\Container\FeString.h $buildDir\Container\FeString.inl $buildDir\Container\FeVector.h $buildDir\Core\Core.h $buildDir\Core\FeCompiler.h $buildDir\Core\FeConfig.h $buildDir\Core\FeDebugBreak.h $buildDir\Core\FeEntry.h $buildDir\Core\FeError.h $buildDir\Core\FeFeature.h $buildDir\Core\FeMeta.h $buildDir\Core\FePlatform.h $buildDir\Core\FePrint.h $buildDir\Core\FeType.h $buildDir\Core\FeUnitTest.h $buildDir\Core\FeUtility.h $buildDir\Core\FeWindows.h $buildDir\System\Directory.h $buildDir\System\Directory_Win.h $buildDir\System\Directory_Win.inl $buildDir\System\FeStringStream.h $buildDir\System\FileInfo.h $buildDir\System\Path.h $buildDir\System\Path.inl
+build $binDir\Fe\Fe.lib: lib $buildDir\Algorithm\Hash.obj $buildDir\Algorithm\Internal\sha1.obj $buildDir\Container\FeGUID.obj $buildDir\Container\FeString.obj $buildDir\Core\FeEntry.obj $buildDir\Core\FePrint.obj $buildDir\Core\FeUtility.obj  $buildDir\System\Directory_Win.obj $buildDir\System\FileInfo.obj $buildDir\System\Path.obj
+build $binDir\Fe\Fe.exe: linkWholeArchive $binDir\Fe\Fe.lib $buildDir\Main.obj
+build Fe: unitTest $binDir\Fe\Fe.exe
