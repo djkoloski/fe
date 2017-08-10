@@ -28,17 +28,16 @@ void WriteNinjaFile(const Solution &solution)
 	solutionNinjaFile.writeVariable("solutionDir", solution.getSolutionDir());
 
 	// Projects
-	for (const auto &pair : solution.getProjects())
+	for (const auto &project : solution.getProjects())
 	{
-		const auto &project = *pair.second;
-		auto ninjaPath = Path::join("$solutionDir", project.getName(), ninjaFileName);
+		auto ninjaPath = Path::join("$solutionDir", project->getName(), ninjaFileName);
 
 		solutionNinjaFile.writeNewline();
-		solutionNinjaFile.writeComment(project.getName());
+		solutionNinjaFile.writeComment(project->getName());
 		solutionNinjaFile.writeSubninja(ninjaPath);
 
 		// Project NinjaFile
-		auto n = NinjaFile(Path::join(project.getName(), ninjaFileName));
+		auto n = NinjaFile(Path::join(project->getName(), ninjaFileName));
 
 		// Rules
 		n.writeComment("Rules");
@@ -58,7 +57,7 @@ void WriteNinjaFile(const Solution &solution)
 		// Project Variables
 		n.writeNewline();
 		n.writeComment("Project variables");
-		n.writeVariable("project", project.getName());
+		n.writeVariable("project", project->getName());
 		n.writeVariable("sourceDir", Path::join("$solutionDir", "$project"));
 		n.writeVariable("buildDir", Path::join("$solutionDir", "Build", "$buildType", "$project"));
 
@@ -66,7 +65,7 @@ void WriteNinjaFile(const Solution &solution)
 		n.writeNewline();
 		n.writeComment("Compile settings");
 		auto modules = feHashTable<feString, const Module *>();
-		project.collectDependentModules(modules);
+		project->collectDependentModules(modules);
 
 		auto includes = feString();
 		auto codegenIncludes = feString();
@@ -112,11 +111,11 @@ void WriteNinjaFile(const Solution &solution)
 
 		// Build
 		n.writeComment("Build");
-		for (const auto &command : project.getBuildCommands())
+		for (const auto &command : project->getBuildCommands())
 		{
 			n.writeBuild(command);
 		}
-		n.writeBuild(project.getBuildAlias());
+		n.writeBuild(project->getBuildAlias());
 	}
 }
 
@@ -133,27 +132,24 @@ void WriteMSVCSolution(const Solution &solution)
 	output << "MinimumVisualStudioVersion = 10.0.40219.1\n";
 
 	// Projects
-	for (const auto &pair : solution.getProjects())
+	for (const auto &project : solution.getProjects())
 	{
-		const auto &name = pair.first;
-		const auto &project = *pair.second;
-
 		output
 			<< "Project(\"{"
 			<< solution.getVisualStudioGUID().toString()
 			<< "}\") = \""
-			<< name
+			<< project->getName()
 			<< "\", \""
-			<< name
+			<< project->getName()
 			<< "\\"
-			<< name
+			<< project->getName()
 			<< ".vcxproj\", \"{"
-			<< project.getVisualStudioGUID().toString()
+			<< project->getVisualStudioGUID().toString()
 			<< "}\"\n";
 
 		// Dependencies
 		output << "\tProjectSection(ProjectDependencies) = postProject\n";
-		for (const auto *module : project.getModules())
+		for (const auto *module : project->getModules())
 		{
 			for (const auto *dependency : module->getDependencies())
 			{
@@ -166,7 +162,7 @@ void WriteMSVCSolution(const Solution &solution)
 			}
 		}
 		// Also depend on FeGen if codegen is enabled
-		if (project.getCodegenEnabled())
+		if (project->getCodegenEnabled())
 		{
 			const auto &fegen = solution.getProject("FeGen");
 			output
@@ -247,10 +243,8 @@ void WriteMSVCSolution(const Solution &solution)
 
 	// Project configuration platforms
 	output << "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
-	for (const auto &pair : solution.getProjects())
+	for (const auto &project : solution.getProjects())
 	{
-		const auto &project = *pair.second;
-
 		for (
 			Settings::Configuration configuration = Settings::Configuration::First;
 			configuration <= Settings::Configuration::Last;
@@ -263,7 +257,7 @@ void WriteMSVCSolution(const Solution &solution)
 			{
 				output
 					<< "\t\t{"
-					<< project.getVisualStudioGUID().toString()
+					<< project->getVisualStudioGUID().toString()
 					<< "}."
 					<< Settings::getConfigurationString(configuration)
 					<< "|"
@@ -275,7 +269,7 @@ void WriteMSVCSolution(const Solution &solution)
 					<< "\n";
 				output
 					<< "\t\t{"
-					<< project.getVisualStudioGUID().toString()
+					<< project->getVisualStudioGUID().toString()
 					<< "}."
 					<< Settings::getConfigurationString(configuration)
 					<< "|"
@@ -300,10 +294,9 @@ void WriteMSVCSolution(const Solution &solution)
 	ReplaceFileIfChanged(solutionPath, output.str());
 	output.clear();
 
-	for (const auto &pair : solution.getProjects())
+	for (const auto &project : solution.getProjects())
 	{
-		const auto &project = *pair.second;
-		WriteMSVCProject(project, solution);
+		WriteMSVCProject(*project, solution);
 	}
 }
 

@@ -46,23 +46,25 @@ const Rule *Solution::getRule(feStringView name) const
 	}
 	return i->second.get();
 }
-const feHashTable<feString, feUnique<Project>> &Solution::getProjects() const
+const feVector<feUnique<Project>> &Solution::getProjects() const
 {
 	return _projects;
 }
 Project *Solution::addProject(feStringView name, const feGUID visualStudioGUID)
 {
-	_projects[name] = feMakeUnique<Project>(name, visualStudioGUID);
-	return _projects[name].get();
+	_projects.push_back(feMakeUnique<Project>(name, visualStudioGUID));
+	return _projects.back().get();
 }
 const Project *Solution::getProject(feStringView name) const
 {
-	auto i = _projects.find(name);
-	if (i == _projects.end())
+	for (const auto &project : _projects)
 	{
-		return null;
+		if (project->getName() == name)
+		{
+			return project.get();
+		}
 	}
-	return i->second.get();
+	return null;
 }
 const feHashTable<feString, feUnique<Module>> &Solution::getModules() const
 {

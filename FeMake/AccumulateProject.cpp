@@ -118,6 +118,17 @@ void AccumulateProject(Project &project, Solution &solution)
 		},
 		true);
 
+	auto codegenDependencies = feString();
+	for (auto *module : project.getModules())
+	{
+		for (auto *dependency : module->getDependencies())
+		{
+			codegenDependencies = feStringUtil::append(
+				codegenDependencies,
+				dependency->getName() + "_codegen");
+		}
+	}
+
 	auto &codegenPhase = project.addBuildCommand();
 	codegenPhase.setRule(null);
 	codegenPhase.setInputs(allHeaders);

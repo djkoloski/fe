@@ -18,7 +18,7 @@ private:
 	feString _solutionDir;
 	Settings _settings;
 	feHashTable<feString, feUnique<Rule>> _rules;
-	feHashTable<feString, feUnique<Project>> _projects;
+	feVector<feUnique<Project>> _projects;
 	feHashTable<feString, feUnique<Module>> _modules;
 	feGUID _visualStudioSolutionFoldersGUID;
 	feVector<feUnique<SolutionFolder>> _visualStudioSolutionFolders;
@@ -35,7 +35,7 @@ public:
 	const feHashTable<feString, feUnique<Rule>> &getRules() const;
 	Rule *addRule(feStringView name);
 	const Rule *getRule(feStringView name) const;
-	const feHashTable<feString, feUnique<Project>> &getProjects() const;
+	const feVector<feUnique<Project>> &getProjects() const;
 	Project *addProject(feStringView name, const feGUID visualStudioGUID);
 	const Project *getProject(feStringView name) const;
 	const feHashTable<feString, feUnique<Module>> &getModules() const;
