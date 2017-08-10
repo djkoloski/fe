@@ -129,17 +129,34 @@ void ConfigureExternal(Solution &solution)
 		Path::join(
 			libclangDir,
 			"include"));
+
+	feRawString libDirName;
+	feRawString binDirName;
+	switch (solution.getSettings().getPlatform())
+	{
+	case Settings::Platform::Win_x86:
+		libDirName = "lib_x86";
+		binDirName = "bin_x86";
+		break;
+	case Settings::Platform::Win_x64:
+		libDirName = "lib_x64";
+		binDirName = "bin_x64";
+		break;
+	default:
+		FE_ERROR_SWITCH_VALUE();
+	}
+
 	libclangModule.addLib(
 		Path::join(
 			libclangDir,
-			"lib",
+			libDirName,
 			Path::addExtension(
 				"libclang",
 				solution.getSettings().getLibraryFileExtension())));
 	libclangModule.addSharedLib(
 		Path::join(
 			libclangDir,
-			"bin",
+			binDirName,
 			Path::addExtension(
 				"libclang",
 				solution.getSettings().getSharedLibraryFileExtension())));
