@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Makey/Solution.h>
+#include <FeMake/Solution.h>
 
 void WriteNinjaFile(const Solution &solution);
 void WriteMSVCSolution(const Solution &solution);

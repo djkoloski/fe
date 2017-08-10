@@ -1,4 +1,4 @@
-#include <Makey/SolutionFolder.h>
+#include <FeMake/SolutionFolder.h>
 
 SolutionFolder::SolutionFolder(feStringView name, const feGUID &visualStudioGUID) :
 	_name(name),

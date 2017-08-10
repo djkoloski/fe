@@ -4,8 +4,8 @@
 #include <Fe/Container/FeString.h>
 #include <Fe/Container/FeVector.h>
 #include <Fe/Container/FeHashTable.h>
-#include <Makey/BuildCommand.h>
-#include <Makey/Module.h>
+#include <FeMake/BuildCommand.h>
+#include <FeMake/Module.h>
 
 class Project
 {

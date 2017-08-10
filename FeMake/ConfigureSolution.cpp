@@ -1,4 +1,4 @@
-#include <Makey/ConfigureSolution.h>
+#include <FeMake/ConfigureSolution.h>
 
 #include <Fe/System/Path.h>
 
@@ -124,9 +124,9 @@ void ConfigureRules(Solution &solution)
 			"$solutionDir",
 			"Bin",
 			"Win_x64_Release",
-			"CGen",
+			"FeGen",
 			Path::addExtension(
-				"CGen",
+				"FeGen",
 				solution.getSettings().getExecutableFileExtension()))
 		+ " $in $out -I$solutionDir $codegenIncludes "
 		+ codegenFlags;

@@ -1,9 +1,9 @@
-#include <Makey/WriteSolution.h>
+#include <FeMake/WriteSolution.h>
 
 #include <Fe/System/Directory.h>
 #include <Fe/System/File.h>
 
-#include <Makey/NinjaFile.h>
+#include <FeMake/NinjaFile.h>
 
 #include <sstream>
 
@@ -165,15 +165,15 @@ void WriteMSVCSolution(const Solution &solution)
 					<< "}\n";
 			}
 		}
-		// Also depend on CGen if codegen is enabled
+		// Also depend on FeGen if codegen is enabled
 		if (project.getCodegenEnabled())
 		{
-			const auto &cgen = solution.getProject("CGen");
+			const auto &fegen = solution.getProject("FeGen");
 			output
 				<< "\t\t{"
-				<< cgen->getVisualStudioGUID().toString()
+				<< fegen->getVisualStudioGUID().toString()
 				<< "} = {"
-				<< cgen->getVisualStudioGUID().toString()
+				<< fegen->getVisualStudioGUID().toString()
 				<< "}\n";
 		}
 		output << "\tEndProjectSection\n";
@@ -559,7 +559,7 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< "    <NMakeBuildCommandLine>cd $(SolutionDir)\n";
 			output
-				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
+				<< "Bin\\Win_x64_Release\\FeMake\\FeMake.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
 				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
 				<< " -C "
@@ -579,7 +579,7 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
 				<< " -t clean $(ProjectName)\n";
 			output
-				<< "Bin\\Win_x64_Release\\Makey\\Makey.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
+				<< "Bin\\Win_x64_Release\\FeMake\\FeMake.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
 				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
 				<< " -C "
@@ -801,7 +801,7 @@ void WriteGitPreCommit()
 
 	content
 		<< "#!/bin/sh\n"
-		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
+		<< "./Bin/Win_x64_Release/FeMake/FeMake.exe --bootstrap\n"
 		<< "git add \"./*Bootstrap.ninja\"\n";
 
 	auto output = std::ofstream(Path::join(".git", "hooks", "pre-commit"));
@@ -814,7 +814,7 @@ void WriteGitPostMerge()
 
 	content
 		<< "#!/bin/sh\n"
-		<< "./Bin/Win_x64_Release/Makey/Makey.exe --bootstrap\n"
+		<< "./Bin/Win_x64_Release/FeMake/FeMake.exe --bootstrap\n"
 		<< "git add \"./*Bootstrap.ninja\"\n"
 		<< "git commit -m \"Update ninja bootstraps\"\n";
 

@@ -4,11 +4,11 @@
 #include <Fe/Container/FeString.h> 
 #include <Fe/Container/FeVector.h>
 #include <Fe/Container/FeHashTable.h>
-#include <Makey/Module.h>
-#include <Makey/Project.h>
-#include <Makey/Rule.h>
-#include <Makey/Settings.h>
-#include <Makey/SolutionFolder.h>
+#include <FeMake/Module.h>
+#include <FeMake/Project.h>
+#include <FeMake/Rule.h>
+#include <FeMake/Settings.h>
+#include <FeMake/SolutionFolder.h>
 
 class Solution
 {

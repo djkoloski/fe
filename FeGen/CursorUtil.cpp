@@ -1,6 +1,6 @@
-#include <CGen/CursorUtil.h>
+#include <FeGen/CursorUtil.h>
 
-#include <CGen/StringUtil.h>
+#include <FeGen/StringUtil.h>
 
 std::string CursorUtil::getSpelling(CXCursor cursor)
 {

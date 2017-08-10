@@ -2,7 +2,7 @@
 
 #include <Fe/Core/Core.h>
 #include <Fe/Container/FeString.h>
-#include <Makey/Rule.h>
+#include <FeMake/Rule.h>
 
 class BuildCommand
 {

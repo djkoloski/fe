@@ -1,22 +1,22 @@
 #include <Fe/System/Directory.h>
 
-#include <Makey/Solution.h>
-#include <Makey/AccumulateProject.h>
-#include <Makey/ConfigureSolution.h>
-#include <Makey/WriteSolution.h>
+#include <FeMake/Solution.h>
+#include <FeMake/AccumulateProject.h>
+#include <FeMake/ConfigureSolution.h>
+#include <FeMake/WriteSolution.h>
 
 feStatus MakeAllProjects(feInt argc, const feRawString *argv);
 feStatus MakeBootstrap();
 void ConfigureExternal(Solution &solution);
-void ConfigureCGen(Solution &solution);
+void ConfigureFeGen(Solution &solution);
 void ConfigureFe(Solution &solution);
-void ConfigureMakey(Solution &solution);
+void ConfigureFeMake(Solution &solution);
 void ConfigureTest(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
 void PerformGitIntegration();
 
 static const auto k_usageString =
-	"usage: Makey [variable=value...]\n"
+	"usage: FeMake [variable=value...]\n"
 	"variables:\n"
 	"  platform\tThe platform to generate ninja build files for\n"
 	"    win_x86\tWindows 32-bit\n"
@@ -76,9 +76,9 @@ feStatus MakeAllProjects(feInt argc, const feRawString *argv)
 
 	ConfigureRules(solution);
 	ConfigureExternal(solution);
-	ConfigureCGen(solution);
+	ConfigureFeGen(solution);
 	ConfigureFe(solution);
-	ConfigureMakey(solution);
+	ConfigureFeMake(solution);
 	ConfigureTest(solution);
 	ConfigureSolutionFolders(solution);
 
@@ -103,9 +103,9 @@ feStatus MakeBootstrap()
 
 	ConfigureRules(bootstrap);
 	ConfigureExternal(bootstrap);
-	ConfigureCGen(bootstrap);
+	ConfigureFeGen(bootstrap);
 	ConfigureFe(bootstrap);
-	ConfigureMakey(bootstrap);
+	ConfigureFeMake(bootstrap);
 
 	WriteNinjaFile(bootstrap);
 
@@ -162,14 +162,14 @@ void ConfigureExternal(Solution &solution)
 				solution.getSettings().getSharedLibraryFileExtension())));
 }
 
-void ConfigureCGen(Solution &solution)
+void ConfigureFeGen(Solution &solution)
 {
 	auto visualStudioGUID = feGUID(
 		0x2d, 0x71, 0x9d, 0xbb,
 		0x3e, 0xd3, 0x40, 0xd7,
 		0x9a, 0x68, 0xb6, 0x64,
 		0x41, 0xd6, 0xb6, 0x59);
-	auto &project = *solution.addProject("CGen", visualStudioGUID);
+	auto &project = *solution.addProject("FeGen", visualStudioGUID);
 	project.setType(Project::Type::Executable);
 	project.addModule(solution.getModule("libclang"));
 	project.setCodegenEnabled(false);
@@ -203,14 +203,14 @@ void ConfigureFe(Solution &solution)
 	module.addDependency(&project);
 }
 
-void ConfigureMakey(Solution &solution)
+void ConfigureFeMake(Solution &solution)
 {
 	auto visualStudioGUID = feGUID(
 		0x53, 0x75, 0x11, 0xC5,
 		0x42, 0xF5, 0x46, 0xDB,
 		0xBA, 0xA2, 0x19, 0xC3,
 		0x5C, 0x15, 0x49, 0x58);
-	auto &project = *solution.addProject("Makey", visualStudioGUID);
+	auto &project = *solution.addProject("FeMake", visualStudioGUID);
 	project.setType(Project::Type::Executable);
 	project.addModule(solution.getModule("fe"));
 

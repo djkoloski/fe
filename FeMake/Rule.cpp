@@ -1,4 +1,4 @@
-#include <Makey/Rule.h>
+#include <FeMake/Rule.h>
 
 Rule::Rule(feStringView name) :
 	_name(name),

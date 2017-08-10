@@ -1,4 +1,4 @@
-#include <Makey/Settings.h>
+#include <FeMake/Settings.h>
 
 Settings::Settings() :
 	_compiler(Compiler::Unknown),

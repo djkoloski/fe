@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Fe/Container/FeString.h>
-#include <Makey/BuildCommand.h>
-#include <Makey/Rule.h>
+#include <FeMake/BuildCommand.h>
+#include <FeMake/Rule.h>
 
 #include <ostream>
 #include <fstream>

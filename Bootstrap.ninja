@@ -1,11 +1,11 @@
 # Variables
 solutionDir = ..
 
-# CGen
-subninja $solutionDir\CGen\Bootstrap.ninja
+# FeMake
+subninja $solutionDir\FeMake\Bootstrap.ninja
+
+# FeGen
+subninja $solutionDir\FeGen\Bootstrap.ninja
 
 # Fe
 subninja $solutionDir\Fe\Bootstrap.ninja
-
-# Makey
-subninja $solutionDir\Makey\Bootstrap.ninja

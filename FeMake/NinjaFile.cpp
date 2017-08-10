@@ -1,4 +1,4 @@
-#include <Makey/NinjaFile.h>
+#include <FeMake/NinjaFile.h>
 
 NinjaFile::NinjaFile(feStringView path) :
 	_output(path)

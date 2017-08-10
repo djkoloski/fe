@@ -1,4 +1,4 @@
-#include <Makey/AccumulateProject.h>
+#include <FeMake/AccumulateProject.h>
 
 #include <Fe/System/Directory.h>
 
@@ -56,7 +56,7 @@ void AccumulateProject(Project &project, Solution &solution)
 					if (project.getCodegenEnabled())
 					{
 						build.setRule(codegen);
-						build.setImplicitDependencies(solution.getProject("CGen")->getBuildAlias().getInputs());
+						build.setImplicitDependencies(solution.getProject("FeGen")->getBuildAlias().getInputs());
 					}
 					else
 					{
@@ -68,7 +68,7 @@ void AccumulateProject(Project &project, Solution &solution)
 
 					if (project.getCodegenEnabled())
 					{
-						auto source = Path::join("$buildDir", Path::addExtension(Path::removeExtension(relPath) + "-cgen", ".cpp"));
+						auto source = Path::join("$buildDir", Path::addExtension(Path::removeExtension(relPath) + "-fegen", ".cpp"));
 						build.setImplicitOutputs(source);
 						auto object = Path::addExtension(Path::removeExtension(source), solution.getSettings().getObjectFileExtension());
 						auto &sourceBuild = project.addBuildCommand();

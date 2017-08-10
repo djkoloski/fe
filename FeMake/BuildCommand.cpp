@@ -1,4 +1,4 @@
-#include <Makey/BuildCommand.h>
+#include <FeMake/BuildCommand.h>
 
 const Rule *BuildCommand::getRule() const
 {

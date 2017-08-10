@@ -1,4 +1,4 @@
-#include <Makey/Solution.h>
+#include <FeMake/Solution.h>
 
 Solution::Solution(feStringView name, const feGUID &visualStudioGUID) :
 	_name(name),
