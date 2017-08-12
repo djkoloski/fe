@@ -31,7 +31,7 @@ feString feStringUtil::toLower(feStringView str)
 	auto result = feString();
 	result.resize(str.length());
 
-	for (auto i = 0; i < str.length(); ++i)
+	for (auto i = feUInt(0); i < str.length(); ++i)
 	{
 		result[i] = tolower(str[i]);
 	}
@@ -43,7 +43,7 @@ feString feStringUtil::toUpper(feStringView str)
 	auto result = feString();
 	result.resize(str.length());
 
-	for (auto i = 0; i < str.length(); ++i)
+	for (auto i = feUInt(0); i < str.length(); ++i)
 	{
 		result[i] = toupper(str[i]);
 	}
@@ -59,4 +59,8 @@ feString feStringUtil::replace(feStringView source, feStringView pattern, feStri
 		i += replacement.length();
 	}
 	return result;
+}
+feBool feStringUtil::isEqual(feStringView first, feStringView second)
+{
+	return !strcmp(first.c_str(), second.c_str());
 }
