@@ -42,23 +42,18 @@ libPaths =
 libs = 
 
 # Build
-build $buildDir\Algorithm\Hash.obj: compile $sourceDir\Algorithm\Hash.cpp || Fe_codegen
 build $buildDir\Algorithm\Hash.h | $buildDir\Algorithm\Hash-fegen.cpp: codegen $sourceDir\Algorithm\Hash.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Algorithm\Hash-fegen.obj: compile $buildDir\Algorithm\Hash-fegen.cpp | $buildDir\Algorithm\Hash.h
-build $buildDir\Algorithm\Internal\sha1.obj: compile $sourceDir\Algorithm\Internal\sha1.cpp || Fe_codegen
 build $buildDir\Algorithm\Internal\sha1.h | $buildDir\Algorithm\Internal\sha1-fegen.cpp: codegen $sourceDir\Algorithm\Internal\sha1.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Algorithm\Internal\sha1-fegen.obj: compile $buildDir\Algorithm\Internal\sha1-fegen.cpp | $buildDir\Algorithm\Internal\sha1.h
-build $buildDir\Container\FeGUID.obj: compile $sourceDir\Container\FeGUID.cpp || Fe_codegen
 build $buildDir\Container\FeGUID.h | $buildDir\Container\FeGUID-fegen.cpp: codegen $sourceDir\Container\FeGUID.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Container\FeGUID-fegen.obj: compile $buildDir\Container\FeGUID-fegen.cpp | $buildDir\Container\FeGUID.h
 build $buildDir\Container\FeHashTable.h | $buildDir\Container\FeHashTable-fegen.cpp: codegen $sourceDir\Container\FeHashTable.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Container\FeHashTable-fegen.obj: compile $buildDir\Container\FeHashTable-fegen.cpp | $buildDir\Container\FeHashTable.h
 build $buildDir\Container\FePointer.h | $buildDir\Container\FePointer-fegen.cpp: codegen $sourceDir\Container\FePointer.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Container\FePointer-fegen.obj: compile $buildDir\Container\FePointer-fegen.cpp | $buildDir\Container\FePointer.h
-build $buildDir\Container\FeString.obj: compile $sourceDir\Container\FeString.cpp || Fe_codegen
 build $buildDir\Container\FeString.h | $buildDir\Container\FeString-fegen.cpp: codegen $sourceDir\Container\FeString.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Container\FeString-fegen.obj: compile $buildDir\Container\FeString-fegen.cpp | $buildDir\Container\FeString.h
-build $buildDir\Container\FeString.inl: copy $sourceDir\Container\FeString.inl
 build $buildDir\Container\FeVector.h | $buildDir\Container\FeVector-fegen.cpp: codegen $sourceDir\Container\FeVector.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Container\FeVector-fegen.obj: compile $buildDir\Container\FeVector-fegen.cpp | $buildDir\Container\FeVector.h
 build $buildDir\Core\Core.h | $buildDir\Core\Core-fegen.cpp: codegen $sourceDir\Core\Core.h | $binDir\FeGen\FeGen.exe
@@ -69,7 +64,6 @@ build $buildDir\Core\FeConfig.h | $buildDir\Core\FeConfig-fegen.cpp: codegen $so
 build $buildDir\Core\FeConfig-fegen.obj: compile $buildDir\Core\FeConfig-fegen.cpp | $buildDir\Core\FeConfig.h
 build $buildDir\Core\FeDebugBreak.h | $buildDir\Core\FeDebugBreak-fegen.cpp: codegen $sourceDir\Core\FeDebugBreak.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeDebugBreak-fegen.obj: compile $buildDir\Core\FeDebugBreak-fegen.cpp | $buildDir\Core\FeDebugBreak.h
-build $buildDir\Core\FeEntry.obj: compile $sourceDir\Core\FeEntry.cpp || Fe_codegen
 build $buildDir\Core\FeEntry.h | $buildDir\Core\FeEntry-fegen.cpp: codegen $sourceDir\Core\FeEntry.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeEntry-fegen.obj: compile $buildDir\Core\FeEntry-fegen.cpp | $buildDir\Core\FeEntry.h
 build $buildDir\Core\FeError.h | $buildDir\Core\FeError-fegen.cpp: codegen $sourceDir\Core\FeError.h | $binDir\FeGen\FeGen.exe
@@ -80,51 +74,57 @@ build $buildDir\Core\FeMeta.h | $buildDir\Core\FeMeta-fegen.cpp: codegen $source
 build $buildDir\Core\FeMeta-fegen.obj: compile $buildDir\Core\FeMeta-fegen.cpp | $buildDir\Core\FeMeta.h
 build $buildDir\Core\FeMetaAttribute.h | $buildDir\Core\FeMetaAttribute-fegen.cpp: codegen $sourceDir\Core\FeMetaAttribute.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeMetaAttribute-fegen.obj: compile $buildDir\Core\FeMetaAttribute-fegen.cpp | $buildDir\Core\FeMetaAttribute.h
-build $buildDir\Core\FeMetaObject.obj: compile $sourceDir\Core\FeMetaObject.cpp || Fe_codegen
 build $buildDir\Core\FeMetaObject.h | $buildDir\Core\FeMetaObject-fegen.cpp: codegen $sourceDir\Core\FeMetaObject.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeMetaObject-fegen.obj: compile $buildDir\Core\FeMetaObject-fegen.cpp | $buildDir\Core\FeMetaObject.h
-build $buildDir\Core\FeMetaObject.inl: copy $sourceDir\Core\FeMetaObject.inl
-build $buildDir\Core\FeObject.obj: compile $sourceDir\Core\FeObject.cpp || Fe_codegen
 build $buildDir\Core\FeObject.h | $buildDir\Core\FeObject-fegen.cpp: codegen $sourceDir\Core\FeObject.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeObject-fegen.obj: compile $buildDir\Core\FeObject-fegen.cpp | $buildDir\Core\FeObject.h
 build $buildDir\Core\FePlatform.h | $buildDir\Core\FePlatform-fegen.cpp: codegen $sourceDir\Core\FePlatform.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FePlatform-fegen.obj: compile $buildDir\Core\FePlatform-fegen.cpp | $buildDir\Core\FePlatform.h
-build $buildDir\Core\FePrint.obj: compile $sourceDir\Core\FePrint.cpp || Fe_codegen
 build $buildDir\Core\FePrint.h | $buildDir\Core\FePrint-fegen.cpp: codegen $sourceDir\Core\FePrint.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FePrint-fegen.obj: compile $buildDir\Core\FePrint-fegen.cpp | $buildDir\Core\FePrint.h
 build $buildDir\Core\FeType.h | $buildDir\Core\FeType-fegen.cpp: codegen $sourceDir\Core\FeType.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeType-fegen.obj: compile $buildDir\Core\FeType-fegen.cpp | $buildDir\Core\FeType.h
 build $buildDir\Core\FeUnitTest.h | $buildDir\Core\FeUnitTest-fegen.cpp: codegen $sourceDir\Core\FeUnitTest.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeUnitTest-fegen.obj: compile $buildDir\Core\FeUnitTest-fegen.cpp | $buildDir\Core\FeUnitTest.h
-build $buildDir\Core\FeUtility.obj: compile $sourceDir\Core\FeUtility.cpp || Fe_codegen
 build $buildDir\Core\FeUtility.h | $buildDir\Core\FeUtility-fegen.cpp: codegen $sourceDir\Core\FeUtility.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeUtility-fegen.obj: compile $buildDir\Core\FeUtility-fegen.cpp | $buildDir\Core\FeUtility.h
 build $buildDir\Core\FeWindows.h | $buildDir\Core\FeWindows-fegen.cpp: codegen $sourceDir\Core\FeWindows.h | $binDir\FeGen\FeGen.exe
 build $buildDir\Core\FeWindows-fegen.obj: compile $buildDir\Core\FeWindows-fegen.cpp | $buildDir\Core\FeWindows.h
-build $buildDir\Main.obj: compile $sourceDir\Main.cpp || Fe_codegen
 build $buildDir\System\Directory.h | $buildDir\System\Directory-fegen.cpp: codegen $sourceDir\System\Directory.h | $binDir\FeGen\FeGen.exe
 build $buildDir\System\Directory-fegen.obj: compile $buildDir\System\Directory-fegen.cpp | $buildDir\System\Directory.h
-build $buildDir\System\Directory_Win.obj: compile $sourceDir\System\Directory_Win.cpp || Fe_codegen
 build $buildDir\System\Directory_Win.h | $buildDir\System\Directory_Win-fegen.cpp: codegen $sourceDir\System\Directory_Win.h | $binDir\FeGen\FeGen.exe
 build $buildDir\System\Directory_Win-fegen.obj: compile $buildDir\System\Directory_Win-fegen.cpp | $buildDir\System\Directory_Win.h
-build $buildDir\System\Directory_Win.inl: copy $sourceDir\System\Directory_Win.inl
 build $buildDir\System\FeStringStream.h | $buildDir\System\FeStringStream-fegen.cpp: codegen $sourceDir\System\FeStringStream.h | $binDir\FeGen\FeGen.exe
 build $buildDir\System\FeStringStream-fegen.obj: compile $buildDir\System\FeStringStream-fegen.cpp | $buildDir\System\FeStringStream.h
 build $buildDir\System\File.h | $buildDir\System\File-fegen.cpp: codegen $sourceDir\System\File.h | $binDir\FeGen\FeGen.exe
 build $buildDir\System\File-fegen.obj: compile $buildDir\System\File-fegen.cpp | $buildDir\System\File.h
-build $buildDir\System\FileInfo.obj: compile $sourceDir\System\FileInfo.cpp || Fe_codegen
 build $buildDir\System\FileInfo.h | $buildDir\System\FileInfo-fegen.cpp: codegen $sourceDir\System\FileInfo.h | $binDir\FeGen\FeGen.exe
 build $buildDir\System\FileInfo-fegen.obj: compile $buildDir\System\FileInfo-fegen.cpp | $buildDir\System\FileInfo.h
-build $buildDir\System\File_Win.obj: compile $sourceDir\System\File_Win.cpp || Fe_codegen
 build $buildDir\System\File_Win.h | $buildDir\System\File_Win-fegen.cpp: codegen $sourceDir\System\File_Win.h | $binDir\FeGen\FeGen.exe
 build $buildDir\System\File_Win-fegen.obj: compile $buildDir\System\File_Win-fegen.cpp | $buildDir\System\File_Win.h
-build $buildDir\System\Path.obj: compile $sourceDir\System\Path.cpp || Fe_codegen
 build $buildDir\System\Path.h | $buildDir\System\Path-fegen.cpp: codegen $sourceDir\System\Path.h | $binDir\FeGen\FeGen.exe
 build $buildDir\System\Path-fegen.obj: compile $buildDir\System\Path-fegen.cpp | $buildDir\System\Path.h
+build $buildDir\Container\FeString.inl: copy $sourceDir\Container\FeString.inl
+build $buildDir\Core\FeMetaObject.inl: copy $sourceDir\Core\FeMetaObject.inl
+build $buildDir\System\Directory_Win.inl: copy $sourceDir\System\Directory_Win.inl
 build $buildDir\System\Path.inl: copy $sourceDir\System\Path.inl
-build $buildDir\Testfile.obj: compile $sourceDir\Testfile.cpp || Fe_codegen
-build $buildDir\TestFile2.obj: compile $sourceDir\TestFile2.cpp || Fe_codegen
-build Fe_codegen: phony $buildDir\Algorithm\Hash.h $buildDir\Algorithm\Internal\sha1.h $buildDir\Container\FeGUID.h $buildDir\Container\FeHashTable.h $buildDir\Container\FePointer.h $buildDir\Container\FeString.h $buildDir\Container\FeString.inl $buildDir\Container\FeVector.h $buildDir\Core\Core.h $buildDir\Core\FeCompiler.h $buildDir\Core\FeConfig.h $buildDir\Core\FeDebugBreak.h $buildDir\Core\FeEntry.h $buildDir\Core\FeError.h $buildDir\Core\FeFeature.h $buildDir\Core\FeMeta.h $buildDir\Core\FeMetaAttribute.h $buildDir\Core\FeMetaObject.h $buildDir\Core\FeMetaObject.inl $buildDir\Core\FeObject.h $buildDir\Core\FePlatform.h $buildDir\Core\FePrint.h $buildDir\Core\FeType.h $buildDir\Core\FeUnitTest.h $buildDir\Core\FeUtility.h $buildDir\Core\FeWindows.h $buildDir\System\Directory.h $buildDir\System\Directory_Win.h $buildDir\System\Directory_Win.inl $buildDir\System\FeStringStream.h $buildDir\System\File.h $buildDir\System\FileInfo.h $buildDir\System\File_Win.h $buildDir\System\Path.h $buildDir\System\Path.inl
-build $binDir\Fe\Fe.lib: lib $buildDir\Algorithm\Hash.obj $buildDir\Algorithm\Hash-fegen.obj $buildDir\Algorithm\Internal\sha1.obj $buildDir\Algorithm\Internal\sha1-fegen.obj $buildDir\Container\FeGUID.obj $buildDir\Container\FeGUID-fegen.obj $buildDir\Container\FeHashTable-fegen.obj $buildDir\Container\FePointer-fegen.obj $buildDir\Container\FeString.obj $buildDir\Container\FeString-fegen.obj $buildDir\Container\FeVector-fegen.obj $buildDir\Core\Core-fegen.obj $buildDir\Core\FeCompiler-fegen.obj $buildDir\Core\FeConfig-fegen.obj $buildDir\Core\FeDebugBreak-fegen.obj $buildDir\Core\FeEntry.obj $buildDir\Core\FeEntry-fegen.obj $buildDir\Core\FeError-fegen.obj $buildDir\Core\FeFeature-fegen.obj $buildDir\Core\FeMeta-fegen.obj $buildDir\Core\FeMetaAttribute-fegen.obj $buildDir\Core\FeMetaObject.obj $buildDir\Core\FeMetaObject-fegen.obj $buildDir\Core\FeObject.obj $buildDir\Core\FeObject-fegen.obj $buildDir\Core\FePlatform-fegen.obj $buildDir\Core\FePrint.obj $buildDir\Core\FePrint-fegen.obj $buildDir\Core\FeType-fegen.obj $buildDir\Core\FeUnitTest-fegen.obj $buildDir\Core\FeUtility.obj $buildDir\Core\FeUtility-fegen.obj $buildDir\Core\FeWindows-fegen.obj  $buildDir\System\Directory-fegen.obj $buildDir\System\Directory_Win.obj $buildDir\System\Directory_Win-fegen.obj $buildDir\System\FeStringStream-fegen.obj $buildDir\System\File-fegen.obj $buildDir\System\FileInfo.obj $buildDir\System\FileInfo-fegen.obj $buildDir\System\File_Win.obj $buildDir\System\File_Win-fegen.obj $buildDir\System\Path.obj $buildDir\System\Path-fegen.obj $buildDir\Testfile.obj $buildDir\TestFile2.obj
-build $binDir\Fe\Fe.exe: linkWholeArchive $binDir\Fe\Fe.lib $buildDir\Main.obj
+build $buildDir\Algorithm\Hash.obj: compile $sourceDir\Algorithm\Hash.cpp || Fe_headers
+build $buildDir\Algorithm\Internal\sha1.obj: compile $sourceDir\Algorithm\Internal\sha1.cpp || Fe_headers
+build $buildDir\Container\FeGUID.obj: compile $sourceDir\Container\FeGUID.cpp || Fe_headers
+build $buildDir\Container\FeString.obj: compile $sourceDir\Container\FeString.cpp || Fe_headers
+build $buildDir\Core\FeEntry.obj: compile $sourceDir\Core\FeEntry.cpp || Fe_headers
+build $buildDir\Core\FeMetaObject.obj: compile $sourceDir\Core\FeMetaObject.cpp || Fe_headers
+build $buildDir\Core\FeObject.obj: compile $sourceDir\Core\FeObject.cpp || Fe_headers
+build $buildDir\Core\FePrint.obj: compile $sourceDir\Core\FePrint.cpp || Fe_headers
+build $buildDir\Core\FeUtility.obj: compile $sourceDir\Core\FeUtility.cpp || Fe_headers
+build $buildDir\Main.obj: compile $sourceDir\Main.cpp || Fe_headers
+build $buildDir\System\Directory_Win.obj: compile $sourceDir\System\Directory_Win.cpp || Fe_headers
+build $buildDir\System\FileInfo.obj: compile $sourceDir\System\FileInfo.cpp || Fe_headers
+build $buildDir\System\File_Win.obj: compile $sourceDir\System\File_Win.cpp || Fe_headers
+build $buildDir\System\Path.obj: compile $sourceDir\System\Path.cpp || Fe_headers
+build $buildDir\Testfile.obj: compile $sourceDir\Testfile.cpp || Fe_headers
+build $buildDir\TestFile2.obj: compile $sourceDir\TestFile2.cpp || Fe_headers
+build Fe_headers: phony $buildDir\Algorithm\Hash.h $buildDir\Algorithm\Internal\sha1.h $buildDir\Container\FeGUID.h $buildDir\Container\FeHashTable.h $buildDir\Container\FePointer.h $buildDir\Container\FeString.h $buildDir\Container\FeVector.h $buildDir\Core\Core.h $buildDir\Core\FeCompiler.h $buildDir\Core\FeConfig.h $buildDir\Core\FeDebugBreak.h $buildDir\Core\FeEntry.h $buildDir\Core\FeError.h $buildDir\Core\FeFeature.h $buildDir\Core\FeMeta.h $buildDir\Core\FeMetaAttribute.h $buildDir\Core\FeMetaObject.h $buildDir\Core\FeObject.h $buildDir\Core\FePlatform.h $buildDir\Core\FePrint.h $buildDir\Core\FeType.h $buildDir\Core\FeUnitTest.h $buildDir\Core\FeUtility.h $buildDir\Core\FeWindows.h $buildDir\System\Directory.h $buildDir\System\Directory_Win.h $buildDir\System\FeStringStream.h $buildDir\System\File.h $buildDir\System\FileInfo.h $buildDir\System\File_Win.h $buildDir\System\Path.h $buildDir\Container\FeString.inl $buildDir\Core\FeMetaObject.inl $buildDir\System\Directory_Win.inl $buildDir\System\Path.inl
+build $binDir\Fe\Fe.lib: lib $buildDir\Algorithm\Hash-fegen.obj $buildDir\Algorithm\Internal\sha1-fegen.obj $buildDir\Container\FeGUID-fegen.obj $buildDir\Container\FeHashTable-fegen.obj $buildDir\Container\FePointer-fegen.obj $buildDir\Container\FeString-fegen.obj $buildDir\Container\FeVector-fegen.obj $buildDir\Core\Core-fegen.obj $buildDir\Core\FeCompiler-fegen.obj $buildDir\Core\FeConfig-fegen.obj $buildDir\Core\FeDebugBreak-fegen.obj $buildDir\Core\FeEntry-fegen.obj $buildDir\Core\FeError-fegen.obj $buildDir\Core\FeFeature-fegen.obj $buildDir\Core\FeMeta-fegen.obj $buildDir\Core\FeMetaAttribute-fegen.obj $buildDir\Core\FeMetaObject-fegen.obj $buildDir\Core\FeObject-fegen.obj $buildDir\Core\FePlatform-fegen.obj $buildDir\Core\FePrint-fegen.obj $buildDir\Core\FeType-fegen.obj $buildDir\Core\FeUnitTest-fegen.obj $buildDir\Core\FeUtility-fegen.obj $buildDir\Core\FeWindows-fegen.obj $buildDir\System\Directory-fegen.obj $buildDir\System\Directory_Win-fegen.obj $buildDir\System\FeStringStream-fegen.obj $buildDir\System\File-fegen.obj $buildDir\System\FileInfo-fegen.obj $buildDir\System\File_Win-fegen.obj $buildDir\System\Path-fegen.obj $buildDir\Algorithm\Hash.obj $buildDir\Algorithm\Internal\sha1.obj $buildDir\Container\FeGUID.obj $buildDir\Container\FeString.obj $buildDir\Core\FeEntry.obj $buildDir\Core\FeMetaObject.obj $buildDir\Core\FeObject.obj $buildDir\Core\FePrint.obj $buildDir\Core\FeUtility.obj $buildDir\System\Directory_Win.obj $buildDir\System\FileInfo.obj $buildDir\System\File_Win.obj $buildDir\System\Path.obj $buildDir\Testfile.obj $buildDir\TestFile2.obj
+build $binDir\Fe\Fe.exe: linkWholeArchive $buildDir\Main.obj $binDir\Fe\Fe.lib
 build Fe: unitTest $binDir\Fe\Fe.exe

@@ -42,12 +42,12 @@ libPaths = /LIBPATH:$extDir\LLVM\lib_x64
 libs = libclang.lib
 
 # Build
-build $buildDir\CursorUtil.obj: compile $sourceDir\CursorUtil.cpp || FeGen_codegen
 build $buildDir\CursorUtil.h: copy $sourceDir\CursorUtil.h
-build $buildDir\Main.obj: compile $sourceDir\Main.cpp || FeGen_codegen
-build $buildDir\StringUtil.obj: compile $sourceDir\StringUtil.cpp || FeGen_codegen
 build $buildDir\StringUtil.h: copy $sourceDir\StringUtil.h
-build FeGen_codegen: phony $buildDir\CursorUtil.h $buildDir\StringUtil.h
+build $buildDir\CursorUtil.obj: compile $sourceDir\CursorUtil.cpp || FeGen_headers
+build $buildDir\Main.obj: compile $sourceDir\Main.cpp || FeGen_headers
+build $buildDir\StringUtil.obj: compile $sourceDir\StringUtil.cpp || FeGen_headers
+build FeGen_headers: phony $buildDir\CursorUtil.h $buildDir\StringUtil.h
 build $binDir\FeGen\libclang.dll: copy $extDir\LLVM\bin_x64\libclang.dll
-build $binDir\FeGen\FeGen.exe: link $buildDir\CursorUtil.obj $buildDir\Main.obj $buildDir\StringUtil.obj | $extDir\LLVM\lib_x64\libclang.lib $binDir\FeGen\libclang.dll
+build $binDir\FeGen\FeGen.exe: link $buildDir\CursorUtil.obj $buildDir\StringUtil.obj $buildDir\Main.obj | $extDir\LLVM\lib_x64\libclang.lib $binDir\FeGen\libclang.dll
 build FeGen: unitTest $binDir\FeGen\FeGen.exe
