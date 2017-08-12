@@ -11,6 +11,8 @@ void ConfigureExternal(Solution &solution);
 void ConfigureFeGen(Solution &solution);
 void ConfigureFe(Solution &solution);
 void ConfigureFeMake(Solution &solution);
+void ConfigureFeRender(Solution &solution);
+void ConfigureFeUI(Solution &solution);
 void ConfigureTest(Solution &solution);
 void ConfigureSolutionFolders(Solution &solution);
 void PerformGitIntegration();
@@ -79,6 +81,8 @@ feStatus MakeAllProjects(feInt argc, const feRawString *argv)
 	ConfigureFeGen(solution);
 	ConfigureFe(solution);
 	ConfigureFeMake(solution);
+	ConfigureFeRender(solution);
+	ConfigureFeUI(solution);
 	ConfigureTest(solution);
 	ConfigureSolutionFolders(solution);
 
@@ -130,17 +134,17 @@ void ConfigureExternal(Solution &solution)
 			libclangDir,
 			"include"));
 
-	feRawString libDirName;
-	feRawString binDirName;
+	feRawString libclangLibDirName;
+	feRawString libclangBinDirName;
 	switch (solution.getSettings().getPlatform())
 	{
 	case Settings::Platform::Win_x86:
-		libDirName = "lib_x86";
-		binDirName = "bin_x86";
+		libclangLibDirName = "lib_x86";
+		libclangBinDirName = "bin_x86";
 		break;
 	case Settings::Platform::Win_x64:
-		libDirName = "lib_x64";
-		binDirName = "bin_x64";
+		libclangLibDirName = "lib_x64";
+		libclangBinDirName = "bin_x64";
 		break;
 	default:
 		FE_ERROR_SWITCH_VALUE();
@@ -149,16 +153,55 @@ void ConfigureExternal(Solution &solution)
 	libclangModule.addLib(
 		Path::join(
 			libclangDir,
-			libDirName,
+			libclangLibDirName,
 			Path::addExtension(
 				"libclang",
 				solution.getSettings().getLibraryFileExtension())));
 	libclangModule.addSharedLib(
 		Path::join(
 			libclangDir,
-			binDirName,
+			libclangBinDirName,
 			Path::addExtension(
 				"libclang",
+				solution.getSettings().getSharedLibraryFileExtension())));
+
+	// SDL2
+	auto &sdl2Module = *solution.addModule("sdl2");
+
+	auto sdl2Dir = Path::join("$extDir", "SDL2");
+	sdl2Module.addInclude(
+		Path::join(
+			sdl2Dir,
+			"include"));
+
+	feRawString sdl2LibDirName;
+	switch (solution.getSettings().getPlatform())
+	{
+	case Settings::Platform::Win_x86:
+		sdl2LibDirName = "x86";
+		break;
+	case Settings::Platform::Win_x64:
+		sdl2LibDirName = "x64";
+		break;
+	default:
+		FE_ERROR_SWITCH_VALUE();
+	}
+
+	sdl2Module.addLib(
+		Path::join(
+			sdl2Dir,
+			"lib",
+			sdl2LibDirName,
+			Path::addExtension(
+				"SDL2",
+				solution.getSettings().getLibraryFileExtension())));
+	sdl2Module.addSharedLib(
+		Path::join(
+			sdl2Dir,
+			"lib",
+			sdl2LibDirName,
+			Path::addExtension(
+				"SDL2",
 				solution.getSettings().getSharedLibraryFileExtension())));
 }
 
@@ -217,6 +260,59 @@ void ConfigureFeMake(Solution &solution)
 	AccumulateProject(project, solution);
 }
 
+void ConfigureFeRender(Solution &solution)
+{
+	auto visualStudioGUID = feGUID(
+		0x1a, 0x59, 0x64, 0xa1,
+		0xf7, 0xaf, 0x48, 0x29,
+		0xb3, 0x26, 0x23, 0x00,
+		0x37, 0x73, 0x53, 0xe8);
+	auto &project = *solution.addProject("FeRender", visualStudioGUID);
+	project.setType(Project::Type::Library);
+	project.addModule(solution.getModule("fe"));
+	project.addModule(solution.getModule("sdl2"));
+
+	AccumulateProject(project, solution);
+
+	// Module
+	auto &module = *solution.addModule("feRender");
+
+	module.addLib(
+		Path::join(
+			"$binDir",
+			project.getName(),
+			Path::addExtension(
+				project.getName(),
+				solution.getSettings().getLibraryFileExtension())));
+	module.addDependency(&project);
+}
+
+void ConfigureFeUI(Solution &solution)
+{
+	auto visualStudioGUID = feGUID(
+		0x71, 0x39, 0x0f, 0xfd,
+		0x5c, 0x6f, 0x46, 0xfd,
+		0xaf, 0x2a, 0x0e, 0x95,
+		0x57, 0x19, 0x69, 0x0f);
+	auto &project = *solution.addProject("FeUI", visualStudioGUID);
+	project.setType(Project::Type::Library);
+	project.addModule(solution.getModule("feRender"));
+
+	AccumulateProject(project, solution);
+
+	// Module
+	auto &module = *solution.addModule("feUI");
+
+	module.addLib(
+		Path::join(
+			"$binDir",
+			project.getName(),
+			Path::addExtension(
+				project.getName(),
+				solution.getSettings().getLibraryFileExtension())));
+	module.addDependency(&project);
+}
+
 void ConfigureTest(Solution &solution)
 {
 	auto visualStudioGUID = feGUID(
@@ -226,7 +322,7 @@ void ConfigureTest(Solution &solution)
 		0x3c, 0x83, 0x21, 0x38);
 	auto &project = *solution.addProject("Test", visualStudioGUID);
 	project.setType(Project::Type::Executable);
-	project.addModule(solution.getModule("fe"));
+	project.addModule(solution.getModule("feUI"));
 
 	AccumulateProject(project, solution);
 }
