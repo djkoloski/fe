@@ -1,0 +1,3 @@
+To update gl3w:
+	Run `py gl3w_gen.py`
+	Copy src/gl3w.c into FeRender/gl3w

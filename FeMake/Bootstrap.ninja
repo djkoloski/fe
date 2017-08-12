@@ -1,6 +1,6 @@
 # Rules
 rule linkWholeArchive
-  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF /WHOLEARCHIVE
+  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF /WHOLEARCHIVE:$project.lib
   description = linkWholeArchive $out
 rule codegen
   command = $solutionDir\Bin\Win_x64_Release\FeGen\FeGen.exe $in $out -I$solutionDir $codegenIncludes -Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field -ferror-limit=0 -DPLATFORM_WIN_X64 -DCONFIG_RELEASE
@@ -73,6 +73,6 @@ build $buildDir\Settings.obj: compile $sourceDir\Settings.cpp || FeMake_headers
 build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp || FeMake_headers
 build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp || FeMake_headers
 build $buildDir\WriteSolution.obj: compile $sourceDir\WriteSolution.cpp || FeMake_headers
-build FeMake_headers: phony $buildDir\BuildCommand.h $buildDir\ConfigureSolution.h $buildDir\Module.h $buildDir\NinjaFile.h $buildDir\Project.h $buildDir\Rule.h $buildDir\Settings.h $buildDir\Solution.h $buildDir\SolutionFolder.h $buildDir\WriteSolution.h
+build FeMake_headers: phony $buildDir\BuildCommand.h $buildDir\ConfigureSolution.h $buildDir\Module.h $buildDir\NinjaFile.h $buildDir\Project.h $buildDir\Rule.h $buildDir\Settings.h $buildDir\Solution.h $buildDir\SolutionFolder.h $buildDir\WriteSolution.h || $binDir\Fe\Fe.exe
 build $binDir\FeMake\FeMake.exe: link $buildDir\BuildCommand-fegen.obj $buildDir\ConfigureSolution-fegen.obj $buildDir\Module-fegen.obj $buildDir\NinjaFile-fegen.obj $buildDir\Project-fegen.obj $buildDir\Rule-fegen.obj $buildDir\Settings-fegen.obj $buildDir\Solution-fegen.obj $buildDir\SolutionFolder-fegen.obj $buildDir\WriteSolution-fegen.obj $buildDir\BuildCommand.obj $buildDir\ConfigureSolution.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj $buildDir\WriteSolution.obj $buildDir\Main.obj | $binDir\Fe\Fe.lib
 build FeMake: unitTest $binDir\FeMake\FeMake.exe

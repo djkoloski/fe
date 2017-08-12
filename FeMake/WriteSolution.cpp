@@ -95,9 +95,13 @@ void WriteNinjaFile(const Solution &solution)
 
 			for (const auto &lib : module.getLibs())
 			{
-				libPaths = feStringUtil::append(
-					libPaths,
-					"/LIBPATH:" + Path::dirName(lib));
+				auto dirName = Path::dirName(lib);
+				if (dirName != "")
+				{
+					libPaths = feStringUtil::append(
+						libPaths,
+						"/LIBPATH:" + Path::dirName(lib));
+				}
 				libs = feStringUtil::append(
 					libs,
 					Path::baseName(lib));
@@ -348,6 +352,17 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 	{
 		output
 			<< "    <ClInclude Include=\""
+			<< path
+			<< "\" />\n";
+	}
+	output << "  </ItemGroup>\n";
+
+	// Inline headers
+	output << "  <ItemGroup>\n";
+	for (const auto &path : project.getInlineFilePaths())
+	{
+		output
+			<< "    <None Include=\""
 			<< path
 			<< "\" />\n";
 	}

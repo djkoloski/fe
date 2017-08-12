@@ -117,6 +117,19 @@ feStatus MakeBootstrap()
 
 void ConfigureExternal(Solution &solution)
 {
+	auto platformShortName = "";
+	switch (solution.getSettings().getPlatform())
+	{
+	case Settings::Platform::Win_x86:
+		platformShortName = "x86";
+		break;
+	case Settings::Platform::Win_x64:
+		platformShortName = "x64";
+		break;
+	default:
+		FE_ERROR_SWITCH_VALUE();
+	}
+
 	// catch
 	auto &catchModule = *solution.addModule("catch");
 	catchModule.addInclude(
@@ -127,39 +140,25 @@ void ConfigureExternal(Solution &solution)
 	// libclang
 	auto &libclangModule = *solution.addModule("libclang");
 
-	auto libclangDir = Path::join("$extDir", "LLVM");
+	auto llvmDir = Path::join("$extDir", "LLVM");
 	libclangModule.addInclude(
 		Path::join(
-			libclangDir,
+			llvmDir,
 			"include"));
-
-	feRawString libclangLibDirName;
-	feRawString libclangBinDirName;
-	switch (solution.getSettings().getPlatform())
-	{
-	case Settings::Platform::Win_x86:
-		libclangLibDirName = "lib_x86";
-		libclangBinDirName = "bin_x86";
-		break;
-	case Settings::Platform::Win_x64:
-		libclangLibDirName = "lib_x64";
-		libclangBinDirName = "bin_x64";
-		break;
-	default:
-		FE_ERROR_SWITCH_VALUE();
-	}
 
 	libclangModule.addLib(
 		Path::join(
-			libclangDir,
-			libclangLibDirName,
+			llvmDir,
+			"lib",
+			platformShortName,
 			Path::addExtension(
 				"libclang",
 				solution.getSettings().getLibraryFileExtension())));
 	libclangModule.addSharedLib(
 		Path::join(
-			libclangDir,
-			libclangBinDirName,
+			llvmDir,
+			"bin",
+			platformShortName,
 			Path::addExtension(
 				"libclang",
 				solution.getSettings().getSharedLibraryFileExtension())));
@@ -173,24 +172,11 @@ void ConfigureExternal(Solution &solution)
 			sdl2Dir,
 			"include"));
 
-	feRawString sdl2LibDirName;
-	switch (solution.getSettings().getPlatform())
-	{
-	case Settings::Platform::Win_x86:
-		sdl2LibDirName = "x86";
-		break;
-	case Settings::Platform::Win_x64:
-		sdl2LibDirName = "x64";
-		break;
-	default:
-		FE_ERROR_SWITCH_VALUE();
-	}
-
 	sdl2Module.addLib(
 		Path::join(
 			sdl2Dir,
 			"lib",
-			sdl2LibDirName,
+			platformShortName,
 			Path::addExtension(
 				"SDL2",
 				solution.getSettings().getLibraryFileExtension())));
@@ -198,10 +184,24 @@ void ConfigureExternal(Solution &solution)
 		Path::join(
 			sdl2Dir,
 			"lib",
-			sdl2LibDirName,
+			platformShortName,
 			Path::addExtension(
 				"SDL2",
 				solution.getSettings().getSharedLibraryFileExtension())));
+
+	// opengl
+	auto &openglModule = *solution.addModule("opengl");
+
+	openglModule.addLib("opengl32.lib");
+
+	// gl3w
+	auto &gl3wModule = *solution.addModule("gl3w");
+
+	gl3wModule.addInclude(
+		Path::join(
+			"$extDir",
+			"gl3w",
+			"include"));
 }
 
 void ConfigureFeGen(Solution &solution)
@@ -230,6 +230,7 @@ void ConfigureFe(Solution &solution)
 	auto &project = *solution.addProject("Fe", visualStudioGUID);
 	project.setType(Project::Type::Library);
 	project.addModule(solution.getModule("catch"));
+	project.setVisualStudioDebuggerDefaultArguments("--run-unit-tests");
 
 	project.collectFiles();
 	project.makeBuildRules(solution);
@@ -257,6 +258,7 @@ void ConfigureFeMake(Solution &solution)
 	auto &project = *solution.addProject("FeMake", visualStudioGUID);
 	project.setType(Project::Type::Executable);
 	project.addModule(solution.getModule("fe"));
+	project.setVisualStudioDebuggerDefaultArguments("compiler=MSVC platform=Win_x64 config=Release");
 
 	project.collectFiles();
 	project.makeBuildRules(solution);
@@ -273,6 +275,9 @@ void ConfigureFeRender(Solution &solution)
 	project.setType(Project::Type::Library);
 	project.addModule(solution.getModule("fe"));
 	project.addModule(solution.getModule("sdl2"));
+	project.addModule(solution.getModule("opengl"));
+	project.addModule(solution.getModule("gl3w"));
+	project.setVisualStudioDebuggerDefaultArguments("--run-unit-tests");
 
 	project.collectFiles();
 	project.makeBuildRules(solution);
@@ -300,6 +305,7 @@ void ConfigureFeUI(Solution &solution)
 	auto &project = *solution.addProject("FeUI", visualStudioGUID);
 	project.setType(Project::Type::Library);
 	project.addModule(solution.getModule("feRender"));
+	project.setVisualStudioDebuggerDefaultArguments("--run-unit-tests");
 
 	project.collectFiles();
 	project.makeBuildRules(solution);

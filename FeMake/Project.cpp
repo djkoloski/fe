@@ -131,7 +131,7 @@ void Project::collectFiles()
 				{
 					addInlineFilePath(relPath);
 				}
-				else if (extension == ".cpp")
+				else if (extension == ".c" || extension == ".cpp")
 				{
 					addSourceFilePath(relPath);
 				}
@@ -278,13 +278,14 @@ void Project::makeBuildHeadersBuildRule(feStringView buildHeaders, const Solutio
 		{
 			buildHeadersDependencies = feStringUtil::append(
 				buildHeadersDependencies,
-				dependency->getName() + "_headers");
+				dependency->getBuildAlias().getInputs());
 		}
 	}
 
 	auto &build = addBuildCommand();
 	build.setRule(null);
 	build.setInputs(buildHeaders);
+	build.setOrderOnlyDependencies(buildHeadersDependencies);
 	build.setOutputs(_name + "_headers");
 }
 feString Project::makeLibraryDependencyBuildRules(const Solution &solution)
@@ -298,14 +299,15 @@ feString Project::makeLibraryDependencyBuildRules(const Solution &solution)
 		const auto &module = *pair.second;
 
 		// Static library dependencies
-		libraryDependencies = feStringUtil::append(
-			libraryDependencies,
-			feStringUtil::joinRangeWrapped(
-				"",
-				"",
-				" ",
-				module.getLibs().begin(),
-				module.getLibs().end()));
+		for (const auto &libPath : module.getLibs())
+		{
+			if (Path::dirName(libPath) != "")
+			{
+				libraryDependencies = feStringUtil::append(
+					libraryDependencies,
+					libPath);
+			}
+		}
 
 		// Shared library dependencies
 		for (const auto &sharedLibPath : module.getSharedLibs())

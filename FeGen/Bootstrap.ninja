@@ -1,6 +1,6 @@
 # Rules
 rule linkWholeArchive
-  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF /WHOLEARCHIVE
+  command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF /WHOLEARCHIVE:$project.lib
   description = linkWholeArchive $out
 rule codegen
   command = $solutionDir\Bin\Win_x64_Release\FeGen\FeGen.exe $in $out -I$solutionDir $codegenIncludes -Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field -ferror-limit=0 -DPLATFORM_WIN_X64 -DCONFIG_RELEASE
@@ -38,7 +38,7 @@ buildDir = $solutionDir\Build\$buildType\$project
 # Compile settings
 includes = /I $extDir\LLVM\include
 codegenIncludes = -I$extDir\LLVM\include
-libPaths = /LIBPATH:$extDir\LLVM\lib_x64
+libPaths = /LIBPATH:$extDir\LLVM\lib\x64
 libs = libclang.lib
 
 # Build
@@ -48,6 +48,6 @@ build $buildDir\CursorUtil.obj: compile $sourceDir\CursorUtil.cpp || FeGen_heade
 build $buildDir\Main.obj: compile $sourceDir\Main.cpp || FeGen_headers
 build $buildDir\StringUtil.obj: compile $sourceDir\StringUtil.cpp || FeGen_headers
 build FeGen_headers: phony $buildDir\CursorUtil.h $buildDir\StringUtil.h
-build $binDir\FeGen\libclang.dll: copy $extDir\LLVM\bin_x64\libclang.dll
-build $binDir\FeGen\FeGen.exe: link $buildDir\CursorUtil.obj $buildDir\StringUtil.obj $buildDir\Main.obj | $extDir\LLVM\lib_x64\libclang.lib $binDir\FeGen\libclang.dll
+build $binDir\FeGen\libclang.dll: copy $extDir\LLVM\bin\x64\libclang.dll
+build $binDir\FeGen\FeGen.exe: link $buildDir\CursorUtil.obj $buildDir\StringUtil.obj $buildDir\Main.obj | $extDir\LLVM\lib\x64\libclang.lib $binDir\FeGen\libclang.dll
 build FeGen: unitTest $binDir\FeGen\FeGen.exe

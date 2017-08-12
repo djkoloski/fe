@@ -8,6 +8,10 @@ feString Path::baseName(feStringView path)
 feString Path::dirName(feStringView path)
 {
 	auto i = _baseNameLength(path);
+	if (i == path.length())
+	{
+		return "";
+	}
 	return path.substr(0, path.length() - i - 1);
 }
 feString Path::extension(feStringView path)

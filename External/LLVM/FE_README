@@ -1,0 +1,4 @@
+To update libclang:
+	Replace include
+	Replace the x86 version of lib/x86/libclang.lib and bin/x86/libclang.dll
+	Replace the x64 version of lib/x64/libclang.lib and bin/x64/libclang.dll
