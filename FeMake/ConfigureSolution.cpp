@@ -118,7 +118,7 @@ void ConfigureRules(Solution &solution)
 	auto &codegen = *solution.addRule("codegen");
 	codegen.setRestat(true);
 	codegen.setDescription("codegen $in $out");
-	auto codegenFlags = "-Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field";
+	auto codegenFlags = "-Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field -ferror-limit=0";
 	auto codegenCommand =
 		Path::join(
 			"$solutionDir",

@@ -7,6 +7,8 @@
 #include <FeMake/BuildCommand.h>
 #include <FeMake/Module.h>
 
+class Solution;
+
 class Project
 {
 public:
@@ -23,10 +25,11 @@ private:
 	feVector<BuildCommand> _buildCommands;
 	BuildCommand _buildAlias;
 	feVector<const Module *> _modules;
-	feBool _codegenEnabled;
 	feVector<feString> _headerFilePaths;
+	feVector<feString> _inlineFilePaths;
 	feVector<feString> _sourceFilePaths;
 	feVector<feString> _otherFilePaths;
+	feBool _codegenEnabled;
 	feString _visualStudioDebuggerDefaultArguments;
 
 public:
@@ -40,17 +43,31 @@ public:
 	BuildCommand &addBuildCommand();
 	BuildCommand &getBuildAlias();
 	const BuildCommand &getBuildAlias() const;
-	const feVector<const Module *> &getModules() const;
 	void addModule(const Module *module);
-	feBool getCodegenEnabled() const;
-	void setCodegenEnabled(feBool codegenEnabled);
+	const feVector<const Module *> &getModules() const;
 	void addHeaderFilePath(feStringView headerFilePath);
 	const feVector<feString> &getHeaderFilePaths() const;
+	void addInlineFilePath(feStringView otherFilePath);
+	const feVector<feString> &getInlineFilePaths() const;
 	void addSourceFilePath(feStringView sourceFilePath);
 	const feVector<feString> &getSourceFilePaths() const;
 	void addOtherFilePath(feStringView otherFilePath);
 	const feVector<feString> &getOtherFilePaths() const;
+	void setCodegenEnabled(feBool codegenEnabled);
+	feBool getCodegenEnabled() const;
 	void collectDependentModules(feHashTable<feString, const Module *> &modules) const;
 	const feString &getVisualStudioDebuggerDefaultArguments() const;
 	void setVisualStudioDebuggerDefaultArguments(feStringView arguments);
+	void collectFiles();
+	void makeBuildRules(const Solution &solution);
+
+private:
+	void makeCodegenBuildRules(feStringView path, const Solution &solution, feString &buildHeaders, feString &libObjects);
+	feString makeHeaderCopyBuildRule(feStringView path, const Solution &solution);
+	feString makeSourceBuildRule(feStringView path, const Solution &solution);
+	void makeBuildHeadersBuildRule(feStringView buildHeaders, const Solution &solution);
+	feString makeLibraryDependencyBuildRules(const Solution &solution);
+	feString makeLibraryBuildRule(feStringView objects, const Solution &solution);
+	feString makeExecutableBuildRule(feStringView objects, feStringView libraryDependencies, const Solution &solution, feBool wholeArchive);
+	void makeUnitTestBuildRule(feStringView executablePath, const Solution &solution);
 };

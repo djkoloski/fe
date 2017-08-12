@@ -3,7 +3,7 @@ rule linkWholeArchive
   command = link $in $libPaths $libs /OUT:$out /nologo /WX /MACHINE:X64 /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF /WHOLEARCHIVE
   description = linkWholeArchive $out
 rule codegen
-  command = $solutionDir\Bin\Win_x64_Release\FeGen\FeGen.exe $in $out -I$solutionDir $codegenIncludes -Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field -DPLATFORM_WIN_X64 -DCONFIG_RELEASE
+  command = $solutionDir\Bin\Win_x64_Release\FeGen\FeGen.exe $in $out -I$solutionDir $codegenIncludes -Wall -x c++ -Xclang -DCODEGEN -Wno-pragma-once-outside-header -Wno-unused-private-field -ferror-limit=0 -DPLATFORM_WIN_X64 -DCONFIG_RELEASE
   description = codegen $in $out
   restat = true
 rule compile
@@ -42,8 +42,6 @@ libPaths = /LIBPATH:$binDir\Fe
 libs = Fe.lib
 
 # Build
-build $buildDir\AccumulateProject.h | $buildDir\AccumulateProject-fegen.cpp: codegen $sourceDir\AccumulateProject.h | $binDir\FeGen\FeGen.exe
-build $buildDir\AccumulateProject-fegen.obj: compile $buildDir\AccumulateProject-fegen.cpp | $buildDir\AccumulateProject.h
 build $buildDir\BuildCommand.h | $buildDir\BuildCommand-fegen.cpp: codegen $sourceDir\BuildCommand.h | $binDir\FeGen\FeGen.exe
 build $buildDir\BuildCommand-fegen.obj: compile $buildDir\BuildCommand-fegen.cpp | $buildDir\BuildCommand.h
 build $buildDir\ConfigureSolution.h | $buildDir\ConfigureSolution-fegen.cpp: codegen $sourceDir\ConfigureSolution.h | $binDir\FeGen\FeGen.exe
@@ -64,7 +62,6 @@ build $buildDir\SolutionFolder.h | $buildDir\SolutionFolder-fegen.cpp: codegen $
 build $buildDir\SolutionFolder-fegen.obj: compile $buildDir\SolutionFolder-fegen.cpp | $buildDir\SolutionFolder.h
 build $buildDir\WriteSolution.h | $buildDir\WriteSolution-fegen.cpp: codegen $sourceDir\WriteSolution.h | $binDir\FeGen\FeGen.exe
 build $buildDir\WriteSolution-fegen.obj: compile $buildDir\WriteSolution-fegen.cpp | $buildDir\WriteSolution.h
-build $buildDir\AccumulateProject.obj: compile $sourceDir\AccumulateProject.cpp || FeMake_headers
 build $buildDir\BuildCommand.obj: compile $sourceDir\BuildCommand.cpp || FeMake_headers
 build $buildDir\ConfigureSolution.obj: compile $sourceDir\ConfigureSolution.cpp || FeMake_headers
 build $buildDir\Main.obj: compile $sourceDir\Main.cpp || FeMake_headers
@@ -76,6 +73,6 @@ build $buildDir\Settings.obj: compile $sourceDir\Settings.cpp || FeMake_headers
 build $buildDir\Solution.obj: compile $sourceDir\Solution.cpp || FeMake_headers
 build $buildDir\SolutionFolder.obj: compile $sourceDir\SolutionFolder.cpp || FeMake_headers
 build $buildDir\WriteSolution.obj: compile $sourceDir\WriteSolution.cpp || FeMake_headers
-build FeMake_headers: phony $buildDir\AccumulateProject.h $buildDir\BuildCommand.h $buildDir\ConfigureSolution.h $buildDir\Module.h $buildDir\NinjaFile.h $buildDir\Project.h $buildDir\Rule.h $buildDir\Settings.h $buildDir\Solution.h $buildDir\SolutionFolder.h $buildDir\WriteSolution.h
-build $binDir\FeMake\FeMake.exe: link $buildDir\AccumulateProject-fegen.obj $buildDir\BuildCommand-fegen.obj $buildDir\ConfigureSolution-fegen.obj $buildDir\Module-fegen.obj $buildDir\NinjaFile-fegen.obj $buildDir\Project-fegen.obj $buildDir\Rule-fegen.obj $buildDir\Settings-fegen.obj $buildDir\Solution-fegen.obj $buildDir\SolutionFolder-fegen.obj $buildDir\WriteSolution-fegen.obj $buildDir\AccumulateProject.obj $buildDir\BuildCommand.obj $buildDir\ConfigureSolution.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj $buildDir\WriteSolution.obj $buildDir\Main.obj | $binDir\Fe\Fe.lib
+build FeMake_headers: phony $buildDir\BuildCommand.h $buildDir\ConfigureSolution.h $buildDir\Module.h $buildDir\NinjaFile.h $buildDir\Project.h $buildDir\Rule.h $buildDir\Settings.h $buildDir\Solution.h $buildDir\SolutionFolder.h $buildDir\WriteSolution.h
+build $binDir\FeMake\FeMake.exe: link $buildDir\BuildCommand-fegen.obj $buildDir\ConfigureSolution-fegen.obj $buildDir\Module-fegen.obj $buildDir\NinjaFile-fegen.obj $buildDir\Project-fegen.obj $buildDir\Rule-fegen.obj $buildDir\Settings-fegen.obj $buildDir\Solution-fegen.obj $buildDir\SolutionFolder-fegen.obj $buildDir\WriteSolution-fegen.obj $buildDir\BuildCommand.obj $buildDir\ConfigureSolution.obj $buildDir\Module.obj $buildDir\NinjaFile.obj $buildDir\Project.obj $buildDir\Rule.obj $buildDir\Settings.obj $buildDir\Solution.obj $buildDir\SolutionFolder.obj $buildDir\WriteSolution.obj $buildDir\Main.obj | $binDir\Fe\Fe.lib
 build FeMake: unitTest $binDir\FeMake\FeMake.exe

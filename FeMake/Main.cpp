@@ -1,7 +1,6 @@
 #include <Fe/System/Directory.h>
 
 #include <FeMake/Solution.h>
-#include <FeMake/AccumulateProject.h>
 #include <FeMake/ConfigureSolution.h>
 #include <FeMake/WriteSolution.h>
 
@@ -217,7 +216,8 @@ void ConfigureFeGen(Solution &solution)
 	project.addModule(solution.getModule("libclang"));
 	project.setCodegenEnabled(false);
 
-	AccumulateProject(project, solution);
+	project.collectFiles();
+	project.makeBuildRules(solution);
 }
 
 void ConfigureFe(Solution &solution)
@@ -231,7 +231,8 @@ void ConfigureFe(Solution &solution)
 	project.setType(Project::Type::Library);
 	project.addModule(solution.getModule("catch"));
 
-	AccumulateProject(project, solution);
+	project.collectFiles();
+	project.makeBuildRules(solution);
 
 	// Module
 	auto &module = *solution.addModule("fe");
@@ -257,7 +258,8 @@ void ConfigureFeMake(Solution &solution)
 	project.setType(Project::Type::Executable);
 	project.addModule(solution.getModule("fe"));
 
-	AccumulateProject(project, solution);
+	project.collectFiles();
+	project.makeBuildRules(solution);
 }
 
 void ConfigureFeRender(Solution &solution)
@@ -272,7 +274,8 @@ void ConfigureFeRender(Solution &solution)
 	project.addModule(solution.getModule("fe"));
 	project.addModule(solution.getModule("sdl2"));
 
-	AccumulateProject(project, solution);
+	project.collectFiles();
+	project.makeBuildRules(solution);
 
 	// Module
 	auto &module = *solution.addModule("feRender");
@@ -298,7 +301,8 @@ void ConfigureFeUI(Solution &solution)
 	project.setType(Project::Type::Library);
 	project.addModule(solution.getModule("feRender"));
 
-	AccumulateProject(project, solution);
+	project.collectFiles();
+	project.makeBuildRules(solution);
 
 	// Module
 	auto &module = *solution.addModule("feUI");
@@ -324,7 +328,8 @@ void ConfigureTest(Solution &solution)
 	project.setType(Project::Type::Executable);
 	project.addModule(solution.getModule("feUI"));
 
-	AccumulateProject(project, solution);
+	project.collectFiles();
+	project.makeBuildRules(solution);
 }
 
 void ConfigureSolutionFolders(Solution &solution)
