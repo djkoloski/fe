@@ -688,9 +688,9 @@ void WriteMSVCProjectUserFile(const Solution &solution, const Project &project)
 		{
 			output
 				<< "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='"
-				<< solution.getSettings().getConfigurationString()
+				<< solution.getSettings().getConfigurationString(configuration)
 				<< "|"
-				<< solution.getSettings().getMSVCPlatformString()
+				<< solution.getSettings().getMSVCPlatformString(platform)
 				<< "'\">\n"
 				<< "    <LocalDebuggerCommand>$(SolutionDir)Bin\\Win_$(PlatformTarget)_$(Configuration)\\$(ProjectName)\\$(ProjectName)"
 				<< solution.getSettings().getExecutableFileExtension()
