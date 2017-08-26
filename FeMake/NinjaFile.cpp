@@ -67,3 +67,7 @@ void NinjaFile::writeSubninja(const feStringView path)
 {
 	_output << "subninja " << path << "\n";
 }
+void NinjaFile::writeDefault(const feStringView targets)
+{
+	_output << "default " << targets << "\n";
+}

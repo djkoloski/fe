@@ -162,13 +162,15 @@ void WriteBuildNinjaFile(const Solution &solution)
 	n.writeRule(ninja);
 
 	auto feMake = Rule("FeMake");
+	auto feMakePath = Path::join(
+		"Bin",
+		"Win_x64_Release",
+		"FeMake",
+		Path::addExtension("FeMake", solution.getSettings().getExecutableFileExtension()));
+
 	feMake.setCommand(
 		"cmd /c cd $solutionDir && "
-		+ Path::join(
-			"Bin",
-			"Win_x64_Release",
-			"FeMake",
-			Path::addExtension("FeMake", solution.getSettings().getExecutableFileExtension()))
+		+ feMakePath
 		+ " compiler="
 		+ solution.getSettings().getCompilerString()
 		+ " platform="
@@ -179,38 +181,66 @@ void WriteBuildNinjaFile(const Solution &solution)
 	feMake.setIsGenerator(true);
 	n.writeRule(feMake);
 
+	n.writeNewline();
+
 	auto projectNinjaFiles = feString();
+	auto projectCodegens = feString();
+	auto projectTests = feString();
 	for (const auto &project : solution.getProjects())
 	{
 		auto buildCodegen = BuildCommand();
+		auto codegenName = project->getName() + "_codegen";
 		buildCodegen.setRule(&ninja);
-		buildCodegen.setOutputs(project->getName() + "_codegen");
+		buildCodegen.setOutputs(codegenName);
 		buildCodegen.setImplicitDependencies(
 			Path::join(
 				"$buildDir",
 				project->getName(),
 				solutionNinjaFileName));
 		n.writeBuild(buildCodegen);
-		n.writeVariable("  target", project->getName() + "_codegen");
+		n.writeVariable("  target", codegenName);
 
 		auto buildAlias = BuildCommand();
+		auto testName = project->getName() + "_test";
 		buildAlias.setRule(&ninja);
 		buildAlias.setOutputs(project->getName());
 		buildAlias.setImplicitDependencies(buildCodegen.getOutputs());
 		n.writeBuild(buildAlias);
-		n.writeVariable("  target", project->getName() + "_test");
+		n.writeVariable("  target", testName);
 
 		projectNinjaFiles = feStringUtil::append(
 			projectNinjaFiles,
 			Path::join("$buildDir", project->getName(), solutionNinjaFileName));
+		projectCodegens = feStringUtil::append(projectCodegens, codegenName);
+		projectTests = feStringUtil::append(projectTests, testName);
 
 		n.writeNewline();
 	}
+
+	auto buildAllCodegen = BuildCommand();
+	buildAllCodegen.setRule(&ninja);
+	buildAllCodegen.setOutputs("All_codegen");
+	buildAllCodegen.setImplicitDependencies(Path::join("$buildDir", solutionNinjaFileName));
+	n.writeBuild(buildAllCodegen);
+	n.writeVariable("  target", projectCodegens);
+
+	auto buildAll = BuildCommand();
+	buildAllCodegen.setRule(&ninja);
+	buildAllCodegen.setOutputs("All");
+	buildAllCodegen.setImplicitDependencies("All_codegen");
+	n.writeBuild(buildAllCodegen);
+	n.writeVariable("  target", projectTests);
+	
+	n.writeNewline();
+	
+	n.writeDefault("All");
+	n.writeNewline();
 
 	auto buildNinjaFiles = BuildCommand();
 	buildNinjaFiles.setRule(&feMake);
 	buildNinjaFiles.setOutputs(Path::join("$buildDir", solutionNinjaFileName));
 	buildNinjaFiles.setImplicitOutputs(projectNinjaFiles);
+	buildNinjaFiles.setImplicitDependencies(Path::join("$solutionDir", feMakePath));
 	n.writeBuild(buildNinjaFiles);
 }
 
