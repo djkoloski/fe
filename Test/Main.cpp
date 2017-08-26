@@ -1,6 +1,6 @@
 #include <Fe/Core/Core.h>
 
-#include <Test/Test.h>
+#include <Test/FeGenTest.h>
 
 void printClassInfo(feObject *obj)
 {
