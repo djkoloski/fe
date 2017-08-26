@@ -11,7 +11,6 @@ static void WriteMSVCProject(const Project &project, const Solution &solution);
 static void WriteMSVCProjectUserFile(const Solution &solution, const Project &project);
 static void ReplaceFileIfChanged(feStringView path, feStringView newContents);
 static void WriteFileIfNew(feStringView path, feStringView contents);
-static feString NinjaFileName(const Solution &solution);
 static feString NinjaPathToMSVCPath(feStringView path, const Settings &settings);
 static void WriteGitAttributes();
 static void WriteGitPreCommit();
@@ -19,43 +18,47 @@ static void WriteGitPostMerge();
 
 void WriteNinjaFile(const Solution &solution)
 {
-	auto ninjaFileName = NinjaFileName(solution);
+	auto buildDir = Path::join(
+		solution.getSolutionDir(),
+		"Build",
+		solution.getSettings().getIdentifier());
 
 	// Solution NinjaFile
-	auto solutionNinjaFile = NinjaFile(ninjaFileName);
+	auto solutionNinja = NinjaFile(
+		Path::join(
+			buildDir,
+			Path::addExtension(solution.getName(), ".ninja")));
 
-	solutionNinjaFile.writeComment("Variables");
-	solutionNinjaFile.writeVariable("solutionDir", solution.getSolutionDir());
+	// Rules
+	solutionNinja.writeComment("Rules");
+	for (const auto &i : solution.getRules())
+	{
+		solutionNinja.writeRule(*i.second);
+	}
+
+	// Solution variables
+	solutionNinja.writeNewline();
+	solutionNinja.writeComment("Variables");
+	solutionNinja.writeVariable("solutionDir", solution.getSolutionDir());
+	solutionNinja.writeVariable("buildType", solution.getSettings().getIdentifier());
+	solutionNinja.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType"));
+	solutionNinja.writeVariable("extDir", Path::join("$solutionDir", "External"));
 
 	// Projects
 	for (const auto &project : solution.getProjects())
 	{
-		auto ninjaPath = Path::join("$solutionDir", project->getName(), ninjaFileName);
+		auto localNinjaFilePath = Path::join(
+			project->getName(),
+			Path::addExtension(solution.getName(), ".ninja"));
 
-		solutionNinjaFile.writeNewline();
-		solutionNinjaFile.writeComment(project->getName());
-		solutionNinjaFile.writeSubninja(ninjaPath);
+		solutionNinja.writeNewline();
+		solutionNinja.writeComment(project->getName());
+		solutionNinja.writeSubninja(localNinjaFilePath);
 
 		// Project NinjaFile
-		auto n = NinjaFile(Path::join(project->getName(), ninjaFileName));
-
-		// Rules
-		n.writeComment("Rules");
-		for (const auto &i : solution.getRules())
-		{
-			n.writeRule(*i.second);
-		}
-
-		// Solution Variables
-		n.writeNewline();
-		n.writeComment("Solution variables");
-		n.writeVariable("solutionDir", solution.getSolutionDir());
-		n.writeVariable("buildType", solution.getSettings().getIdentifier());
-		n.writeVariable("binDir", Path::join("$solutionDir", "Bin", "$buildType"));
-		n.writeVariable("extDir", Path::join("$solutionDir", "External"));
+		auto n = NinjaFile(Path::join(buildDir, localNinjaFilePath));
 
 		// Project Variables
-		n.writeNewline();
 		n.writeComment("Project variables");
 		n.writeVariable("project", project->getName());
 		n.writeVariable("sourceDir", Path::join("$solutionDir", "$project"));
@@ -119,7 +122,6 @@ void WriteNinjaFile(const Solution &solution)
 		{
 			n.writeBuild(command);
 		}
-		n.writeBuild(project->getBuildAlias());
 	}
 }
 
@@ -306,8 +308,6 @@ void WriteMSVCSolution(const Solution &solution)
 
 void WriteMSVCProject(const Project &project, const Solution &solution)
 {
-	auto ninjaFileName = NinjaFileName(solution);
-
 	auto projectPath = Path::join(project.getName(), Path::addExtension(project.getName(), ".vcxproj"));
 	auto output = std::stringstream();
 
@@ -571,10 +571,10 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
 				<< " -f "
-				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
-				<< " $(ProjectName)</NMakeBuildCommandLine>\n";
+				<< solution.getName()
+				<< ".ninja $(ProjectName)</NMakeBuildCommandLine>\n";
 
 			// Rebuild
 			output
@@ -582,19 +582,19 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
 				<< " -f "
-				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
-				<< " -t clean $(ProjectName)\n";
+				<< solution.getName()
+				<< ".ninja -t clean $(ProjectName)\n";
 			output
 				<< "Bin\\Win_x64_Release\\FeMake\\FeMake.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
 			output
 				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
 				<< " -f "
-				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
-				<< " $(ProjectName)</NMakeReBuildCommandLine>\n";
+				<< solution.getName()
+				<< ".ninja $(ProjectName)</NMakeReBuildCommandLine>\n";
 
 			// Clean
 			output
@@ -602,10 +602,10 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 			output
 				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)", "$(ProjectName)")
+				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
 				<< " -f "
-				<< Path::join("$(SolutionDir)", "$(ProjectName)", ninjaFileName)
-				<< " -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
+				<< solution.getName()
+				<< ".ninja -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
 
 			// Include paths
 			auto includePaths = Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)");
@@ -756,11 +756,6 @@ void WriteFileIfNew(feStringView path, feStringView contents)
 		auto output = std::ofstream(path);
 		output << contents;
 	}
-}
-
-feString NinjaFileName(const Solution &solution)
-{
-	return Path::addExtension(solution.getName(), ".ninja");
 }
 
 feString NinjaPathToMSVCPath(feStringView path, const Settings &settings)

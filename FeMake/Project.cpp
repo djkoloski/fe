@@ -34,14 +34,6 @@ BuildCommand &Project::addBuildCommand()
 	_buildCommands.emplace_back();
 	return _buildCommands.back();
 }
-BuildCommand &Project::getBuildAlias()
-{
-	return _buildAlias;
-}
-const BuildCommand &Project::getBuildAlias() const
-{
-	return _buildAlias;
-}
 void Project::addModule(const Module *module)
 {
 	_modules.push_back(module);
@@ -192,9 +184,6 @@ void Project::makeBuildRules(const Solution &solution)
 		}
 	}
 
-	// Build headers
-	makeBuildHeadersBuildRule(buildHeaders, solution);
-
 	// Library dependencies
 	auto libraryDependencies = makeLibraryDependencyBuildRules(solution);
 
@@ -215,8 +204,14 @@ void Project::makeBuildRules(const Solution &solution)
 		break;
 	}
 
+	// Codegen step
+	makeCodegenStepBuildRule(buildHeaders, solution);
+
+	// Compile step
+	makeCompileStepBuildRule(executablePath, solution);
+
 	// Unit test and alias
-	makeUnitTestBuildRule(executablePath, solution);
+	makeTestStepBuildRule(executablePath, solution);
 }
 void Project::makeCodegenBuildRules(feStringView path, const Solution &solution, feString &buildHeaders, feString &libObjects)
 {
@@ -227,7 +222,7 @@ void Project::makeCodegenBuildRules(feStringView path, const Solution &solution,
 
 	auto &headerBuild = addBuildCommand();
 	headerBuild.setRule(solution.getRule("codegen"));
-	headerBuild.setImplicitDependencies(solution.getProject("FeGen")->getBuildAlias().getInputs());
+	headerBuild.setImplicitDependencies("FeGen_compile");
 	headerBuild.setInputs(sourceHeaderPath);
 	headerBuild.setOutputs(buildHeaderPath);
 	headerBuild.setImplicitOutputs(sourcePath);
@@ -239,7 +234,6 @@ void Project::makeCodegenBuildRules(feStringView path, const Solution &solution,
 	sourceBuild.setRule(solution.getRule("compile"));
 	sourceBuild.setInputs(sourcePath);
 	sourceBuild.setOutputs(objectPath);
-	sourceBuild.setImplicitDependencies(buildHeaderPath);
 	libObjects = feStringUtil::append(
 		libObjects,
 		objectPath);
@@ -265,28 +259,8 @@ feString Project::makeSourceBuildRule(feStringView path, const Solution &solutio
 	build.setRule(solution.getRule("compile"));
 	build.setInputs(source);
 	build.setOutputs(object);
-	build.setOrderOnlyDependencies(_name + "_headers");
 
 	return object;
-}
-void Project::makeBuildHeadersBuildRule(feStringView buildHeaders, const Solution &solution)
-{
-	auto buildHeadersDependencies = feString();
-	for (auto *module : _modules)
-	{
-		for (auto *dependency : module->getDependencies())
-		{
-			buildHeadersDependencies = feStringUtil::append(
-				buildHeadersDependencies,
-				dependency->getBuildAlias().getInputs());
-		}
-	}
-
-	auto &build = addBuildCommand();
-	build.setRule(null);
-	build.setInputs(buildHeaders);
-	build.setOrderOnlyDependencies(buildHeadersDependencies);
-	build.setOutputs(_name + "_headers");
 }
 feString Project::makeLibraryDependencyBuildRules(const Solution &solution)
 {
@@ -364,9 +338,60 @@ feString Project::makeExecutableBuildRule(feStringView objects, feStringView lib
 
 	return outputPath;
 }
-void Project::makeUnitTestBuildRule(feStringView executablePath, const Solution &solution)
+void Project::makeCodegenStepBuildRule(feStringView buildHeaders, const Solution &solution)
 {
-	_buildAlias.setRule(solution.getRule("unitTest"));
-	_buildAlias.setInputs(executablePath);
-	_buildAlias.setOutputs(_name);
+	auto dependencies = feString();
+	for (auto *module : _modules)
+	{
+		for (auto *dependency : module->getDependencies())
+		{
+			dependencies = feStringUtil::append(
+				dependencies,
+				dependency->getName() + "_codegen");
+		}
+	}
+
+	auto &build = addBuildCommand();
+	build.setRule(null);
+	build.setInputs(buildHeaders);
+	build.setImplicitDependencies(dependencies);
+	build.setOutputs(_name + "_codegen");
+}
+void Project::makeCompileStepBuildRule(feStringView executablePath, const Solution &solution)
+{
+	auto dependencies = feString(_name + "_codegen");
+	for (auto *module : _modules)
+	{
+		for (auto *dependency : module->getDependencies())
+		{
+			dependencies = feStringUtil::append(
+				dependencies,
+				dependency->getName() + "_compile");
+		}
+	}
+
+	auto &build = addBuildCommand();
+	build.setRule(null);
+	build.setInputs(executablePath);
+	build.setImplicitDependencies(dependencies);
+	build.setOutputs(_name + "_compile");
+}
+void Project::makeTestStepBuildRule(feStringView executablePath, const Solution &solution)
+{
+	auto dependencies = feString(_name + "_compile");
+	for (auto *module : _modules)
+	{
+		for (auto *dependency : module->getDependencies())
+		{
+			dependencies = feStringUtil::append(
+				dependencies,
+				dependency->getName() + "_test");
+		}
+	}
+
+	auto &build = addBuildCommand();
+	build.setRule(solution.getRule("unitTest"));
+	build.setInputs(executablePath);
+	build.setImplicitDependencies(dependencies);
+	build.setOutputs(_name + "_test");
 }

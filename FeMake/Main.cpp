@@ -95,8 +95,10 @@ feStatus MakeBootstrap()
 {
 	auto bootstrap = Solution("Bootstrap", feGUID());
 
-	// Bootstrap is run from inside Build
-	bootstrap.setSolutionDir("..");
+	// Bootstrap uses '.' because it's checked into git
+	// this forces us to run it from the command line with the current
+	// working directory equal to the solution directory
+	bootstrap.setSolutionDir(".");
 
 	Settings settings;
 	settings.setCompiler(Settings::Compiler::MSVC);
