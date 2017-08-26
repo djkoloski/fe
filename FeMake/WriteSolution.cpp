@@ -161,7 +161,7 @@ void WriteBuildNinjaFile(const Solution &solution)
 	ninja.setDescription("ninja $target");
 	n.writeRule(ninja);
 
-	auto feMake = Rule("FeMake");
+	auto feMake = Rule("Run_FeMake");
 	auto feMakePath = Path::join(
 		"Bin",
 		"Win_x64_Release",
@@ -183,7 +183,6 @@ void WriteBuildNinjaFile(const Solution &solution)
 
 	n.writeNewline();
 
-	auto projectNinjaFiles = feString();
 	auto projectCodegens = feString();
 	auto projectTests = feString();
 	for (const auto &project : solution.getProjects())
@@ -192,11 +191,7 @@ void WriteBuildNinjaFile(const Solution &solution)
 		auto codegenName = project->getName() + "_codegen";
 		buildCodegen.setRule(&ninja);
 		buildCodegen.setOutputs(codegenName);
-		buildCodegen.setImplicitDependencies(
-			Path::join(
-				"$buildDir",
-				project->getName(),
-				solutionNinjaFileName));
+		buildCodegen.setImplicitDependencies("Generate_Build_Files");
 		n.writeBuild(buildCodegen);
 		n.writeVariable("  target", codegenName);
 
@@ -208,9 +203,6 @@ void WriteBuildNinjaFile(const Solution &solution)
 		n.writeBuild(buildAlias);
 		n.writeVariable("  target", testName);
 
-		projectNinjaFiles = feStringUtil::append(
-			projectNinjaFiles,
-			Path::join("$buildDir", project->getName(), solutionNinjaFileName));
 		projectCodegens = feStringUtil::append(projectCodegens, codegenName);
 		projectTests = feStringUtil::append(projectTests, testName);
 
@@ -220,7 +212,7 @@ void WriteBuildNinjaFile(const Solution &solution)
 	auto buildAllCodegen = BuildCommand();
 	buildAllCodegen.setRule(&ninja);
 	buildAllCodegen.setOutputs("All_codegen");
-	buildAllCodegen.setImplicitDependencies(Path::join("$buildDir", solutionNinjaFileName));
+	buildAllCodegen.setImplicitDependencies("Generate_Build_Files");
 	n.writeBuild(buildAllCodegen);
 	n.writeVariable("  target", projectCodegens);
 
@@ -238,8 +230,7 @@ void WriteBuildNinjaFile(const Solution &solution)
 
 	auto buildNinjaFiles = BuildCommand();
 	buildNinjaFiles.setRule(&feMake);
-	buildNinjaFiles.setOutputs(Path::join("$buildDir", solutionNinjaFileName));
-	buildNinjaFiles.setImplicitOutputs(projectNinjaFiles);
+	buildNinjaFiles.setOutputs("Generate_Build_Files");
 	buildNinjaFiles.setImplicitDependencies(Path::join("$solutionDir", feMakePath));
 	n.writeBuild(buildNinjaFiles);
 }

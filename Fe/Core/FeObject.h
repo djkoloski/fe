@@ -6,5 +6,5 @@ class feObject
 {
 public:
 	virtual ~feObject() = default;
-	virtual const feMetaObject *getMetaObject() const;
+	virtual const feMetaObject *getMetaObject() const = 0;
 };
