@@ -163,12 +163,18 @@ void WriteBuildNinjaFile(const Solution &solution)
 
 	auto feMake = Rule("FeMake");
 	feMake.setCommand(
-		Path::join(
-			"$solutionDir",
+		"cmd /c cd $solutionDir && "
+		+ Path::join(
 			"Bin",
 			"Win_x64_Release",
 			"FeMake",
-			Path::addExtension("FeMake", solution.getSettings().getExecutableFileExtension())));
+			Path::addExtension("FeMake", solution.getSettings().getExecutableFileExtension()))
+		+ " compiler="
+		+ solution.getSettings().getCompilerString()
+		+ " platform="
+		+ solution.getSettings().getPlatformString()
+		+ " config="
+		+ solution.getSettings().getConfigurationString());
 	feMake.setDescription("FeMake");
 	feMake.setIsGenerator(true);
 	n.writeRule(feMake);
