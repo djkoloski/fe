@@ -1,8 +1,12 @@
 #include <FeMake/NinjaFile.h>
 
-NinjaFile::NinjaFile(feStringView path) :
-	_output(path)
-{}
+#include <Fe/System/Directory.h>
+
+NinjaFile::NinjaFile(feStringView path)
+{
+	Directory::create(Path::dirName(path));
+	_output.open(path.c_str());
+}
 void NinjaFile::writeComment(feStringView comment)
 {
 	_output << "# " << comment << "\n";
