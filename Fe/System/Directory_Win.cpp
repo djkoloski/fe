@@ -12,5 +12,34 @@ feString WindowsDirectory::currentWorkingDirectory()
 	GetCurrentDirectory(length, &result[0]);
 	return result;
 }
+feStatus WindowsDirectory::create(feStringView path, feBool recurse)
+{
+	DWORD pathType = GetFileAttributes(path.c_str());
+	if (pathType == INVALID_FILE_ATTRIBUTES)
+	{
+		if (recurse)
+		{
+			auto parent = Path::dirName(path);
+			if (parent != "")
+			{
+				if (create(parent, true) == kFailure)
+				{
+					return kFailure;
+				}
+			}
+		}
+
+		if (!CreateDirectory(path.c_str(), null) && GetLastError() != ERROR_ALREADY_EXISTS)
+		{
+			return kFailure;
+		}
+	}
+	else if (!(pathType & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		return kFailure;
+	}
+
+	return kSuccess;
+}
 
 #endif

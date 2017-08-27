@@ -400,7 +400,7 @@ int main(int argc, char **argv)
 
 	// ---------------------------------------------------------------------
 	// TODO: remove after thorough testing
-	if (inputHeaderPath != "D:\\Projects\\Fe\\Test\\Test.h")
+	if (BaseName(inputHeaderPath) != "FeGenTest.h")
 	{
 		system(("copy " + inputHeaderPath + " " + outputHeaderPath).c_str());
 		system(("type nul > " + outputSourcePath).c_str());

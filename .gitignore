@@ -1,7 +1,22 @@
-Bin/*
-Build
-*.ninja
-!Bootstrap.ninja
+# Ignore bin and build
+Bin
+Build/*
+
+# Don't ignore the bootstrap ninja files
+!Build/Win_x64_Release
+Build/Win_x64_Release/*
+!Build/Win_x64_Release/Bootstrap.ninja
+!Build/Win_x64_Release/FeGen
+Build/Win_x64_Release/FeGen/*
+!Build/Win_x64_Release/FeGen/Bootstrap.ninja
+!Build/Win_x64_Release/Fe
+Build/Win_x64_Release/Fe/*
+!Build/Win_x64_Release/Fe/Bootstrap.ninja
+!Build/Win_x64_Release/FeMake
+Build/Win_x64_Release/FeMake/*
+!Build/Win_x64_Release/FeMake/Bootstrap.ninja
+
+# Ignore VS project files
 *.sln
 *.vcxproj
 *.vcxproj.filters

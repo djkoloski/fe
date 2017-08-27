@@ -22,4 +22,5 @@ public:
 	void writeBuild(const BuildCommand &build);
 	void writeInclude(const feStringView path);
 	void writeSubninja(const feStringView path);
+	void writeDefault(const feStringView targets);
 };

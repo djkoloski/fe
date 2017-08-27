@@ -23,7 +23,6 @@ private:
 	feGUID _visualStudioGUID;
 	Type _type;
 	feVector<BuildCommand> _buildCommands;
-	BuildCommand _buildAlias;
 	feVector<const Module *> _modules;
 	feVector<feString> _headerFilePaths;
 	feVector<feString> _inlineFilePaths;
@@ -41,8 +40,6 @@ public:
 	void setType(Type type);
 	const feVector<BuildCommand> &getBuildCommands() const;
 	BuildCommand &addBuildCommand();
-	BuildCommand &getBuildAlias();
-	const BuildCommand &getBuildAlias() const;
 	void addModule(const Module *module);
 	const feVector<const Module *> &getModules() const;
 	void addHeaderFilePath(feStringView headerFilePath);
@@ -65,9 +62,10 @@ private:
 	void makeCodegenBuildRules(feStringView path, const Solution &solution, feString &buildHeaders, feString &libObjects);
 	feString makeHeaderCopyBuildRule(feStringView path, const Solution &solution);
 	feString makeSourceBuildRule(feStringView path, const Solution &solution);
-	void makeBuildHeadersBuildRule(feStringView buildHeaders, const Solution &solution);
 	feString makeLibraryDependencyBuildRules(const Solution &solution);
 	feString makeLibraryBuildRule(feStringView objects, const Solution &solution);
 	feString makeExecutableBuildRule(feStringView objects, feStringView libraryDependencies, const Solution &solution, feBool wholeArchive);
-	void makeUnitTestBuildRule(feStringView executablePath, const Solution &solution);
+	void makeCodegenStepBuildRule(feStringView buildHeaders, const Solution &solution);
+	void makeCompileStepBuildRule(feStringView executablePath, const Solution &solution);
+	void makeTestStepBuildRule(feStringView executablePath, const Solution &solution);
 };

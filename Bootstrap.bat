@@ -1,5 +1,5 @@
 @echo off
-if not exist "Build" mkdir "Build"
-git checkout -- Bootstrap.ninja FeGen\Bootstrap.ninja Fe\Bootstrap.ninja FeMake\Bootstrap.ninja
-External\ninja\ninja.exe -C Build -f ..\Bootstrap.ninja FeMake
+git checkout -- Build\Win_x64_Release\Bootstrap.ninja Build\Win_x64_Release\FeGen\Bootstrap.ninja Build\Win_x64_Release\Fe\Bootstrap.ninja Build\Win_x64_Release\FeMake\Bootstrap.ninja
+External\ninja\ninja.exe -C Build\Win_x64_Release -f Bootstrap.ninja FeMake_codegen
+External\ninja\ninja.exe -C Build\Win_x64_Release -f Bootstrap.ninja FeMake_test
 Bin\Win_x64_Release\FeMake\FeMake.exe platform=Win_x64 config=Release compiler=MSVC

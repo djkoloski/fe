@@ -86,6 +86,7 @@ feStatus MakeAllProjects(feInt argc, const feRawString *argv)
 	ConfigureSolutionFolders(solution);
 
 	WriteNinjaFile(solution);
+	WriteBuildNinjaFile(solution);
 	WriteMSVCSolution(solution);
 
 	return kSuccess;
@@ -95,8 +96,10 @@ feStatus MakeBootstrap()
 {
 	auto bootstrap = Solution("Bootstrap", feGUID());
 
-	// Bootstrap is run from inside Build
-	bootstrap.setSolutionDir("..");
+	// Bootstrap uses '../..' as its solution directory because it's
+	// checked into git. This forces us to run it from the command
+	// line with the current working directory equal to Build\Win_x64_Release.
+	bootstrap.setSolutionDir(Path::join("..", ".."));
 
 	Settings settings;
 	settings.setCompiler(Settings::Compiler::MSVC);

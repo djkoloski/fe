@@ -1,1 +1,1 @@
-External\ninja\ninja.exe -C Build -f ..\AllProjects.ninja
+External\ninja\ninja.exe -C Build %1
