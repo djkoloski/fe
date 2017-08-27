@@ -184,7 +184,7 @@ void WriteBuildNinjaFile(const Solution &solution)
 	n.writeNewline();
 
 	auto projectCodegens = feString();
-	auto projectTests = feString();
+	auto projectAliases = feString();
 	for (const auto &project : solution.getProjects())
 	{
 		auto buildCodegen = BuildCommand();
@@ -196,15 +196,22 @@ void WriteBuildNinjaFile(const Solution &solution)
 		n.writeVariable("  target", codegenName);
 
 		auto buildAlias = BuildCommand();
-		auto testName = project->getName() + "_test";
+		auto aliasName = project->getName() + "_test";
 		buildAlias.setRule(&ninja);
 		buildAlias.setOutputs(project->getName());
 		buildAlias.setImplicitDependencies(buildCodegen.getOutputs());
 		n.writeBuild(buildAlias);
-		n.writeVariable("  target", testName);
+		n.writeVariable("  target", aliasName);
+
+		auto buildClean = BuildCommand();
+		auto cleanName = project->getName() + "_clean";
+		buildClean.setRule(&ninja);
+		buildClean.setOutputs(cleanName);
+		n.writeBuild(buildClean);
+		n.writeVariable("  target", "-t clean " + aliasName);
 
 		projectCodegens = feStringUtil::append(projectCodegens, codegenName);
-		projectTests = feStringUtil::append(projectTests, testName);
+		projectAliases = feStringUtil::append(projectAliases, aliasName);
 
 		n.writeNewline();
 	}
@@ -216,15 +223,21 @@ void WriteBuildNinjaFile(const Solution &solution)
 	n.writeBuild(buildAllCodegen);
 	n.writeVariable("  target", projectCodegens);
 
-	auto buildAll = BuildCommand();
-	buildAllCodegen.setRule(&ninja);
-	buildAllCodegen.setOutputs("All");
-	buildAllCodegen.setImplicitDependencies("All_codegen");
-	n.writeBuild(buildAllCodegen);
-	n.writeVariable("  target", projectTests);
-	
+	auto buildAllAlias = BuildCommand();
+	buildAllAlias.setRule(&ninja);
+	buildAllAlias.setOutputs("All");
+	buildAllAlias.setImplicitDependencies("All_codegen");
+	n.writeBuild(buildAllAlias);
+	n.writeVariable("  target", projectAliases);
+
+	auto buildAllClean = BuildCommand();
+	buildAllClean.setRule(&ninja);
+	buildAllClean.setOutputs("All_clean");
+	n.writeBuild(buildAllClean);
+	n.writeVariable("  target", "-t clean " + projectAliases);
+
 	n.writeNewline();
-	
+
 	n.writeDefault("All");
 	n.writeNewline();
 
@@ -650,6 +663,12 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 				break;
 			}
 
+			auto ninjaPath = Path::join(
+				"$(SolutionDir)"
+				"External",
+				"ninja",
+				Path::addExtension("ninja", solution.getSettings().getExecutableFileExtension()));
+
 			output
 				<< "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='"
 				<< Settings::getConfigurationString(configuration)
@@ -675,47 +694,32 @@ void WriteMSVCProject(const Project &project, const Solution &solution)
 
 			// Build
 			output
-				<< "    <NMakeBuildCommandLine>cd $(SolutionDir)\n";
-			output
-				<< "Bin\\Win_x64_Release\\FeMake\\FeMake.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
-			output
-				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< "    <NMakeBuildCommandLine>"
+				<< ninjaPath
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
-				<< " -f "
-				<< solution.getName()
-				<< ".ninja $(ProjectName)</NMakeBuildCommandLine>\n";
+				<< Path::join("$(SolutionDir)", "Build")
+				<< " $(ProjectName)</NMakeBuildCommandLine>\n";
 
 			// Rebuild
 			output
-				<< "    <NMakeReBuildCommandLine>cd $(SolutionDir)\n";
-			output
-				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< "    <NMakeReBuildCommandLine>"
+				<< ninjaPath
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
-				<< " -f "
-				<< solution.getName()
-				<< ".ninja -t clean $(ProjectName)\n";
+				<< Path::join("$(SolutionDir)", "Build")
+				<< " $(ProjectName)_clean\n";
 			output
-				<< "Bin\\Win_x64_Release\\FeMake\\FeMake.exe platform=Win_$(PlatformTarget) config=$(Configuration) compiler=MSVC\n";
-			output
-				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< ninjaPath
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
-				<< " -f "
-				<< solution.getName()
-				<< ".ninja $(ProjectName)</NMakeReBuildCommandLine>\n";
+				<< Path::join("$(SolutionDir)", "Build")
+				<< " $(ProjectName)</NMakeReBuildCommandLine>\n";
 
 			// Clean
 			output
-				<< "    <NMakeCleanCommandLine>cd $(SolutionDir)\n";
-			output
-				<< Path::join("$(SolutionDir)", "External", "ninja", "ninja.exe")
+				<< "    <NMakeCleanCommandLine>"
+				<< ninjaPath
 				<< " -C "
-				<< Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)")
-				<< " -f "
-				<< solution.getName()
-				<< ".ninja -t clean $(ProjectName)</NMakeCleanCommandLine>\n";
+				<< Path::join("$(SolutionDir)", "Build")
+				<< " $(ProjectName)_clean</NMakeCleanCommandLine>\n";
 
 			// Include paths
 			auto includePaths = Path::join("$(SolutionDir)", "Build", "Win_$(PlatformTarget)_$(Configuration)");
