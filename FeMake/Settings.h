@@ -10,7 +10,8 @@ public:
 		Unknown,
 		MSVC,
 		First = MSVC,
-		Last = MSVC,
+		LLVM,
+		Last = LLVM,
 	};
 	enum class Platform
 	{

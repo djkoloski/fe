@@ -40,3 +40,5 @@ using feWord = feLong;
 using feUWord = feULong;
 
 #endif
+
+#define FE_UNUSED(x) (void)x

@@ -9,6 +9,7 @@ private:
 	feString _command;
 	feString _description;
 	feString _deps;
+	feString _depfile;
 	feBool _isGenerator;
 	feBool _restat;
 
@@ -22,6 +23,8 @@ public:
 	void setDescription(feStringView description);
 	const feString &getDeps() const;
 	void setDeps(feStringView deps);
+	const feString &getDepfile() const;
+	void setDepfile(feStringView depfile);
 	feBool getIsGenerator() const;
 	void setIsGenerator(feBool isGenerator);
 	feBool getRestat() const;

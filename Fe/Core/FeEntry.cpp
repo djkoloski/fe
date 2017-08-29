@@ -25,7 +25,7 @@ struct FeUnitTestListener : Catch::TestEventListenerBase
 				"%s(%llu): warning UnitTest: %s\n",
 				sourceLineInfo.file,
 				sourceLineInfo.line,
-				assertionStats.assertionResult.getMessage());
+				assertionStats.assertionResult.getMessage().c_str());
 			break;
 		default:
 			FE_PRINT(

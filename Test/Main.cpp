@@ -10,6 +10,7 @@ void printClassInfo(feObject *obj)
 	{
 		const auto &field = meta.getMetaFields()[i];
 		const auto &type = *field.getType();
+		FE_UNUSED(type);
 
 		FE_PRINT("Field %i: size %i, offset %i\n", i, field.getSize(), field.getOffset());
 	}

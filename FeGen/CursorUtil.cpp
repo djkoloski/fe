@@ -1,5 +1,6 @@
 #include <FeGen/CursorUtil.h>
 
+#include <FeGen/Util.h>
 #include <FeGen/StringUtil.h>
 
 std::string CursorUtil::getSpelling(CXCursor cursor)
@@ -46,6 +47,8 @@ std::unordered_set<std::string> CursorUtil::getAttributes(CXCursor cursor)
 		cursor,
 		[](CXCursor cursor, CXCursor parent, CXClientData clientData)
 		{
+			UNUSED(parent);
+
 			auto &attribs = *static_cast<std::unordered_set<std::string> *>(clientData);
 
 			switch (clang_getCursorKind(cursor))

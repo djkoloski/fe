@@ -30,6 +30,11 @@ void NinjaFile::writeRule(const Rule &rule)
 		_output << "  deps = " << rule.getDeps() << "\n";
 	}
 
+	if (rule.getDepfile() != "")
+	{
+		_output << "  depfile = " << rule.getDepfile() << "\n";
+	}
+
 	if (rule.getIsGenerator())
 	{
 		_output << "  generator = true\n";
@@ -63,15 +68,15 @@ void NinjaFile::writeBuild(const BuildCommand &build)
 
 	_output << "\n";
 }
-void NinjaFile::writeInclude(const feStringView path)
+void NinjaFile::writeInclude(feStringView path)
 {
 	_output << "include " << path << "\n";
 }
-void NinjaFile::writeSubninja(const feStringView path)
+void NinjaFile::writeSubninja(feStringView path)
 {
 	_output << "subninja " << path << "\n";
 }
-void NinjaFile::writeDefault(const feStringView targets)
+void NinjaFile::writeDefault(feStringView targets)
 {
 	_output << "default " << targets << "\n";
 }

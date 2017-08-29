@@ -33,6 +33,14 @@ void Rule::setDeps(feStringView deps)
 {
 	_deps = deps;
 }
+const feString &Rule::getDepfile() const
+{
+	return _depfile;
+}
+void Rule::setDepfile(feStringView depfile)
+{
+	_depfile = depfile;
+}
 feBool Rule::getIsGenerator() const
 {
 	return _isGenerator;
