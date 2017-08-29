@@ -264,15 +264,11 @@ void ConfigureRules(Solution &solution)
 
 		// Link
 #if FE_IS_TARGET(WINDOWS)
-		linkCommand = "link $in $libPaths $libs /OUT:$out /nologo /WX /ignore:4221";
+		linkCommand = "lld-link $in $libPaths $libs /OUT:$out /nologo /WX /ignore:4221";
 #endif
 
-		// Link whole archive
-		linkWholeArchiveFlags = "/WHOLEARCHIVE:$project.lib /ignore:4221";
-
 		// Lib
-		// TODO: does clang support making .lib's?
-		libCommand = "lib $in /OUT:$out /nologo /WX /ignore:4221";
+		libCommand = "llvm-lib $in /OUT:$out /nologo /ignore:4221";
 
 		switch (solution.getSettings().getPlatform())
 		{
@@ -299,25 +295,23 @@ void ConfigureRules(Solution &solution)
 			// Debug
 			compileCommand += " /DCONFIG_DEBUG /Z7";
 			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
-			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Release:
 			// Release
 			compileCommand += " -DCONFIG_RELEASE /Z7 /Ot";
 			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
-			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Profile:
 			// Profile
 			compileCommand += " /DCONFIG_PROFILE /Ot /GL";
 			linkCommand += " /SUBSYSTEM:CONSOLE /LTCG /OPT:REF /OPT:ICF";
-			libCommand += " /SUBSYSTEM:CONSOLE /LTCG";
+			libCommand += " /LTCG";
 			break;
 		case Settings::Configuration::Final:
 			// Final
 			compileCommand += " /DCONFIG_PROFILE /Ot /GL";
 			linkCommand += " /SUBSYSTEM:WINDOWS /LTCG /OPT:REF /OPT:ICF";
-			libCommand += " /SUBSYSTEM:WINDOWS /LTCG";
+			libCommand += " /LTCG";
 			break;
 		default:
 			FE_ERROR_SWITCH_VALUE();

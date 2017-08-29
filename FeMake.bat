@@ -1,0 +1,1 @@
+Bin\Win_x64_Release\FeMake\FeMake.exe compiler=%1 platform=win_x64 config=release
