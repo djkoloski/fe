@@ -30,6 +30,10 @@ feStatus ConfigureSettings(Solution &solution, feInt argc, const feRawString *ar
 			{
 				settings.setCompiler(Settings::Compiler::MSVC);
 			}
+			else if (value == "llvm")
+			{
+				settings.setCompiler(Settings::Compiler::LLVM);
+			}
 			else
 			{
 				FE_LOG_WARNING("Unrecognized compiler '%s'", value.c_str());
@@ -154,6 +158,39 @@ void ConfigureRules(Solution &solution)
 	unitTest.setCommand("$in --run-unit-tests -r xml -o $in.unittests.xml");
 	unitTest.setDescription("unit test $in");
 
+	// Codegen
+	switch (solution.getSettings().getPlatform())
+	{
+	case Settings::Platform::Win_x86:
+		codegenCommand += " -DPLATFORM_WIN_X86";
+		break;
+	case Settings::Platform::Win_x64:
+		codegenCommand += " -DPLATFORM_WIN_X64";
+		break;
+	default:
+		FE_ERROR_SWITCH_VALUE();
+		break;
+	}
+	switch (solution.getSettings().getConfiguration())
+	{
+	case Settings::Configuration::Debug:
+		codegenCommand += " -DCONFIG_DEBUG";
+		break;
+	case Settings::Configuration::Release:
+		codegenCommand += " -DCONFIG_RELEASE";
+		break;
+	case Settings::Configuration::Profile:
+		codegenCommand += " -DCONFIG_PROFILE";
+		break;
+	case Settings::Configuration::Final:
+		codegenCommand += " -DCONFIG_FINAL";
+		break;
+	default:
+		FE_ERROR_SWITCH_VALUE();
+		break;
+	}
+
+	// Compile/link/lib
 	switch (solution.getSettings().getCompiler())
 	{
 	case Settings::Compiler::MSVC:
@@ -175,14 +212,12 @@ void ConfigureRules(Solution &solution)
 		case Settings::Platform::Win_x86:
 			// Win x86
 			compileCommand += " /DPLATFORM_WIN_X86";
-			codegenCommand += " -DPLATFORM_WIN_X86";
 			linkCommand += " /MACHINE:X86";
 			libCommand += " /MACHINE:X86";
 			break;
 		case Settings::Platform::Win_x64:
 			// Win x64
 			compileCommand += " /DPLATFORM_WIN_X64";
-			codegenCommand += " -DPLATFORM_WIN_X64";
 			linkCommand += " /MACHINE:X64";
 			libCommand += " /MACHINE:X64";
 			break;
@@ -196,30 +231,87 @@ void ConfigureRules(Solution &solution)
 		case Settings::Configuration::Debug:
 			// Debug
 			compileCommand += " /DCONFIG_DEBUG /Z7";
-			codegenCommand += " -DCONFIG_DEBUG";
 			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Release:
 			// Release
-			compileCommand += " /DCONFIG_RELEASE /Z7 /O2";
-			codegenCommand += " -DCONFIG_RELEASE";
+			compileCommand += " /DCONFIG_RELEASE /Z7 /Ot";
 			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE";
 			break;
 		case Settings::Configuration::Profile:
 			// Profile
-			compileCommand += " /DCONFIG_PROFILE /O2 /GL";
-			codegenCommand += " -DCONFIG_PROFILE";
+			compileCommand += " /DCONFIG_PROFILE /Ot /GL";
 			linkCommand += " /SUBSYSTEM:CONSOLE /LTCG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:CONSOLE /LTCG";
 			break;
 		case Settings::Configuration::Final:
 			// Final
-			compileCommand += " /DCONFIG_FINAL /O2 /GL";
-			codegenCommand += " -DCONFIG_FINAL";
+			compileCommand += " /DCONFIG_FINAL /Ot /GL";
 			linkCommand += " /SUBSYSTEM:WINDOWS /LTCG /OPT:REF /OPT:ICF";
 			libCommand += " /SUBSYSTEM:WINDOWS /LTCG";
+			break;
+		default:
+			FE_ERROR_SWITCH_VALUE();
+			break;
+		}
+		break;
+	case Settings::Compiler::LLVM:
+		// Compile
+		compileCommand = "clang-cl /c $in /Fo$out /showIncludes /I " + Path::join("$solutionDir", "Build", "$buildType") + " $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast -fms-compatibility-version=19.00";
+		compile.setDeps("msvc");
+
+		// Link
+#if FE_IS_TARGET(WINDOWS)
+		linkCommand = "lld-link $in $libPaths $libs /OUT:$out /nologo /WX /ignore:4221";
+#endif
+
+		// Lib
+		libCommand = "llvm-lib $in /OUT:$out /nologo /ignore:4221";
+
+		switch (solution.getSettings().getPlatform())
+		{
+		case Settings::Platform::Win_x86:
+			// Win x86
+			compileCommand += " /DPLATFORM_WIN_X86";
+			linkCommand += " /MACHINE:X86";
+			libCommand += " /MACHINE:X86";
+			break;
+		case Settings::Platform::Win_x64:
+			// Win x64
+			compileCommand += " /DPLATFORM_WIN_X64";
+			linkCommand += " /MACHINE:X64";
+			libCommand += " /MACHINE:X64";
+			break;
+		default:
+			FE_ERROR_SWITCH_VALUE();
+			break;
+		}
+
+		switch (solution.getSettings().getConfiguration())
+		{
+		case Settings::Configuration::Debug:
+			// Debug
+			compileCommand += " /DCONFIG_DEBUG /Z7";
+			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
+			break;
+		case Settings::Configuration::Release:
+			// Release
+			compileCommand += " -DCONFIG_RELEASE /Z7 /Ot";
+			linkCommand += " /SUBSYSTEM:CONSOLE /DEBUG /OPT:REF /OPT:ICF";
+			break;
+		case Settings::Configuration::Profile:
+			// Profile
+			compileCommand += " /DCONFIG_PROFILE /Ot /GL";
+			linkCommand += " /SUBSYSTEM:CONSOLE /LTCG /OPT:REF /OPT:ICF";
+			libCommand += " /LTCG";
+			break;
+		case Settings::Configuration::Final:
+			// Final
+			compileCommand += " /DCONFIG_PROFILE /Ot /GL";
+			linkCommand += " /SUBSYSTEM:WINDOWS /LTCG /OPT:REF /OPT:ICF";
+			libCommand += " /LTCG";
 			break;
 		default:
 			FE_ERROR_SWITCH_VALUE();

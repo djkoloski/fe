@@ -9,27 +9,13 @@ const feChar k_byteToUppercaseChar[16] = {
 	'8', '9', 'A', 'B',
 	'C', 'D', 'E', 'F',
 };
-const feChar k_byteToLowercaseChar[16] = {
-	'0', '1', '2', '3',
-	'4', '5', '6', '7',
-	'8', '9', 'a', 'b',
-	'c', 'd', 'e', 'f',
-};
 feChar upperToUppercaseHex(feUByte byte)
 {
 	return k_byteToUppercaseChar[byte >> 4];
 }
-feChar upperToLowercaseHex(feUByte byte)
-{
-	return k_byteToLowercaseChar[byte >> 4];
-}
 feChar lowerToUppercaseHex(feUByte byte)
 {
 	return k_byteToUppercaseChar[byte & 0x0f];
-}
-feChar lowerToLowercaseHex(feUByte byte)
-{
-	return k_byteToLowercaseChar[byte & 0x0f];
 }
 feUByte hexToLower(feChar lower)
 {

@@ -23,6 +23,8 @@ feRawString Settings::getCompilerString(Compiler compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return "MSVC";
+	case Settings::Compiler::LLVM:
+		return "LLVM";
 	default:
 		FE_ERROR_SWITCH_VALUE();
 		return "";
@@ -113,6 +115,10 @@ feRawString Settings::getObjectFileExtension(Compiler compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return ".obj";
+	case Settings::Compiler::LLVM:
+#if FE_IS_TARGET(WINDOWS)
+		return ".o";
+#endif
 	default:
 		FE_ERROR_SWITCH_VALUE();
 		return "";
@@ -128,6 +134,10 @@ feRawString Settings::getExecutableFileExtension(Compiler compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return ".exe";
+	case Settings::Compiler::LLVM:
+#if FE_IS_TARGET(WINDOWS)
+		return ".exe";
+#endif
 	default:
 		FE_ERROR_SWITCH_VALUE();
 		return "";
@@ -143,6 +153,10 @@ feRawString Settings::getLibraryFileExtension(Compiler compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return ".lib";
+	case Settings::Compiler::LLVM:
+#if FE_IS_TARGET(WINDOWS)
+		return ".lib";
+#endif
 	default:
 		FE_ERROR_SWITCH_VALUE();
 		return "";
@@ -158,6 +172,10 @@ feRawString Settings::getSharedLibraryFileExtension(Compiler compiler)
 	{
 	case Settings::Compiler::MSVC:
 		return ".dll";
+	case Settings::Compiler::LLVM:
+#if FE_IS_TARGET(WINDOWS)
+		return ".dll";
+#endif
 	default:
 		FE_ERROR_SWITCH_VALUE();
 		return "";

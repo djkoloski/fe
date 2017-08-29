@@ -1,3 +1,4 @@
+#include <FeGen/Util.h>
 #include <FeGen/CursorUtil.h>
 #include <FeGen/StringUtil.h>
 
@@ -13,7 +14,7 @@ private:
 	std::stringstream _outputHeader;
 	std::stringstream _outputSource;
 public:
-	Writer(const std::string &inputHeaderPath, const std::string &outputHeaderPath, const std::string &outputSourcePath);
+	Writer(const std::string &inputHeaderPath);
 
 	std::stringstream &header();
 	const std::stringstream &header() const;
@@ -25,7 +26,7 @@ public:
 	void advanceToCursorEnd(CXCursor cursor, int shift = 0);
 };
 
-Writer::Writer(const std::string &inputHeaderPath, const std::string &outputHeaderPath, const std::string &outputSourcePath) :
+Writer::Writer(const std::string &inputHeaderPath) :
 	_offset(0),
 	_inputHeader(inputHeaderPath, std::ios::binary)
 {}
@@ -293,13 +294,13 @@ void parseClass(CXCursor cursor, Writer &writer)
 		<< spelling
 		<< "MetaFieldCount = "
 		<< metaFieldCount
-		<< ";\r\n\tstatic const feMetaField k_"
+		<< ";\r\n#if defined(__clang__)\r\n#pragma clang diagnostic push\r\n#pragma clang diagnostic ignored \"-Winvalid-offsetof\"\r\n#endif // defined(__clang__)\r\n\tstatic const feMetaField k_"
 		<< spelling
 		<< "MetaFields[k_"
 		<< spelling
 		<< "MetaFieldCount] = {\r\n"
 		<< metaData
-		<< "\t};\r\n\tstatic const auto k_"
+		<< "\t};\r\n#if defined(__clang__)\r\n#pragma clang diagnostic pop\r\n#endif // defined(__clang__)\r\n\tstatic const auto k_"
 		<< spelling
 		<< "MetaObject = feMetaObject(feMetaObject::IntrinsicType::feObject, k_"
 		<< spelling
@@ -318,6 +319,8 @@ void parseTranslationUnit(CXCursor cursor, Writer &writer)
 		cursor,
 		[](CXCursor cursor, CXCursor parent, CXClientData clientData)
 		{
+			UNUSED(parent);
+
 			auto &writer = *static_cast<Writer *>(clientData);
 
 			// Only process cursors in our source file
@@ -434,7 +437,7 @@ int main(int argc, char **argv)
 		clang_disposeDiagnostic(diagnostic);
 	}
 
-	auto writer = Writer(inputHeaderPath, outputHeaderPath, outputSourcePath);
+	auto writer = Writer(inputHeaderPath);
 
 	// Parse translation unit
 	writer.header()

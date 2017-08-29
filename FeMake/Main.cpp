@@ -28,7 +28,8 @@ static const auto k_usageString =
 	"    profile\tNo debugging symbols, asserts on, optimizations on\n"
 	"    final\tNo debugging symbols, asserts off, optimizations on\n"
 	"  compiler\tThe compiler to generate ninja build files for\n"
-	"    msvc\tMicrosoft Visual Studio Compiler";
+	"    msvc\tMicrosoft Visual Studio Compiler\n"
+	"    llvm\tLLVM Compiler Infrastructure";
 
 feInt feMain(feInt argc, const feRawString *argv)
 {

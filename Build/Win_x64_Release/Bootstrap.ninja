@@ -9,7 +9,7 @@ rule codegen
   description = codegen $in $out
   restat = true
 rule compile
-  command = cl /c $in /Fo$out /showIncludes /I $solutionDir\Build\$buildType $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /O2
+  command = cl /c $in /Fo$out /showIncludes /I $solutionDir\Build\$buildType $includes /nologo /W3 /sdl /WX /EHsc /GR- /fp:fast /vms /DPLATFORM_WIN_X64 /DCONFIG_RELEASE /Z7 /Ot
   description = compile $out
   deps = msvc
 rule link
