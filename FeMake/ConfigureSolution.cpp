@@ -264,11 +264,11 @@ void ConfigureRules(Solution &solution)
 
 		// Link
 #if FE_IS_TARGET(WINDOWS)
-		linkCommand = "lld-link $in $libPaths $libs /OUT:$out /nologo /WX /ignore:4221";
+		linkCommand = "link $in $libPaths $libs /OUT:$out /nologo /WX /ignore:4221";
 #endif
 
 		// Link whole archive
-		linkWholeArchiveFlags = "/mllvm:\"--whole-archive " + Path::join("$solutionDir", "Build", "$buildType", "$project", "$project.lib") + "\"";
+		linkWholeArchiveFlags = "/WHOLEARCHIVE:$project.lib /ignore:4221";
 
 		// Lib
 		// TODO: does clang support making .lib's?

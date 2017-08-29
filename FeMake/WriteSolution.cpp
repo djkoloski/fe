@@ -82,31 +82,14 @@ void WriteNinjaFile(const Solution &solution)
 		{
 			const auto &module = *pair.second;
 
-			switch (solution.getSettings().getCompiler())
-			{
-			case Settings::Compiler::MSVC:
-				includes = feStringUtil::append(
-					includes,
-					feStringUtil::joinRangeWrapped(
-						"/I ",
-						"",
-						" ",
-						module.getIncludes().begin(),
-						module.getIncludes().end()));
-				break;
-			case Settings::Compiler::LLVM:
-				includes = feStringUtil::append(
-					includes,
-					feStringUtil::joinRangeWrapped(
-						"-I ",
-						"",
-						" ",
-						module.getIncludes().begin(),
-						module.getIncludes().end()));
-				break;
-			default:
-				FE_ERROR_SWITCH_VALUE();
-			}
+			includes = feStringUtil::append(
+				includes,
+				feStringUtil::joinRangeWrapped(
+					"/I ",
+					"",
+					" ",
+					module.getIncludes().begin(),
+					module.getIncludes().end()));
 
 			codegenIncludes = feStringUtil::append(
 				codegenIncludes,
