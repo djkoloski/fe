@@ -14,11 +14,12 @@ libs = libclang.lib
 # Build
 build $buildDir\CursorUtil.h: copy $sourceDir\CursorUtil.h
 build $buildDir\StringUtil.h: copy $sourceDir\StringUtil.h
+build $buildDir\Util.h: copy $sourceDir\Util.h
 build $buildDir\CursorUtil.obj: compile $sourceDir\CursorUtil.cpp
 build $buildDir\Main.obj: compile $sourceDir\Main.cpp
 build $buildDir\StringUtil.obj: compile $sourceDir\StringUtil.cpp
 build $binDir\FeGen\libclang.dll: copy $extDir\LLVM\bin\x64\libclang.dll
 build $binDir\FeGen\FeGen.exe: link $buildDir\CursorUtil.obj $buildDir\StringUtil.obj $buildDir\Main.obj | $extDir\LLVM\lib\x64\libclang.lib $binDir\FeGen\libclang.dll
-build FeGen_codegen: phony $buildDir\CursorUtil.h $buildDir\StringUtil.h
+build FeGen_codegen: phony $buildDir\CursorUtil.h $buildDir\StringUtil.h $buildDir\Util.h
 build FeGen_compile: phony $binDir\FeGen\FeGen.exe | FeGen_codegen
 build FeGen_test: unitTest $binDir\FeGen\FeGen.exe | FeGen_compile
